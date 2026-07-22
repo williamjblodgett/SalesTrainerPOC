@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SalesSim",
-  description: "AI-powered, evidence-backed sales practice.",
+  title: "Suadence",
+  description: "Practice the conversation before it counts.",
 };
 
 export default function RootLayout({
