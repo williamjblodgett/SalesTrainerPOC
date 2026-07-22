@@ -1,0 +1,1 @@
+import {PlaceholderPage} from '@/components/placeholder-page'; export default function Page(){return <PlaceholderPage title="Team" description="Review rep activity, sessions, and competency progress."/>}

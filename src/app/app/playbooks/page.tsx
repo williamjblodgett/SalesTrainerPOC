@@ -1,0 +1,1 @@
+import {PlaceholderPage} from '@/components/placeholder-page'; export default function Page(){return <PlaceholderPage title="Playbooks" description="Manage sales methodology and untrusted reference sources."/>}

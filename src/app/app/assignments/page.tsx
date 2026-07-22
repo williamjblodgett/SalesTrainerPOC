@@ -1,0 +1,1 @@
+import {PlaceholderPage} from '@/components/placeholder-page'; export default function Page(){return <PlaceholderPage title="Assignments" description="Assign published scenarios to reps and teams."/>}

@@ -1,0 +1,1 @@
+import {PlaceholderPage} from '@/components/placeholder-page'; export default function Page(){return <PlaceholderPage title="Analytics" description="Understand team trends, missed pains, and difficult objections."/>}

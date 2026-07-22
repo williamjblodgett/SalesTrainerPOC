@@ -1,0 +1,1 @@
+-- Run after creating demo Auth users. The application contains a credential-free seeded scenario in src/lib/demo/scenario.ts.

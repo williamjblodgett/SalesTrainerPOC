@@ -1,0 +1,1 @@
+import {PlaceholderPage} from '@/components/placeholder-page'; export default function Page(){return <PlaceholderPage title="Organization settings" description="Manage members, roles, limits, usage, and deletion."/>}
