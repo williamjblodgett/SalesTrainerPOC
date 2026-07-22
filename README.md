@@ -34,3 +34,5 @@ See `.env.example`. OpenAI model IDs are independently configurable for compiler
 ## Current limitations
 
 The hosted demo uses deterministic transcript extraction and buyer behavior unless OpenAI credentials are configured. TXT and pasted transcript text can be analyzed directly; PDF and DOCX files are accepted for the review workflow but require a production document-text extraction adapter. Browser speech recognition/synthesis provides a credential-free voice fallback, while the server-mediated OpenAI Realtime path requires `OPENAI_API_KEY`. Supabase authentication, full tenant persistence, deletion workflows, and production score overrides remain tracked in `docs/TASKS.md`.
+
+See `docs/SALES-LEADER-RESEARCH.md` for the current product research synthesis and `output/pdf/suadence-capabilities.pdf` for the one-page capability brief.

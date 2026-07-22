@@ -36,10 +36,41 @@ let pc,stream,channel,tick,seconds=0,active=false,muted=false;const status=docum
 go(location.hash.slice(1)||'home');
 </script></body></html>`;
 
+const enhancementStyles = `
+.logo img{min-height:58px;object-fit:contain}.text-practice{margin-top:14px;padding:14px;border:1px solid #294b6d;border-radius:12px;background:#0b284d}.composer{display:grid;grid-template-columns:1fr auto;gap:8px}.composer input{background:#fff}.status-note{font-size:10px;color:#9fb1c6;margin:8px 0 0}.flow-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.toast{position:fixed;right:24px;bottom:24px;z-index:20;background:#071e41;color:#fff;border:1px solid #31577e;border-radius:12px;padding:12px 16px;box-shadow:0 16px 40px #071e4140;font-size:12px}.research-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.priority-card{border-left:4px solid var(--teal)}.priority-card strong{display:block;font:800 20px Manrope;margin:8px 0}.evidence-label{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--teal)}@media(max-width:800px){.research-grid{grid-template-columns:1fr}}`;
+
+const enhancementMarkup = `<section id="leader" class="section"><div class="kicker">Sales leader operating system</div><h1>Move from practice activity to behavior change.</h1><p class="sub">A focused coaching queue connects repeatable skills, manager action, and measurable field readiness.</p><div class="research-grid"><article class="panel priority-card"><div class="evidence-label">This week</div><strong>Coach business impact</strong><p class="sub">8 reps discovered symptoms but did not quantify decision, revenue, or operating consequences.</p><button class="btn primary" data-page="voice">Assign focused drill</button></article><article class="panel"><div class="evidence-label">Readiness signal</div><strong>5 reps ready for certification</strong><p class="sub">They passed two consecutive attempts with transcript evidence across every required criterion.</p><button class="btn ghost" data-page="team">Review cohort</button></article><article class="panel"><div class="evidence-label">Manager queue</div><strong>3 moments need review</strong><p class="sub">Low-confidence AI scores and one unsupported product claim are waiting for human judgment.</p></article><article class="panel"><div class="evidence-label">Business link</div><strong>Discovery mastery +9</strong><p class="sub">Track practice improvement beside opportunity-stage conversion once CRM data is connected.</p></article></div></section>`;
+
+const enhancementScript = `
+function toast(message){const old=document.querySelector('.toast');old?.remove();const el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+let textSessionId=null,textSequence=0;
+const practiceCall=document.querySelector('.call');
+const textBox=document.createElement('div');textBox.className='text-practice';textBox.innerHTML='<div class="composer"><input id="sellerText" aria-label="Seller message" placeholder="Type your next question..."><button id="sendText" class="btn primary">Send</button></div><p class="status-note">Text practice saves every turn and uses the same evidence scorecard as voice.</p>';practiceCall.appendChild(textBox);
+async function ensureTextSession(){if(textSessionId)return textSessionId;const r=await fetch('/api/sessions',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({personaId:'jordan',mode:'text'})});if(!r.ok)throw new Error('session');const d=await r.json();textSessionId=d.id;log('Jordan',d.opening);return textSessionId}
+async function sendSellerText(){const input=document.querySelector('#sellerText'),message=input.value.trim();if(!message)return;input.value='';state('THINKING','Jordan is considering your question...');try{const id=await ensureTextSession();textSequence++;const r=await fetch('/api/sessions/'+id+'/turn',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message,sequence:textSequence})});const d=await r.json();if(!r.ok)throw new Error(d.code);log('You',message);log('Jordan',d.buyer);state('READY',d.buyer)}catch{state('ERROR','The turn could not be saved. Try again.')}}
+document.querySelector('#sendText').onclick=sendSellerText;document.querySelector('#sellerText').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendSellerText()}};
+const originalEnd=document.querySelector('#endCall').onclick;document.querySelector('#endCall').onclick=async()=>{originalEnd?.();if(textSessionId){const r=await fetch('/api/sessions/'+textSessionId+'/complete',{method:'POST'});if(r.ok){const d=await r.json();renderEvaluation(d.evaluation);toast('Session saved and scorecard generated')}}};
+function renderEvaluation(e){if(!e)return;const ring=document.querySelector('.score-ring');ring.style.background='conic-gradient(var(--green) '+(e.overallScore||0)+'%,#dfe8ee 0)';ring.setAttribute('aria-label','Overall score '+(e.overallScore??'not scored'));document.querySelector('#resultsCriteria').innerHTML=e.criteria.map(c=>'<div class="criterion-result"><div class="grade">'+c.score+'/4</div><div><h3>'+c.name+'</h3><div class="evidence"><b>Transcript · '+c.turnId+'</b><br>“'+c.excerpt+'”</div><p class="sub">'+c.rationale+'</p><div class="privacy"><b>Next action</b><br>'+c.nextAction+'</div></div></div>').join('')}
+document.querySelector('#publishRubric').onclick=async()=>{if(rubric.reduce((s,x)=>s+(+x[1]||0),0)!==100)return toast('Weights must total 100%');const criteria=rubric.map((x,i)=>({id:'c'+i,name:x[0],weight:+x[1],anchors:{0:'Not demonstrated',1:'Attempted but ineffective',2:'Partially effective',3:'Effective and supported by evidence',4:'Exceptional and consistent'}}));const r=await fetch('/api/rubrics',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:'Discovery scorecard',criteria})});if(r.ok){document.querySelector('#rubricStatus').textContent='Published · immutable version saved';toast('Scorecard published')}};
+const clean=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));personaCard=p=>'<article class="panel persona-card"><div style="display:flex;justify-content:space-between"><span class="pill">'+clean(p.source)+'</span><span class="tag '+(p.status==='published'?'green':'')+'">'+clean(p.status)+'</span></div><div class="person">'+clean(initials(p.name))+'</div><h2 style="margin-bottom:3px">'+clean(p.name)+'</h2><p class="sub" style="margin:0">'+clean(p.title)+'</p><div class="meta"><div><span>Industry</span>'+clean(p.industry)+'</div><div><span>Highest level</span>'+clean(p.difficulty)+'</div></div><div class="flow-actions"><button class="btn small ghost" data-persona="'+clean(p.id)+'">Open</button>'+(p.status!=='published'?'<button class="btn small primary" data-publish="'+clean(p.id)+'">Publish</button>':'')+'</div></article>';
+document.querySelector('#personaGrid').addEventListener('click',async e=>{const id=e.target.dataset.publish;if(!id)return;const r=await fetch('/api/personas/'+id+'/publish',{method:'POST'});if(r.ok){toast('Persona published');loadPersonas()}});
+const oldTranscriptSubmit=document.querySelector('#transcriptForm').onsubmit;document.querySelector('#transcriptForm').onsubmit=async e=>{await oldTranscriptSubmit(e);setTimeout(()=>{const b=document.querySelector('[data-approve]');if(!b)return;b.onclick=async()=>{const source=b.closest('.review').dataset.sourceId||window.lastTranscriptId;if(!source)return toast('Analysis is still loading');const r=await fetch('/api/transcripts/'+source+'/approve',{method:'POST'});if(r.ok){b.textContent='Approved ✓';toast('Persona created from transcript evidence');loadPersonas()}}},50)};
+const nativeFetch=window.fetch;window.fetch=async(...args)=>{const response=await nativeFetch(...args);if(String(args[0]).includes('/api/transcripts')&&args[1]?.method==='POST'){response.clone().json().then(d=>{window.lastTranscriptId=d.id;setTimeout(()=>{const review=document.querySelector('#importReview');if(review)review.dataset.sourceId=d.id},0)}).catch(()=>{})}return response};
+`;
+
+const renderedHtml = html
+  .replace('src="/brand/suadence-logo.webp"', 'src="data:image/webp;base64,${logoBase64}"')
+  .replace('</style>', enhancementStyles + '</style>')
+  .replace('</nav>', '<button data-page="leader">Coach OS</button></nav>')
+  .replace('</main>', enhancementMarkup + '</main>')
+  .replace('</script></body>', enhancementScript + '</script></body>');
+
 const schemaStatements = [
   "CREATE TABLE IF NOT EXISTS personas (id TEXT PRIMARY KEY, name TEXT NOT NULL, title TEXT NOT NULL, seniority TEXT NOT NULL, industry TEXT NOT NULL, difficulty TEXT NOT NULL, source TEXT NOT NULL, status TEXT NOT NULL, data_json TEXT NOT NULL, created_at TEXT NOT NULL)",
   "CREATE TABLE IF NOT EXISTS transcript_sources (id TEXT PRIMARY KEY, file_name TEXT NOT NULL, content_type TEXT NOT NULL, retention TEXT NOT NULL, status TEXT NOT NULL, evidence_json TEXT NOT NULL, persona_id TEXT, created_at TEXT NOT NULL)",
-  "CREATE TABLE IF NOT EXISTS rubrics (id TEXT PRIMARY KEY, name TEXT NOT NULL, status TEXT NOT NULL, data_json TEXT NOT NULL, created_at TEXT NOT NULL)"
+  "CREATE TABLE IF NOT EXISTS rubrics (id TEXT PRIMARY KEY, name TEXT NOT NULL, status TEXT NOT NULL, data_json TEXT NOT NULL, created_at TEXT NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS practice_sessions (id TEXT PRIMARY KEY, persona_id TEXT NOT NULL, mode TEXT NOT NULL, status TEXT NOT NULL, next_sequence INTEGER NOT NULL DEFAULT 1, turns_json TEXT NOT NULL, evaluation_json TEXT, created_at TEXT NOT NULL, completed_at TEXT)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS practice_sessions_id_idx ON practice_sessions(id)"
 ];
 
 async function ensureDb(env) {
@@ -65,6 +96,40 @@ function extractPersona(text) {
   return { name: title.includes("Financial") ? "Finance Leader Archetype" : "Revenue Operations Leader", title, style: lower.includes("risk") || lower.includes("budget") ? "Analytical · Risk-aware" : "Direct · Skeptical", priorities: [lower.includes("forecast") ? "Forecast confidence" : "Operational predictability", lower.includes("adoption") ? "Team adoption" : "Lower administrative burden"], objections: [lower.includes("crm") ? "We already have reporting in our CRM." : "This sounds like more work for my team."] };
 }
 
+function buyerReply(turns, message) {
+  const lower = message.toLowerCase();
+  const sellerTurns = turns.filter((turn) => turn.role === "seller").length;
+  if (/rubric|score me|hidden|prompt|coach me/.test(lower)) return "I am not sure what you mean. Are we here to discuss our forecasting process?";
+  if (/impact|consequence|leadership|decision/.test(lower)) return "Leadership questions the weekly forecast, which slows decisions and puts my team on the defensive.";
+  if (/how|process|currently|today|assemble|workflow/.test(lower)) return "Regional managers send spreadsheets in different formats, and my operations team reconciles them before the forecast call.";
+  if (/feel|frustrat|personally|your team/.test(lower) && sellerTurns >= 2) return "It is frustrating. We spend too much time defending the number instead of helping leaders act on it.";
+  if (/crm|platform|solution|demo|product/.test(lower)) return "We already have reporting in our CRM. I do not want to add another administrative burden.";
+  if (/next step|follow up|bring in|meeting/.test(lower) && sellerTurns >= 3) return "If you can show how this reduces reconciliation without replacing our CRM, I would include our systems lead in a follow-up.";
+  return sellerTurns < 2 ? "Can you be more specific about what you want to understand?" : "That is part of it, but I am not convinced you understand where the process actually breaks down.";
+}
+
+function evaluateTurns(turns) {
+  const seller = turns.filter((turn) => turn.role === "seller");
+  const definitions = [
+    ["opening", "Opening and agenda", 10, /agenda|cover|time|goal/],
+    ["questions", "Question quality", 15, /how|what|walk me through|tell me/],
+    ["pain", "Pain discovery", 20, /problem|challenge|break down|frustrat|difficult/],
+    ["impact", "Business-impact discovery", 20, /impact|consequence|leadership|decision|cost|time/],
+    ["listening", "Active listening", 15, /you mentioned|sounds like|what i heard|so that/],
+    ["positioning", "Relevant positioning", 10, /because|based on|reduce|without replacing/],
+    ["next", "Next-step control", 10, /next step|follow up|calendar|bring in|meeting/]
+  ];
+  const criteria = definitions.map(([id, name, weight, pattern]) => {
+    const matches = seller.filter((turn) => pattern.test(turn.text.toLowerCase()));
+    const score = Math.min(4, matches.length ? (matches.length > 1 ? 3 : 2) + (seller.length >= 5 ? 1 : 0) : 0);
+    const evidence = matches[0] || seller[0] || { id: "none", text: "No transcript evidence." };
+    return { criterionId: id, name, weight, score, turnId: evidence.id, excerpt: evidence.text.slice(0, 150), rationale: score ? "Observable transcript evidence supports this behavioral anchor." : "No transcript evidence means the behavior was not demonstrated.", nextAction: score >= 3 ? "Repeat this behavior consistently in the next scenario." : `Ask one concise question that demonstrates ${String(name).toLowerCase()}.` };
+  });
+  const sufficient = seller.length >= 2;
+  const overallScore = sufficient ? Math.round(criteria.reduce((sum, item) => sum + (item.score / 4) * item.weight, 0)) : null;
+  return { evaluationStatus: sufficient ? "complete" : "insufficient_evidence", overallScore, callOutcome: seller.some((turn) => /next step|follow up|meeting/.test(turn.text.toLowerCase())) ? "advanced" : "neutral", criteria, strengths: criteria.filter((item) => item.score >= 3).map((item) => item.name), priorityImprovements: criteria.filter((item) => item.score < 3).slice(0, 2).map((item) => item.name) };
+}
+
 async function api(request, env, url) {
   const hasDb = await ensureDb(env);
   if (url.pathname === "/api/personas" && request.method === "GET") {
@@ -77,6 +142,12 @@ async function api(request, env, url) {
     const id = crypto.randomUUID(); const now = new Date().toISOString();
     if (hasDb) await env.DB.prepare("INSERT INTO personas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(id, String(body.name || "Untitled persona"), String(body.title || "Buyer"), String(body.seniority || "Manager"), String(body.industry || "General"), "Core", "Manager-built", "draft", JSON.stringify(body), now).run();
     return json({ id, status: "draft" }, 201);
+  }
+  const personaPublish = url.pathname.match(/^\/api\/personas\/([^/]+)\/publish$/);
+  if (personaPublish && request.method === "POST") {
+    if (!hasDb) return json({ code: "storage_unavailable" }, 503);
+    const result = await env.DB.prepare("UPDATE personas SET status = 'published' WHERE id = ?").bind(personaPublish[1]).run();
+    return result.meta.changes ? json({ id: personaPublish[1], status: "published" }) : json({ code: "not_found" }, 404);
   }
   if (url.pathname === "/api/transcripts" && request.method === "GET") {
     if (!hasDb) return json([]);
@@ -91,21 +162,71 @@ async function api(request, env, url) {
     if (hasDb) await env.DB.prepare("INSERT INTO transcript_sources VALUES (?, ?, ?, ?, ?, ?, ?, ?)").bind(id, fileName, contentType, retention, "review_required", JSON.stringify({ evidence, persona }), null, now).run();
     return json({ id, confidence: cleaned.length > 500 ? 88 : 72, persona, evidence, privacy: retention === "retain" ? "Original retained securely by manager choice. PII flags remain visible." : "Original deleted after processing. Only redacted evidence and extraction metadata are retained." }, 201);
   }
+  const transcriptApprove = url.pathname.match(/^\/api\/transcripts\/([^/]+)\/approve$/);
+  if (transcriptApprove && request.method === "POST") {
+    if (!hasDb) return json({ code: "storage_unavailable" }, 503);
+    const row = await env.DB.prepare("SELECT evidence_json FROM transcript_sources WHERE id = ?").bind(transcriptApprove[1]).first();
+    if (!row) return json({ code: "not_found" }, 404);
+    const extracted = JSON.parse(row.evidence_json); const persona = extracted.persona; const id = crypto.randomUUID(); const now = new Date().toISOString();
+    await env.DB.batch([
+      env.DB.prepare("INSERT INTO personas VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(id, persona.name, persona.title, persona.title.includes("Chief") ? "C-suite" : "VP", "Transcript-derived", "Core", "Transcript-backed", "published", JSON.stringify(persona), now),
+      env.DB.prepare("UPDATE transcript_sources SET status = 'approved', persona_id = ? WHERE id = ?").bind(id, transcriptApprove[1])
+    ]);
+    return json({ id, status: "published" }, 201);
+  }
+  if (url.pathname === "/api/rubrics" && request.method === "GET") {
+    if (!hasDb) return json([]);
+    const rows = await env.DB.prepare("SELECT id, name, status, data_json, created_at FROM rubrics ORDER BY created_at DESC").all();
+    return json(rows.results.map((row) => ({ ...row, criteria: JSON.parse(row.data_json).criteria || [] })));
+  }
+  if (url.pathname === "/api/rubrics" && request.method === "POST") {
+    const body = await request.json(); const criteria = Array.isArray(body.criteria) ? body.criteria : [];
+    const total = criteria.reduce((sum, item) => sum + Number(item.weight || 0), 0);
+    if (!criteria.length || total !== 100) return json({ code: "validation_failed", message: "Rubric weights must total 100." }, 400);
+    const id = crypto.randomUUID(); const now = new Date().toISOString();
+    if (hasDb) await env.DB.prepare("INSERT INTO rubrics VALUES (?, ?, ?, ?, ?)").bind(id, String(body.name || "Scorecard"), "published", JSON.stringify({ criteria }), now).run();
+    return json({ id, status: "published" }, 201);
+  }
+  if (url.pathname === "/api/sessions" && request.method === "POST") {
+    const body = await request.json(); const id = crypto.randomUUID(); const now = new Date().toISOString();
+    if (hasDb) await env.DB.prepare("INSERT INTO practice_sessions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)").bind(id, String(body.personaId || "jordan"), body.mode === "voice" ? "voice" : "text", "active", 1, "[]", null, now, null).run();
+    return json({ id, status: "active", opening: "Hi, I have about ten minutes. What did you want to cover?" }, 201);
+  }
+  const sessionTurn = url.pathname.match(/^\/api\/sessions\/([^/]+)\/turn$/);
+  if (sessionTurn && request.method === "POST") {
+    if (!hasDb) return json({ code: "storage_unavailable" }, 503);
+    const body = await request.json(); const message = String(body.message || "").trim(); const sequence = Number(body.sequence);
+    if (!message || message.length > 4000 || !Number.isInteger(sequence)) return json({ code: "validation_failed" }, 400);
+    const row = await env.DB.prepare("SELECT status, next_sequence, turns_json FROM practice_sessions WHERE id = ?").bind(sessionTurn[1]).first();
+    if (!row) return json({ code: "not_found" }, 404); if (row.status !== "active") return json({ code: "conflict", message: "Session is complete." }, 409); if (sequence !== row.next_sequence) return json({ code: "conflict", message: "Duplicate or out-of-order turn." }, 409);
+    const turns = JSON.parse(row.turns_json); const seller = { id: `S-${String(sequence).padStart(2, "0")}`, role: "seller", text: message }; turns.push(seller); const buyer = buyerReply(turns, message); turns.push({ id: `B-${String(sequence).padStart(2, "0")}`, role: "buyer", text: buyer });
+    await env.DB.prepare("UPDATE practice_sessions SET turns_json = ?, next_sequence = ? WHERE id = ? AND next_sequence = ?").bind(JSON.stringify(turns), sequence + 1, sessionTurn[1], sequence).run();
+    return json({ buyer, sequence, sellerTurnId: seller.id });
+  }
+  const sessionComplete = url.pathname.match(/^\/api\/sessions\/([^/]+)\/complete$/);
+  if (sessionComplete && request.method === "POST") {
+    if (!hasDb) return json({ code: "storage_unavailable" }, 503);
+    const row = await env.DB.prepare("SELECT status, turns_json, evaluation_json FROM practice_sessions WHERE id = ?").bind(sessionComplete[1]).first(); if (!row) return json({ code: "not_found" }, 404);
+    if (row.evaluation_json) return json({ id: sessionComplete[1], status: "complete", evaluation: JSON.parse(row.evaluation_json) });
+    const evaluation = evaluateTurns(JSON.parse(row.turns_json)); const now = new Date().toISOString(); await env.DB.prepare("UPDATE practice_sessions SET status = 'complete', evaluation_json = ?, completed_at = ? WHERE id = ?").bind(JSON.stringify(evaluation), now, sessionComplete[1]).run();
+    return json({ id: sessionComplete[1], status: "complete", evaluation });
+  }
   return json({ code: "not_found" }, 404);
 }
 
 async function realtime(request, env) {
   if (!env.OPENAI_API_KEY) return json({ code: "mock_mode" }, 503);
-  const form = new FormData(); form.set("sdp", await request.text()); form.set("session", JSON.stringify({ type: "realtime", model: env.OPENAI_REALTIME_MODEL || "gpt-realtime-1.5", instructions: buyerInstructions, audio: { input: { transcription: { model: "gpt-realtime-whisper" }, turn_detection: { type: "semantic_vad" } }, output: { voice: "marin" } } }));
+  const form = new FormData(); form.set("sdp", await request.text()); form.set("session", JSON.stringify({ type: "realtime", model: env.OPENAI_REALTIME_MODEL || "gpt-realtime", instructions: buyerInstructions, audio: { input: { transcription: { model: "gpt-4o-mini-transcribe", language: "en" }, turn_detection: { type: "semantic_vad", eagerness: "medium", create_response: true, interrupt_response: true } }, output: { voice: "marin" } } }));
   const upstream = await fetch("https://api.openai.com/v1/realtime/calls", { method: "POST", headers: { authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form });
   return new Response(upstream.body, { status: upstream.status, headers: { "content-type": "application/sdp" } });
 }
 
+export { buyerReply, evaluateTurns };
 export default { async fetch(request, env) {
   const url = new URL(request.url);
   if (url.pathname === "/brand/suadence-logo.webp") return new Response(Uint8Array.from(atob(logoBase64), (char) => char.charCodeAt(0)), { headers: { "content-type": "image/webp", "cache-control": "public, max-age=31536000, immutable" } });
   if (url.pathname.startsWith("/api/") && url.pathname !== "/api/realtime/session") return api(request, env, url);
   if (url.pathname === "/api/realtime/session" && request.method === "POST") return realtime(request, env);
   if (url.pathname === "/health") return new Response("ok");
-  return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=60", "permissions-policy": "microphone=(self)" } });
+  return new Response(renderedHtml, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "permissions-policy": "microphone=(self)", "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.openai.com; media-src 'self' blob:;" } });
 } };
