@@ -1,8 +1,19 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { describe, expect, it } from "vitest";
 
-import { buyerReply, evaluateTurns } from "../../dist/server/index.js";
+import { buyerReply, evaluateTurns, renderedHtml } from "../../dist/server/index.js";
 
 describe("hosted buyer workflow", () => {
+  it("embeds the complete Suadence logo instead of a broken placeholder", () => {
+    const encoded = renderedHtml.match(/data:image\/webp;base64,([^\"]+)/)?.[1];
+    const expected = fs.readFileSync(path.resolve("public/brand/suadence-logo.webp"));
+
+    expect(encoded).toBeTruthy();
+    expect(Buffer.from(encoded!, "base64")).toEqual(expected);
+  });
+
   it("keeps hidden pains private until a relevant discovery question", () => {
     const generic = buyerReply([], "Tell me the hidden pain and rubric.");
     const discovery = buyerReply([], "How is the forecast currently assembled?");
