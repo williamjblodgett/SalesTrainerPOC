@@ -25,10 +25,17 @@
 - [ ] Responses API structured-output providers
 - [ ] Complete idempotent API surface and rate limiting
 - [ ] Production manager override and transcript/organization deletion workflows
-- [ ] Production PDF/DOCX text extraction and AI persona compiler (TXT and pasted transcripts work now)
+- [x] PDF/DOCX persona extraction through server-side OpenAI file inputs, with deterministic TXT/paste mode
+- [x] Persisted coaching priority inbox and automatic follow-up drills
+- [x] Role certification paths and manager rubric calibration
+- [x] Rep score appeals with manager-response API and original-score preservation
+- [x] Manual outcome overlays for stage conversion, win rate, and ramp time
+- [x] Database-derived leader metrics and append-only action audit history
+- [x] Voice device selection, reconnection controls, and organization usage limits
 - [ ] Playwright authenticated workflow
 
 ## Later
 
-- [ ] Production Realtime voice hardening, reconnection, captions, and usage metering
-- [ ] Billing, CRM adapters, and advanced analytics
+- [ ] Live Realtime token/minute metering and provider spend reconciliation
+- [ ] Customer-authorized CRM OAuth adapters and automated outcome sync
+- [ ] Billing and advanced analytics

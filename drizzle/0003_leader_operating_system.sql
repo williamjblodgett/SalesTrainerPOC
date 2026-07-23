@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS coaching_items (id TEXT PRIMARY KEY, session_id TEXT, rep_name TEXT NOT NULL, skill TEXT NOT NULL, severity INTEGER NOT NULL, confidence REAL NOT NULL, revenue_priority INTEGER NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS certifications (id TEXT PRIMARY KEY, name TEXT NOT NULL, role_level TEXT NOT NULL, required_score INTEGER NOT NULL, required_attempts INTEGER NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS certification_progress (id TEXT PRIMARY KEY, certification_id TEXT NOT NULL, rep_name TEXT NOT NULL, passed_attempts INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS score_appeals (id TEXT PRIMARY KEY, session_id TEXT NOT NULL, rep_name TEXT NOT NULL, reason TEXT NOT NULL, status TEXT NOT NULL, manager_response TEXT, created_at TEXT NOT NULL, resolved_at TEXT);
+CREATE TABLE IF NOT EXISTS drill_assignments (id TEXT PRIMARY KEY, session_id TEXT, rep_name TEXT NOT NULL, skill TEXT NOT NULL, difficulty TEXT NOT NULL, status TEXT NOT NULL, due_at TEXT, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS outcome_metrics (id TEXT PRIMARY KEY, period TEXT NOT NULL, stage_conversion REAL, win_rate REAL, ramp_days INTEGER, source TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS calibration_sessions (id TEXT PRIMARY KEY, rubric_name TEXT NOT NULL, transcript_label TEXT NOT NULL, status TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS calibration_scores (id TEXT PRIMARY KEY, calibration_id TEXT NOT NULL, manager_name TEXT NOT NULL, score INTEGER NOT NULL, rationale TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS audit_events (id TEXT PRIMARY KEY, entity_type TEXT NOT NULL, entity_id TEXT NOT NULL, action TEXT NOT NULL, actor TEXT NOT NULL, details_json TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS usage_limits (id TEXT PRIMARY KEY, monthly_voice_minutes INTEGER NOT NULL, monthly_ai_spend REAL NOT NULL, max_session_minutes INTEGER NOT NULL, updated_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS coaching_priority_idx ON coaching_items(status, severity DESC, revenue_priority DESC, confidence ASC);
+CREATE INDEX IF NOT EXISTS audit_entity_idx ON audit_events(entity_type, entity_id, created_at DESC);

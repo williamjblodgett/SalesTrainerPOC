@@ -98,7 +98,7 @@ def build() -> None:
         ("03", "Adaptive AI buyers", "Practice against guarded, skeptical, time-conscious buyers that reveal information only after relevant discovery."),
         ("04", "Text and voice practice", "Run persistent text sessions or low-latency WebRTC voice calls with captions, interruption, mute, timer, and saved transcripts."),
         ("05", "Evidence-first scoring", "Use manager-owned 0-4 anchors, weights totaling 100, transcript citations, deterministic math, and insufficient-evidence safeguards."),
-        ("06", "Manager coaching OS", "Prioritize review moments, assign focused drills, track readiness by role, calibrate AI judgment, and identify team-wide skill gaps."),
+        ("06", "Leader readiness OS", "Prioritize coaching, auto-assign retest drills, certify by role, calibrate managers, resolve appeals, and overlay revenue outcomes."),
     ]
     for index, details in enumerate(cards):
         x = left if index % 2 == 0 else right
@@ -115,7 +115,7 @@ def build() -> None:
     canvas.drawString(54, 119, "Less manager administration. More targeted practice. Clear proof of behavior change.")
     canvas.setFillColor(HexColor("#B9CCE0"))
     canvas.setFont(regular, 8.4)
-    canvas.drawString(54, 102, "Secure multi-tenant architecture, immutable versions, role-aware access, cost controls, and deterministic mock mode.")
+    canvas.drawString(54, 102, "Database-derived metrics, audit history, document intelligence, voice controls, usage limits, and deterministic mock mode.")
 
     canvas.setFillColor(MUTED)
     canvas.setFont(regular, 7.2)
