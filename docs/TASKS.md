@@ -20,8 +20,11 @@
 - [x] Idempotent text-practice turns, completion, and evidence-backed evaluation
 - [x] Sales-leader coaching queue and readiness recommendations
 - [x] One-page branded capabilities brief
-- [ ] Supabase auth/onboarding adapters and transactional persistence
-- [ ] Complete RLS write policies and pgTAP cross-tenant suite
+- [x] Supabase SSR auth, session refresh, validated signup/sign-in, and organization bootstrap
+- [x] Role-aware owner/manager/rep application shell and manager action dashboard
+- [x] Complete initial RLS write-policy baseline and unit-level policy contract tests
+- [ ] Run pgTAP cross-tenant suite against a disposable hosted Supabase project
+- [ ] Port hosted D1 workflow repositories into canonical Supabase transactions
 - [ ] Responses API structured-output providers
 - [ ] Complete idempotent API surface and rate limiting
 - [ ] Production manager override and transcript/organization deletion workflows

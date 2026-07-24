@@ -1,27 +1,71 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const links = [
-  ["Overview", "/app"],
-  ["Personas", "/app/personas"],
-  ["Transcript Lab", "/app/personas/import"],
-  ["Practice", "/app/practice"],
-  ["Scenarios", "/app/scenarios"],
-  ["Scorecards", "/app/scorecards"],
-  ["Team Coaching", "/app/team"],
-  ["Analytics", "/app/analytics"],
-  ["Settings", "/app/settings"],
-];
+import { signOut } from "@/app/auth/actions";
+import { requireAppContext } from "@/lib/auth/context";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
-    <aside className="border-r border-[#183657] bg-[#071e41] p-5 text-white">
-      <Link href="/app" className="block rounded-xl bg-white p-3">
-        <Image src="/brand/suadence-logo.webp" alt="Suadence — Practice the conversation before it counts" width={620} height={184} priority />
-      </Link>
-      <p className="mt-5 px-2 text-xs text-slate-400">Northstar Revenue Team · Manager</p>
-      <nav className="mt-5 grid gap-1">{links.map(([label, href]) => <Link key={href} href={href} className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-[#12335e] hover:text-white">{label}</Link>)}</nav>
-    </aside>
-    <main className="min-w-0 p-6 lg:p-10">{children}</main>
-  </div>;
+import { AppNavigation } from "./app-navigation";
+
+export async function AppShell({ children }: { children: React.ReactNode }) {
+  const context = await requireAppContext();
+  const initials = context.user.displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div className="app-frame">
+      <aside className="app-rail">
+        <Link href="/app" className="brand-lockup">
+          <Image
+            src="/brand/suadence-logo.webp"
+            alt="Suadence — Practice the conversation before it counts"
+            width={620}
+            height={184}
+            priority
+          />
+        </Link>
+        <div className="workspace-card">
+          <span>Workspace</span>
+          <strong>{context.organization.name}</strong>
+          <small>{context.role}</small>
+        </div>
+        <AppNavigation role={context.role} />
+        <div className="rail-account">
+          <div className="account-avatar" aria-hidden="true">
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <strong>{context.user.displayName}</strong>
+            <span>{context.demo ? "Demonstration workspace" : context.user.email}</span>
+          </div>
+          {context.demo ? (
+            <span className="demo-chip">Demo</span>
+          ) : (
+            <form action={signOut}>
+              <button className="text-button" type="submit">
+                Sign out
+              </button>
+            </form>
+          )}
+        </div>
+      </aside>
+      <div className="app-surface">
+        <header className="mobile-bar">
+          <Link href="/app">
+            <Image
+              src="/brand/suadence-logo.webp"
+              alt="Suadence"
+              width={210}
+              height={62}
+            />
+          </Link>
+          <span className="role-chip">{context.role}</span>
+        </header>
+        <main className="app-main">{children}</main>
+      </div>
+    </div>
+  );
 }
