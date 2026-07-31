@@ -1,5 +1,23 @@
 # Tasks
 
+## Revenue OS V1
+
+- [x] Category landing page built around “one call in, 20 revenue assets out”
+- [x] Premium operating-system shell with command center and cross-department views
+- [x] Consent-gated call ingestion for Gong, Chorus, Zoom, Teams, Salesforce, and upload source types
+- [x] Exactly 20 governed revenue asset blueprints per ingested call
+- [x] Organization-scoped normalized call, asset, graph, signal, and deletion-request tables
+- [x] Living knowledge graph with evidence, confidence, six node types, and eight relationships
+- [x] Revenue DNA, Knowledge Drift, Content Gap, digital-twin, and proactive-advisor product surfaces
+- [x] Idempotent ingestion keys and organization-bound queries in the hosted V1
+- [x] Cross-department activation for Sales, Enablement, Marketing, Product, CS, and Leadership
+- [x] Enterprise security, legal operating model, pricing, and V1–V3 strategy documented
+- [ ] Production connector OAuth, webhooks, backfills, token rotation, and provider deletion reconciliation
+- [ ] Multi-call entity resolution and human-reviewed graph merge workflow
+- [ ] Production drift/gap computation with minimum evidence thresholds
+- [ ] DPA, privacy notice, subprocessor page, and jurisdiction-specific counsel review
+- [ ] SSO/SAML, SCIM, step-up authentication, legal holds, and regional data residency
+
 ## Milestone 1
 
 - [x] Next.js/TypeScript/Tailwind foundation

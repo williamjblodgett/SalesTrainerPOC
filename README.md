@@ -1,38 +1,67 @@
-# Suadence
+# Suadence Revenue OS
 
-Suadence is an AI-powered B2B sales-training workspace: “Practice the conversation before it counts.” Sales leaders can build realistic buyer personas from structured metrics or transcript evidence, tune difficulty from new-hire through VP-level conversations, run text or voice practice, and review evidence-backed evaluations.
+Suadence is a revenue intelligence operating system built around one promise: **one call in, 20 revenue assets out**.
 
-The internal product name remains isolated so the brand can be changed without rewriting domain logic.
+It converts consented calls and transcripts into an organization-scoped knowledge graph, then activates that evidence as customer personas, digital-twin AI buyers, roleplays, playbooks, talk tracks, battle cards, follow-ups, coaching, product and marketing signals, customer-success actions, and executive intelligence.
+
+The product retains the original sales-practice vertical slice while expanding it into a cross-department operating system for Sales, Enablement, Marketing, Product, Customer Success, Revenue Operations, and Leadership.
 
 ## Stack
 
-Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgres/RLS, Zod, OpenAI JavaScript SDK/Responses API, Vitest, and Playwright.
+Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgres/RLS, Zod, OpenAI JavaScript SDK/Responses API, OpenAI Realtime over WebRTC, Vitest, Playwright, and a D1-backed hosted preview.
+
+## Prerequisites
+
+- Node.js 20+
+- pnpm 10+
+- A Supabase project for the canonical multi-tenant application
+- An OpenAI API key only for provider-backed AI and Realtime voice; mock mode works without credentials
 
 ## Local setup
 
-1. Install Node 20+ and pnpm 10+.
-2. Copy `.env.example` to `.env.local` and fill Supabase values, or retain `AI_PROVIDER=mock` for credential-free AI behavior.
-3. Run the SQL migration with `supabase db reset` or in a local Supabase project.
-4. Run `pnpm install` and `pnpm dev`.
-5. Open `http://localhost:3000/app` for the seeded demo.
+1. Copy `.env.example` to `.env.local`.
+2. Fill the Supabase public values and server-only service role key.
+3. Keep `AI_PROVIDER=mock` for deterministic credential-free behavior, or set `OPENAI_API_KEY`.
+4. Apply the SQL migrations with `supabase db reset` or in a disposable Supabase project.
+5. Run `pnpm install` and `pnpm dev`.
+6. Open `http://localhost:3000/app`.
 
-The deployable Sites worker in `dist/server/index.js` includes a persistent D1-backed persona lab and transcript workspace. It can store retained source files in R2 when the manager explicitly selects that option.
+The hosted worker in `dist/server/index.js` serves the category landing page, the interactive Revenue OS workspace, and D1-backed APIs. The previous sales-training workspace remains available at `/legacy` during migration.
+
+## Environment variables
+
+See `.env.example`. OpenAI model IDs are separately configurable for evidence/scenario work, buyer simulation, evaluation, and Realtime voice. Provider and service keys stay server-side.
 
 ## Commands
 
-- `pnpm dev` — local app
+- `pnpm dev` — local application
 - `pnpm typecheck` — strict TypeScript
 - `pnpm lint` — ESLint
-- `pnpm test` — unit/contract tests
-- `pnpm test:e2e` — Playwright tests
+- `pnpm test` — unit and contract tests
+- `pnpm test:e2e` — Playwright flows
 - `pnpm build` — production build
 
-## Environment
+## Revenue OS data flow
 
-See `.env.example`. OpenAI model IDs are independently configurable for compiler, buyer, evaluator, and later Realtime voice. API keys are server-only.
+`connector → consent gate → normalized call → evidence graph → 20-asset factory → approval and routing → outcome feedback`
+
+Every Revenue OS table includes `organization_id`. Organization access is resolved server-side, never from a browser-supplied tenant identifier. Every generated object keeps source lineage and an approval lifecycle.
 
 ## Current limitations
 
-The hosted demo uses deterministic transcript extraction and buyer behavior unless OpenAI credentials are configured. TXT and pasted transcript text can be analyzed directly; PDF and DOCX files are accepted for the review workflow but require a production document-text extraction adapter. Browser speech recognition/synthesis provides a credential-free voice fallback, while the server-mediated OpenAI Realtime path requires `OPENAI_API_KEY`. Supabase authentication, full tenant persistence, deletion workflows, and production score overrides remain tracked in `docs/TASKS.md`.
+- The hosted V1 accepts pasted/TXT evidence and presents Gong, Chorus, Zoom, Teams, and Salesforce as pilot source adapters; production OAuth, webhooks, backfills, and provider-side deletion reconciliation remain V2 work.
+- The 20 hosted asset outputs and graph extraction use deterministic demo contracts. Provider-backed structured generation will use the same typed boundaries when credentials are configured.
+- Revenue DNA, Knowledge Drift, and Content Gap surfaces are implemented as product workflows; production scoring needs multi-call evidence thresholds and outcome calibration.
+- The hosted preview derives a single authorized organization server-side. The canonical Next.js/Supabase application owns production authentication, membership resolution, and RLS.
+- Security architecture is designed for enterprise review, but SOC 2, SSO/SCIM, regional data residency, a signed DPA, and jurisdiction-specific legal review are roadmap items, not current certifications.
 
-See `docs/SALES-LEADER-RESEARCH.md` for the current product research synthesis and `output/pdf/suadence-capabilities.pdf` for the one-page capability brief.
+## Documentation
+
+- [Revenue OS strategy](docs/REVENUE-OS-STRATEGY.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [AI system](docs/AI-SYSTEM.md)
+- [Security](docs/SECURITY.md)
+- [Local development](docs/LOCAL-DEVELOPMENT.md)
+- [Testing](docs/TESTING.md)
+- [Tasks and roadmap](docs/TASKS.md)
+- [Sales-leader research](docs/SALES-LEADER-RESEARCH.md)

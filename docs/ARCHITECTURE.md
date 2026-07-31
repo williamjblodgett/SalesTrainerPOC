@@ -1,5 +1,27 @@
 # Architecture
 
+## Revenue intelligence operating system
+
+The expanded product uses a second vertical pipeline:
+
+`source connector → consent gate → normalized call → evidence extraction → knowledge graph → asset factory → approval/routing → outcome feedback`
+
+Provider adapters normalize Gong, Chorus, Zoom, Teams, Salesforce, and file/API sources into a stable call envelope. Webhook delivery and ingestion are idempotent. The browser never chooses the authorization tenant; server identity and membership resolve `organization_id` before every repository operation.
+
+The knowledge graph is organization-scoped and evidence-first. Nodes model buyer roles, pains, impacts, objections, risks, claims, product capabilities, outcomes, and skills. Edges model relationships such as `causes`, `masks`, `supports`, `contradicts`, and `evidenced_by`. Every inferred object keeps source turn IDs, confidence, freshness, extraction version, and approval state.
+
+The asset factory materializes 20 governed outputs from a compact graph projection. Draft generation never publishes directly. An asset stores lineage, approval state, model/prompt version, intended department, and processing purpose. Outcome events can later update confidence and recommendations without mutating the historical source call.
+
+AI responsibilities remain separated:
+
+1. Evidence Extractor structures calls into candidate graph updates.
+2. Asset Generator creates department-specific drafts from approved evidence views.
+3. Buyer Actor performs digital-twin simulations without access to evaluation logic.
+4. Evaluator scores only completed practice transcripts against immutable rubrics.
+5. Advisor ranks proposed actions but cannot publish, message, delete, or change CRM state without a permission-aware command boundary.
+
+The current hosted V1 uses D1-backed normalized calls, graph records, asset records, signals, and deletion requests. The canonical production target remains Next.js with Supabase Postgres/RLS, encrypted connector credentials, an object store for explicitly retained source files, and a durable job queue for ingestion and deletion cascades.
+
 Completed evaluations create a prioritized coaching item and a focused retest drill from the lowest-scoring criterion. Leader dashboards aggregate D1 records at request time. Certification, calibration, appeals, outcome snapshots, usage limits, and audit events remain separate business records.
 
 PDF/DOCX ingestion uses OpenAI Responses API file inputs only when a server-side key is present. Text and pasted transcripts retain deterministic extraction. The API returns a typed error instead of implying a binary document was parsed when the provider is unavailable.

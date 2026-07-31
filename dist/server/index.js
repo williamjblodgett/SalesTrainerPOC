@@ -292,11 +292,22 @@ async function realtime(request, env) {
 }
 
 export { buyerReply, evaluateTurns, renderedHtml };
-export default { async fetch(request, env) {
+const worker = { async fetch(request, env) {
   const url = new URL(request.url);
   if (url.pathname === "/brand/suadence-logo.webp") return new Response(Uint8Array.from(atob(logoBase64), (char) => char.charCodeAt(0)), { headers: { "content-type": "image/webp", "cache-control": "public, max-age=31536000, immutable" } });
+  if (url.pathname.startsWith("/api/revenue-os/")) {
+    const { handleRevenueOSApi } = await import("./revenue-os.js");
+    return handleRevenueOSApi(request, env, url);
+  }
   if (url.pathname.startsWith("/api/") && url.pathname !== "/api/realtime/session") return api(request, env, url);
   if (url.pathname === "/api/realtime/session" && request.method === "POST") return realtime(request, env);
   if (url.pathname === "/health") return new Response("ok");
+  const pageHeaders = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "permissions-policy": "microphone=(self)", "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.openai.com; media-src 'self' blob:;" };
+  if (url.pathname === "/" || url.pathname === "/app" || url.pathname.startsWith("/app/")) {
+    const { landingHtml, revenueAppHtml } = await import("./revenue-os.js");
+    return new Response(url.pathname === "/" ? landingHtml : revenueAppHtml, { headers: pageHeaders });
+  }
+  if (url.pathname === "/legacy") return new Response(renderedHtml, { headers: pageHeaders });
   return new Response(renderedHtml, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "permissions-policy": "microphone=(self)", "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.openai.com; media-src 'self' blob:;" } });
 } };
+export default worker;
