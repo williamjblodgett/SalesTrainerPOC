@@ -40,6 +40,7 @@ See `.env.example`. OpenAI model IDs are separately configurable for evidence/sc
 - `pnpm test` — unit and contract tests
 - `pnpm test:e2e` — Playwright flows
 - `pnpm build` — production build
+- `pnpm validate:hosted` — hosted-page logo, pricing, synthetic-label, fallback, and inline-script release checks
 
 ## Revenue OS data flow
 
