@@ -20,7 +20,13 @@ AI responsibilities remain separated:
 4. Evaluator scores only completed practice transcripts against immutable rubrics.
 5. Advisor ranks proposed actions but cannot publish, message, delete, or change CRM state without a permission-aware command boundary.
 
-The current hosted V1 uses D1-backed normalized calls, graph records, asset records, signals, and deletion requests. The canonical production target remains Next.js with Supabase Postgres/RLS, encrypted connector credentials, an object store for explicitly retained source files, and a durable job queue for ingestion and deletion cascades.
+The current hosted private pilot uses D1-backed normalized calls, graph records, canonical entities, asset records, computed signals, connector events/jobs, rate buckets, and deletion requests/tasks. The canonical multi-tenant production target remains Next.js with Supabase Postgres/RLS, encrypted connector credentials, an object store for explicitly retained source files, and a durable job queue for ingestion and deletion cascades.
+
+The hosted connector boundary accepts a signed, normalized event rather than embedding provider-specific logic in domain code. Signature verification, replay protection, event idempotency, consent quarantine, call idempotency, extraction, asset generation, graph synchronization, and audit persistence remain separate steps. Configuration checks never claim that a customer has completed provider authorization.
+
+Cross-call intelligence is recomputed from distinct call IDs. A pattern must meet a configurable evidence threshold before it becomes a content-gap, product, or drift signal. Graph labels are normalized into canonical entities; approximate duplicates become merge candidates and require an explicit reviewer decision.
+
+The Synthetic Demo Lab creates fictional calls in a dedicated `demo_runs` scope. Demo calls use the same extraction and 20-asset contracts, but demo records are excluded from live calls, live graph entities, live signals, and Revenue DNA. Reset uses the same lineage-aware deletion function as governed call deletion.
 
 Completed evaluations create a prioritized coaching item and a focused retest drill from the lowest-scoring criterion. Leader dashboards aggregate D1 records at request time. Certification, calibration, appeals, outcome snapshots, usage limits, and audit events remain separate business records.
 
@@ -40,6 +46,8 @@ The primary flow is onboarding → structured scenario → immutable publication
 
 Generated revenue assets begin in `review_required`; generation is not activation. Reviewers inspect source-call metadata and organization-scoped knowledge-node evidence before recording `approved`, `changes_requested`, or `rejected`. Every decision is durable in `asset_reviews`, while current status supports fast dashboard queries. Revenue DNA behavior-readiness and closed-loop-activation components count approved assets only.
 
-`connector_connections` is a provider-neutral health registry. The UI merges that state with a server-defined connector catalog and reports `native`, `oauth`, `manual_pilot`, or `not_configured` honestly. A pilot check does not claim that calls were imported, and credentials are represented only as a boolean capability signal; secrets never enter API responses.
+`connector_connections` is a provider-neutral health registry. The UI merges that state with a server-defined connector catalog and reports `native`, `oauth_ready`, `manual_pilot`, or `not_configured` honestly. A pilot check does not claim that calls were imported, and credentials are represented only as a boolean capability signal; secrets never enter API responses.
+
+`connector_events` and `ingestion_jobs` form the durable ingestion seam. `graph_entities`, `graph_entity_evidence`, and `graph_merge_candidates` support cross-call memory without destroying source nodes. `computed_intelligence_signals` and `computed_signal_evidence` preserve the threshold, scope, and calls supporting each active pattern. `deletion_tasks` expose which Suadence-controlled systems were erased and which external source confirmations still belong to the customer.
 
 The proactive advisor creates bounded `advisor_actions` with explicit steps, an owning department, and `humanApprovalRequired: true`. V1 advisor actions have no external side effects. Asset decisions, connector checks, advisor commands, and deletion requests append actor-scoped records to `revenue_audit_events` without copying transcripts into the audit stream.

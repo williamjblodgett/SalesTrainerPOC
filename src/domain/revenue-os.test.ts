@@ -4,6 +4,7 @@ import {
   assetBlueprints,
   calculateRevenueDna,
   connectorCatalog,
+  demoLabHtml,
   repairedLandingHtml as landingHtml,
   repairedRevenueAppHtml as revenueAppHtml,
   revenueSchemaStatements,
@@ -74,9 +75,20 @@ describe("Suadence Revenue OS", () => {
   it("keeps the category promise and enterprise buying narrative explicit", () => {
     expect(landingHtml).toContain("One call in.");
     expect(landingHtml).toContain("20 revenue assets out.");
-    expect(landingHtml).toContain("3-month starter");
+    expect(landingHtml).toContain(">TBD<");
+    expect(landingHtml).not.toContain("$12,000");
+    expect(landingHtml).toContain("/demo");
     expect(landingHtml).toContain("Customer intelligence stays customer-owned");
     expect(landingHtml).toContain("V3 · Anticipate");
+  });
+
+  it("ships an isolated synthetic Demo Lab with visible data labeling", () => {
+    expect(demoLabHtml).toContain("Suadence Synthetic Demo Lab");
+    expect(demoLabHtml).toContain("SYNTHETIC DATA ONLY");
+    expect(demoLabHtml).toContain("Generate cohort");
+    expect(demoLabHtml).toContain("Reset synthetic data");
+    expect(demoLabHtml).toContain("excluded from the live command center");
+    expect(demoLabHtml).toContain("/brand/suadence-logo.webp");
   });
 
   it("requires consent in the live ingestion workflow", () => {
@@ -125,7 +137,8 @@ describe("Suadence Revenue OS", () => {
       "salesforce",
       "upload",
     ]);
-    expect(revenueAppHtml).toContain("Run pilot check");
+    expect(revenueAppHtml).toContain("Customer authorization still required");
+    expect(revenueAppHtml).toContain("Provider credentials not configured");
     expect(revenueAppHtml).toContain("Permitted scopes");
   });
 
@@ -156,6 +169,8 @@ describe("Suadence Revenue OS", () => {
     expect(revenueAppHtml).toContain("Governed action queue");
     expect(revenueAppHtml).toContain("72-hour cooling-off window");
     expect(revenueAppHtml).toContain("Append-only accountability");
+    expect(revenueAppHtml).toContain("Production readiness");
+    expect(revenueAppHtml).toContain("Open Synthetic Demo Lab");
     expect(revenueAppHtml).not.toMatch(/[ÃÂâÎ]/);
   });
 });

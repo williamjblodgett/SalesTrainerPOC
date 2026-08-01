@@ -100,8 +100,8 @@ export default function Home() {
 
       <section className="mx-auto max-w-7xl px-6 py-24">
         <div className="rounded-[30px] bg-white p-10 shadow-xl shadow-slate-900/5 md:flex md:items-end md:justify-between">
-          <div><p className="text-xs font-bold uppercase tracking-[0.15em] text-teal-600">Three-month starter · $12,000</p><h2 className="mt-3 text-4xl">Start with one team. Prove the operating value.</h2><p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">Up to 25 users, 500 processed calls, the 20-asset factory, personas, simulations, dashboards, and a weekly value review.</p></div>
-          <Link className="button mt-8 shrink-0 md:mt-0" href="/app">Launch Revenue OS →</Link>
+          <div><p className="text-xs font-bold uppercase tracking-[0.15em] text-teal-600">Pricing</p><h2 className="mt-3 text-4xl">TBD</h2><p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">Packaging and commercial terms are being finalized. No pricing commitment is represented on this site.</p></div>
+          <Link className="button mt-8 shrink-0 md:mt-0" href="/app">Explore Revenue OS →</Link>
         </div>
       </section>
     </main>

@@ -2,92 +2,86 @@
 
 ## Category thesis
 
-Suadence is the revenue intelligence operating system: the governed cognition layer between customer conversations and revenue execution.
+Suadence is the governed cognition layer between customer conversations and revenue execution. Its category promise is **one call in, 20 revenue assets out**.
 
-The category promise is **one call in, 20 revenue assets out**. Existing conversation-intelligence products are primarily systems of capture, search, deal inspection, or forecast support. Enablement products primarily distribute content and training. Suadence turns each consented customer conversation into connected, evidence-backed intelligence and then materializes that intelligence as usable work for Sales, Enablement, Marketing, Product, Customer Success, and Leadership.
+Conversation-intelligence tools usually optimize capture, search, inspection, or forecast visibility. Enablement tools usually distribute content and training. Suadence turns consented customer evidence into structured knowledge, then activates the same truth across Sales, Enablement, Marketing, Product, Customer Success, Revenue Operations, and Leadership.
 
-The unit of value is not a recorded call or a course completion. It is a verified customer signal that becomes coordinated action and improves as outcomes return to the system.
+The unit of value is not a recording or course completion. It is a verified customer signal that becomes approved action and improves as outcomes return to the system.
 
-## Why leaders will buy now
+## What revenue leaders need
 
-Current research reinforces four buying requirements:
+The product is designed around recurring executive and frontline jobs:
 
-- AI must create specific next actions, not another dashboard. Gartner reported in May 2026 that sales organizations providing AI-enabled next-best actions were 2.6 times more likely to achieve commercial growth; treat that as survey association, not proof of causation. <https://www.gartner.com/en/newsroom/press-releases/2026-05-20-gartner-survey-finds-sales-organizations-that-provide-ai-enabled-next-best-actions-are-two-point-six-times-more-likely-to-achieve-commercial-growth>
-- Leaders need cross-functional activation and measurable value. Salesforce's 2026 State of Sales identifies AI and AI agents as sales teams' leading growth tactic and reports high performers using agents more frequently in prospecting. <https://www.salesforce.com/news/stories/state-of-sales-report-announcement-2026/>
-- Coaching must connect to business outcomes. Highspot's 2025 enablement research reports a relationship between AI-powered coaching and higher reported win rates, while emphasizing enablement effectiveness across sales, marketing, and operations. <https://www.highspot.com/en-gb/state-of-sales-enablement-2025/>
-- Buyers are under pressure to reduce disconnected tools. Seismic's June 2026 research describes speed to revenue, fragmented systems, and uncertainty about AI execution as current GTM pressure points. <https://www.seismic.com/newsroom/press-releases/speed-to-revenue-gtm-priority/>
+- See what is changing in buyer language, objections, risks, and decision process without listening to every call.
+- Give managers a prioritized coaching queue, evidence, and a specific next drill instead of another dashboard.
+- Make onboarding useful for new reps while giving VP-level sellers commercially complex simulations.
+- Keep personas, talk tracks, playbooks, and battle cards current without asking managers to write prompts.
+- Separate observed evidence, model inference, and human approval so leaders can trust and defend an output.
+- Connect coaching and content activity to opportunity progression, conversion, ramp, retention, or another agreed business outcome.
+- Reduce tool fragmentation by activating existing CRM, conversation, content, and collaboration systems.
+- Prove time-to-value quickly while preserving consent, customer ownership, deletion, and access controls.
 
-These signals support an operating-system position: activate a shared body of customer truth across existing systems instead of becoming another silo.
+Current market research supports the emphasis on next actions, cross-functional activation, measurable coaching, and tool consolidation. Treat vendor survey findings as directional rather than causal proof:
+
+- [Gartner on AI-enabled next-best actions and reported commercial growth](https://www.gartner.com/en/newsroom/press-releases/2026-05-20-gartner-survey-finds-sales-organizations-that-provide-ai-enabled-next-best-actions-are-two-point-six-times-more-likely-to-achieve-commercial-growth)
+- [Salesforce State of Sales](https://www.salesforce.com/news/stories/state-of-sales-report-announcement-2026/)
+- [Highspot State of Sales Enablement](https://www.highspot.com/en-gb/state-of-sales-enablement-2025/)
+- [Seismic research on speed to revenue and fragmented GTM systems](https://www.seismic.com/newsroom/press-releases/speed-to-revenue-gtm-priority/)
 
 ## Ideal customers and buyers
 
 Primary ICP:
 
-- B2B companies with 50–1,500 quota-carrying and customer-facing employees
+- B2B organizations with 50–1,500 quota-carrying and customer-facing employees
 - High-consideration sales with multiple stakeholders and repeatable call volume
 - Existing call recording, CRM, and enablement infrastructure
-- A sales methodology, messaging architecture, or enablement function that is difficult to keep current
+- A methodology or messaging system that is difficult to keep current
 - Executive pressure to prove AI value without weakening governance
 
-Economic buyer: CRO or Chief Customer Officer. Operational buyer: VP Revenue Operations or VP Enablement. Security approvers: CIO, CISO, Privacy, and Legal. Daily champions: frontline managers, enablement leads, product marketing, customer insights, and product operations.
+Economic buyer: CRO or Chief Customer Officer. Operational buyer: VP Revenue Operations or VP Enablement. Security approvers: CIO, CISO, Privacy, and Legal. Daily champions: frontline managers, enablement, product marketing, customer insights, and product operations.
 
-The first narrow wedge is a three-month revenue-intelligence activation for one sales segment. The expansion path adds departments, sources, business units, languages, and outcome feedback.
+The initial wedge is a controlled revenue-intelligence activation for one segment. Expansion adds departments, sources, business units, languages, outcome feedback, and enterprise identity controls.
 
 ## One call in, 20 assets out
 
-Every asset has a lifecycle: generated → review required → approved → published → superseded. It retains source turn IDs, confidence, processing purpose, consent state, prompt/model version, and approver.
+Every asset follows `generated → review required → approved → published → superseded`. It retains source evidence, confidence, processing purpose, consent state, generation contract, and approver.
 
-| # | Asset | Primary team | Decision or action enabled |
+| # | Asset | Primary team | Decision enabled |
 |---|---|---|---|
-| 1 | AI customer persona | Sales | Adapt discovery to the buyer's real priorities |
-| 2 | Digital twin AI buyer | Enablement | Practice against evidence-grounded buyer behavior |
+| 1 | AI customer persona | Sales | Adapt discovery to real priorities |
+| 2 | Digital twin AI buyer | Enablement | Practice evidence-grounded buyer behavior |
 | 3 | Roleplay simulation | Enablement | Rehearse the highest-value conversation path |
-| 4 | Playbook update | Enablement | Keep approved methodology aligned to field reality |
-| 5 | Talk track | Sales | Use current buyer language without unsupported claims |
-| 6 | Battle card | Sales | Investigate and resolve the objection beneath the surface |
-| 7 | Follow-up email | Sales | Preserve buyer language, impact, and mutual next step |
-| 8 | Manager coaching brief | Manager | Focus human coaching on the highest-impact behavior |
-| 9 | Rep evidence scorecard | Enablement | Assess observable behavior with transcript evidence |
-| 10 | Objection library entry | Sales | Reuse a verified objection pattern and resolution signals |
-| 11 | Pain map | Product | Connect symptoms to business and emotional consequences |
-| 12 | Voice-of-customer brief | Marketing | Use authentic language with traceable provenance |
-| 13 | Campaign message angle | Marketing | Turn repeated demand signals into relevant campaigns |
-| 14 | Content brief | Marketing | Close a recurring unanswered buyer question |
-| 15 | Product signal | Product | Prioritize patterns without mistaking one anecdote for a trend |
-| 16 | Feature request | Product | Preserve context, affected persona, and expected outcome |
-| 17 | Customer success plan | Customer Success | Connect adoption to the customer's stated success criteria |
+| 4 | Playbook update | Enablement | Align methodology with field reality |
+| 5 | Talk track | Sales | Use current buyer language |
+| 6 | Battle card | Sales | Investigate the concern beneath an objection |
+| 7 | Follow-up email | Sales | Preserve impact and a mutual next step |
+| 8 | Manager coaching brief | Manager | Focus coaching on the highest-impact behavior |
+| 9 | Rep evidence scorecard | Enablement | Assess observable behavior, not personality |
+| 10 | Objection library entry | Sales | Reuse a verified objection and resolution path |
+| 11 | Pain map | Product | Connect symptoms to consequences |
+| 12 | Voice-of-customer brief | Marketing | Use authentic, traceable buyer language |
+| 13 | Campaign message angle | Marketing | Convert repeated demand signals into messaging |
+| 14 | Content brief | Marketing | Close an unanswered buyer question |
+| 15 | Product signal | Product | Prioritize patterns without overvaluing anecdotes |
+| 16 | Feature request | Product | Preserve persona, context, and desired outcome |
+| 17 | Customer success plan | Customer Success | Link adoption to stated success criteria |
 | 18 | Risk alert | Customer Success | Act on recurring adoption or expansion friction |
-| 19 | Executive brief | Leadership | Understand market change, execution gaps, and recommended action |
-| 20 | Knowledge-graph update | Revenue OS | Add or strengthen evidence-backed nodes and relationships |
+| 19 | Executive brief | Leadership | Understand change, risk, confidence, and action |
+| 20 | Knowledge-graph update | Revenue OS | Strengthen connected organizational memory |
 
-## The living knowledge graph
+## Living knowledge graph
 
-The graph is the product's compounding moat. A transcript is a source, not the permanent product model.
+Transcripts are sources, not the permanent product model. The graph connects persona, priority, pain, symptom, impact, objection, underlying concern, competitor, claim, capability, risk, decision step, outcome, skill, seller behavior, and approved guidance.
 
-Core node types include account, segment, persona, stakeholder, priority, pain, symptom, business impact, emotional impact, objection, underlying concern, competitor, claim, product capability, outcome, risk, decision step, content asset, skill, seller behavior, and approved guidance.
+Every inferred object needs organization and source boundaries, stable evidence, confidence, distinct-call count, first/last seen timestamps, scope, and approval state. Exact normalized labels strengthen a canonical entity. Similar labels become review-required merge candidates; the system never silently destroys source evidence.
 
-Core relationships include `experiences`, `causes`, `signals`, `raises`, `masks`, `resolves`, `competes_with`, `supports`, `contradicts`, `influences`, `owns`, `approves`, `motivates`, and `evidenced_by`.
-
-Every inferred node needs:
-
-- organization and source boundaries
-- source transcript and stable turn references
-- observed or inferred classification
-- confidence and evidence count
-- first-seen, last-seen, and freshness timestamps
-- region, language, product, segment, and persona dimensions
-- approval and publication state
-- model, extraction contract, and prompt version
-
-The graph never lets retrieved customer content become executable instructions. Documents and transcripts are untrusted evidence. Generation is downstream from a compact, policy-filtered evidence view.
+Cross-call signals require a configurable minimum number of distinct calls. A single call can create drafts but cannot create a live market trend.
 
 ## Strategic differentiators
 
-### Revenue DNA Score
+### Revenue DNA
 
-Revenue DNA measures whether market truth, messaging, seller behavior, assets, and outcomes reinforce each other. It is a transparent composite, not an opaque AI rating.
-
-Recommended deterministic weighting:
+Revenue DNA is a transparent deterministic composite:
 
 - Market coverage: 25%
 - Messaging consistency: 20%
@@ -96,162 +90,139 @@ Recommended deterministic weighting:
 - Closed-loop activation: 10%
 - Governance health: 10%
 
-Each component is scored 0–100 from explicit metrics. The UI must show the component values, data coverage, confidence, trend, and largest contributor to change. When coverage is below a configured threshold, show `insufficient evidence` instead of a score.
+The UI exposes component values, weights, confidence, and coverage. No calls means `insufficient evidence`, not a decorative score. Only approved assets count as activated readiness.
 
 ### Knowledge Drift Detection
 
-Compare approved claims, persona assumptions, objection guidance, and playbook language with recent high-confidence field evidence. A drift alert requires a changed pattern across a minimum evidence threshold, not a single semantic mismatch. Alerts show what changed, affected assets, evidence, confidence, owner, and recommended disposition. No content is automatically republished.
+Drift compares approved guidance with repeated, recent field evidence. Each alert shows the changed pattern, distinct-call count, confidence, affected assets, owner, and disposition. No content republishes automatically.
 
 ### Content Gap Engine
 
-Prioritize missing content using a deterministic opportunity score:
-
-`frequency × buyer severity × stage importance × revenue exposure × confidence × (1 − trusted coverage)`
-
-The engine groups semantically similar questions, finds the current approved response, and proposes the smallest useful asset. Marketing sees language and campaign implications; Enablement sees field readiness; Product sees unmet capability signals.
+The engine finds repeated buyer objections or questions with no approved matching asset. It proposes the smallest useful response and routes the same evidence differently for Marketing, Enablement, Sales, and Product.
 
 ### Digital twin AI buyers
 
-Digital twins represent a cohort pattern, not an impersonation of a named person. Publication requires evidence across several calls or an explicit manager-authored scenario. Hidden pains, reveal conditions, objections, power, trust, patience, and decision dynamics stay server-side. The buyer actor remains separate from evaluation and never coaches the seller during a simulation.
+Twins model a cohort pattern, not a named person. Buyer behavior uses structured responsibilities, priorities, power, urgency, domain fluency, change appetite, risk tolerance, emotional stakes, objections, reveal conditions, and decision dynamics. Hidden buyer state remains server-side. The actor never evaluates or coaches the seller.
+
+Difficulty changes realism rather than merely changing tone:
+
+- New rep: cooperative buyer, clearer signals, shorter objective
+- Core rep: partial answers, follow-up required, one connected objection
+- Senior rep: guarded buyer, political complexity, competing priorities
+- VP/executive seller: commercial ambiguity, multi-threading, strategic risk, and concise executive communication
 
 ### Proactive Revenue Advisor
 
-The advisor ranks actions by severity, confidence, revenue exposure, reversibility, and effort. It can recommend a drill, generate an asset draft, route a signal, or create an executive watch item. Any action that publishes content, changes CRM data, messages a person, or deletes records requires role-appropriate confirmation.
+The advisor ranks suggested actions by severity, confidence, revenue exposure, reversibility, and effort. Publishing, messaging, CRM writes, external routing, and deletion remain explicit human commands with role checks and audit records.
 
 ### Cross-department intelligence
 
-One source signal receives a department-specific interpretation without fragmenting the underlying evidence:
+One evidence pattern receives department-specific interpretation without fragmenting the underlying truth:
 
 - Sales: next conversation, talk track, objection path, follow-up
-- Enablement: competency gap, roleplay, coaching action, certification evidence
-- Marketing: voice of customer, messaging change, content opportunity
-- Product: problem pattern, feature context, affected segment, evidence strength
+- Enablement: skill gap, roleplay, coaching action, certification evidence
+- Marketing: voice of customer, content opportunity, message change
+- Product: problem pattern, affected segment, capability signal
 - Customer Success: adoption risk, success criterion, expansion signal
-- Leadership: market shift, execution risk, confidence, recommended decision
+- Leadership: market shift, execution risk, uncertainty, recommendation
 
 ## Product experience
 
-Suadence should feel like an operating system, not an LMS:
+Suadence should feel like a premium operating system, not an LMS:
 
-- A command center opens on system change and next action, not course completion.
-- Calls are evidence inputs, not a recording library.
-- The knowledge graph is explorable but every path resolves to plain-language evidence.
-- The asset factory organizes outputs by department, source, confidence, owner, and approval state.
-- Personas and simulations sit beside market evidence rather than inside a training catalog.
-- The advisor is action-oriented and permission-aware.
-- Executive views explain movement and uncertainty rather than presenting decorative charts.
+- The command center opens on change, risk, evidence coverage, and next action.
+- Calls are evidence inputs rather than a recording library.
+- The graph is explorable, but every path resolves to plain-language evidence.
+- The asset factory organizes work by department, source, confidence, owner, and approval state.
+- Personas and simulations sit beside live market truth rather than inside a course catalog.
+- Managers can compare attempts, calibrate scoring, override with rationale, and assign the next drill.
+- Executives see movement and uncertainty rather than decorative charts.
+- Empty states explain what evidence is needed next.
 
-The design language is calm, dense only where comparison helps, and built from strong typography, a navy operating shell, white work surfaces, teal/cyan intelligence states, evidence chips, status badges, and restrained motion.
+The Synthetic Demo Lab makes the operating model tangible without customer data. Fictional calls use the same six-node and 20-asset contracts, remain visibly labeled, are excluded from live intelligence, and can be reset completely.
+
+## Scoring model
+
+Score only observable seller behavior against behaviorally anchored criteria. The evaluator cites stable seller turn IDs and never calculates the final score. Application code calculates each contribution as `score / 4 × weight` and rounds the sum to 0–100.
+
+Scoring must distinguish mentioning from discovering, symptoms from business impact, answering from resolving an objection, feature description from relevant positioning, and a vague follow-up from a mutual next step. No transcript evidence means “not demonstrated.” A manager override preserves the AI score, replacement score, actor, timestamp, and required rationale.
+
+Sales leaders need calibration, not false precision. Track evaluator/manager variance, evidence confidence, appeal rate, criterion consistency, and outcome correlation. Do not rank reps publicly or infer protected traits, attitude, or personality.
+
+## Security and legal operating model
+
+Customers retain ownership of calls, transcripts, derived assets, and graph data. Required controls include consent-aware ingestion, data minimization, tenant isolation, encryption, role-based access, auditability, export, retention, deletion, DPA/subprocessor transparency, and prompt-injection resistance.
+
+The hosted gateway verifies signed normalized connector events, rejects replays, validates consent, and deduplicates delivery. Unknown consent is quarantined. Raw audio is not stored by default. Call deletion removes Suadence-controlled lineage and marks external source confirmation honestly; user and organization deletion require identity, retention, and legal-hold review.
+
+See [Security](SECURITY.md) and [Production readiness](PRODUCTION-READINESS.md). This documentation is product guidance, not jurisdiction-specific legal advice.
+
+## Integrations strategy
+
+Adapters implement authorize, backfill, subscribe, normalize, reconcile, revoke, and report health. The provider-neutral signed gateway is stable; each provider still requires customer admin authorization, least-privilege scope review, encrypted tokens, cursoring, rate-limit handling, and marketplace approval.
+
+The product must never label configured credentials as a connected customer tenant. See [Connector implementation](CONNECTORS.md).
 
 ## Permissions
 
-Recommended roles:
-
 | Role | Core access |
 |---|---|
-| Owner | Organization, integrations, retention, permissions, billing, exports, deletion |
-| Executive | Aggregated intelligence, trends, executive briefs; raw transcript access optional |
-| Revenue Ops admin | Sources, graph governance, schemas, assets, dashboards, routing |
-| Manager | Team calls, coaching, simulations, assignments, score overrides |
-| Contributor | Draft and review assets for an assigned department |
-| Rep | Own calls, assigned practice, own coaching and approved assets |
+| Owner | Organization, identity, integrations, retention, exports, deletion |
+| Executive | Aggregated intelligence and briefs; raw transcript optional |
+| Revenue Ops admin | Sources, graph governance, schemas, routing, dashboards |
+| Manager | Team calls, coaching, simulations, assignments, overrides |
+| Contributor | Draft and review assigned department assets |
+| Rep | Own calls, assigned practice, own coaching, approved assets |
 | Auditor | Read-only policy, consent, access, processing, and deletion logs |
 
-Permissions should support transcript-level, department-level, region-level, and source-level restrictions. Raw transcripts and derived intelligence are separate grants. Exports, integration changes, retention changes, and organization deletion require step-up authentication and audit events.
+Raw transcript, derived intelligence, cross-department summary, export, integration, and deletion grants remain separate. Sensitive operations require step-up authentication before general availability.
 
-## Security, privacy, and legal operating model
+## Pricing
 
-This is product and architecture guidance, not jurisdiction-specific legal advice. Customers remain responsible for choosing and documenting the lawful basis for recording and processing their calls.
+**TBD.**
 
-- **Consent-aware ingestion:** capture the source's recording state, notice method, lawful basis or customer policy reference, purpose, region, and retention schedule. Quarantine calls whose consent state cannot be verified.
-- **Data minimization:** store transcript text when sufficient; do not retain raw audio by default. Redact configured PII before model processing and graph extraction.
-- **Tenant isolation:** include `organization_id` on every record, derive it from authenticated membership, enforce it in database policies, and repeat checks in server operations. Never authorize from a browser-supplied tenant ID.
-- **Encryption:** TLS in transit; managed encryption at rest; KMS-backed secrets and rotation; signed, short-lived file URLs; field-level encryption for selected regulated identifiers.
-- **Customer ownership:** contracts state that customers retain their call, transcript, derived asset, and graph data. Customer content is not used to train shared models by default.
-- **Deletion:** support call, speaker, user, source, asset, graph lineage, and organization deletion. Immediately restrict access, run a queued cascade through derived objects and backups, record completion without retaining deleted content, and honor contractual backup-expiry windows.
-- **DPA and subprocessors:** publish a DPA, subprocessor list, data-location options, breach obligations, audit rights, return/deletion terms, and assistance with data-subject requests.
-- **Access:** least privilege, MFA, SSO/SAML, SCIM, time-bound support access, approval for sensitive exports, and immutable audit history.
-- **Model governance:** provider contracts, region routing, zero-retention options where available, prompt-injection defenses, evaluation tests, output provenance, and human approval for externally used claims.
-
-The ICO recommends telling call participants that calls are recorded and why, documenting controller/processor relationships, and disclosing retention and rights. <https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/employment/monitoring-workers/specific-data-protection-considerations-for-different-ways-or-methods-of-monitoring-workers/>
-
-The FTC's business guidance emphasizes mapping personal-data flows, restricting access, writing security duties into vendor contracts, and securely disposing of information that is no longer needed. <https://www.ftc.gov/business-guidance/resources/protecting-personal-information-guide-business> and <https://www.ftc.gov/business-guidance/resources/start-security-guide-business>
-
-## Integrations architecture
-
-Connector adapters implement a common contract: authorize, backfill, subscribe, normalize, reconcile, delete, and report health. Each provider event is idempotent. OAuth tokens live in a dedicated encrypted credential store; webhooks are signed and replay-protected.
-
-V1 supports paste/TXT ingestion and pilot adapters. V2 adds production OAuth and webhooks for Gong, Zoom, Teams, Salesforce, and one additional CRM or conversation platform. Chorus can be supported through the customer's ZoomInfo/Chorus entitlement and available export/API surface. V3 adds marketplace and event-stream connectors.
-
-The normalized call envelope contains source IDs, organization, participants, speaker labels, timestamps, consent metadata, CRM context, transcript segments, retention, and processing state. Provider-specific fields remain namespaced.
-
-## Pricing strategy
-
-Price for activated intelligence and governed scale, not for every manager seat. Avoid unpredictable token pass-through. Include a call-processing allowance, then meter excess processing transparently.
-
-### Three-month Revenue Intelligence Starter — $12,000
-
-- One team and up to 25 users
-- Up to 500 processed calls
-- Transcript ingestion plus one pilot source
-- 20-asset factory, personas, digital twins, coaching, and core dashboards
-- Weekly value review and an executive readout
-- Defined baseline and success plan
-
-The objective is to prove time-to-asset, asset adoption, coaching action, knowledge coverage, and one agreed commercial outcome indicator. The starter converts to annual or ends with a governed data export/deletion choice.
-
-### Growth — target $36,000–$72,000 ARR
-
-Multiple departments, 2,500–10,000 calls per year, native connectors, drift and gap engines, advanced routing, outcome overlays, and standard support.
-
-### Enterprise — target $100,000+ ARR
-
-Multiple business units or regions, advanced identity and retention, dedicated tenancy options, security/legal review, data-location controls, custom connectors, service commitments, and an intelligence success program.
-
-Use pricing bands as commercial hypotheses until 10–15 design partners establish willingness to pay and processing economics.
+The site and product documentation make no price, package, discount, or commercial commitment. Commercial discovery should validate willingness to pay, usage economics, security burden, implementation effort, and the value of activated intelligence before publishing packaging.
 
 ## V1–V3 roadmap
 
-### V1 — Activate (0–4 months)
+### V1 — Activate
 
-- Consent-aware paste/TXT and pilot-source ingestion
-- Normalized calls, transcript evidence, and living graph
-- Exactly 20 governed assets per processed call
-- AI personas and digital-twin simulations
-- Evidence-based coaching, scorecards, manager view, and executive brief
-- Revenue DNA baseline with transparent components
-- Tenant-bound records, auditability, basic retention, exports, and deletion queue
-- Deterministic mock mode plus provider-backed AI contracts
+- Consent-aware upload and signed normalized ingestion
+- Exactly 20 governed assets per accepted call
+- Evidence graph, canonical live entities, and merge review
+- Transparent Revenue DNA and cross-call signal thresholds
+- Personas, digital twins, text/voice practice, evidence scoring, manager review
+- Synthetic Demo Lab
+- Human approvals, audit, rate limits, readiness controls, deletion cascade
 
-Exit criteria: one team can ingest a permitted call, generate and approve assets, practice a scenario, inspect evidence, and demonstrate measurable operating-time savings.
+Exit: a private design partner can demonstrate the complete evidence-to-action loop without confusing configuration, synthetic data, or AI drafts with approved truth.
 
-### V2 — Coordinate (4–10 months)
+### V2 — Coordinate
 
-- Native OAuth/webhook connectors for call systems and CRM
-- Cross-call entity resolution and confidence thresholds
-- Knowledge Drift Detection and Content Gap Engine
-- Department workspaces and role-aware advisor actions
-- Outcome feedback from CRM and product/customer systems
-- SSO/SAML, SCIM, regional retention, legal hold, and customer-managed deletion
-- Model-quality monitoring, evaluation sets, and cost controls
+- Provider-specific OAuth, webhooks, backfills, and token lifecycle
+- Supabase/Postgres transaction and RLS consolidation
+- SSO/SAML, SCIM, step-up authentication, legal holds, regional retention
+- CRM outcome feedback and department workflow integrations
+- Evaluator calibration, model-quality monitoring, and cost metering
+- Durable queues, dead-letter handling, and operations console
 
-Exit criteria: the same evidence triggers coordinated, approved action across at least three departments and closes the loop to a real outcome signal.
+Exit: one evidence pattern triggers coordinated, approved action across at least three departments and closes the loop to a real outcome.
 
-### V3 — Anticipate (10–18 months)
+### V3 — Anticipate
 
-- Predictive buyer and account twins with uncertainty
-- Autonomous but governed asset refresh proposals
-- Executive scenario simulation and planning
+- Predictive buyer/account twins with explicit uncertainty
+- Governed asset-refresh proposals
+- Executive scenario simulation
 - Multi-market and multilingual graph federation
-- Advisor workflows that orchestrate approved actions in connected systems
-- Causal experiments for message, coaching, and content effectiveness
+- Approved advisor orchestration in connected systems
+- Causal experiments for messaging, coaching, and content effectiveness
 
-Exit criteria: Suadence reliably detects meaningful market change before quarterly planning and recommends actions that leaders accept, measure, and audit.
+Exit: Suadence detects meaningful market change before quarterly planning and recommends actions leaders accept, measure, and audit.
 
-## North-star and guardrail metrics
+## Metrics
 
-North-star: **verified intelligence activations per 100 processed calls** — approved assets or actions used by a person or downstream system and still traceable to call evidence.
+North star: **verified intelligence activations per 100 processed calls** — approved assets or actions used by a person or downstream system and still traceable to evidence.
 
-Leading metrics: time from call to first approved asset, percentage of assets with accepted evidence, cross-department activation rate, manager action completion, persona coverage, graph freshness, content-gap closure, drift resolution time, simulation retry improvement, and integration health.
+Leading metrics: time to first approved asset, evidence acceptance, cross-department activation, manager action completion, persona coverage, graph freshness, gap closure, drift resolution, simulation improvement, and integration health.
 
-Guardrails: false-signal rate, unsupported-claim rate, low-confidence publication rate, consent quarantine rate, cross-tenant access attempts, deletion completion SLA, model cost per call, and percent of calls requiring manual speaker correction.
+Guardrails: false-signal rate, unsupported-claim rate, low-confidence publication, consent quarantine, cross-tenant attempts, deletion SLA, model cost per call, speaker-correction rate, and synthetic/live isolation failures.

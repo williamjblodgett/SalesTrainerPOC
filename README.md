@@ -26,7 +26,7 @@ Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgr
 5. Run `pnpm install` and `pnpm dev`.
 6. Open `http://localhost:3000/app`.
 
-The hosted worker in `dist/server/index.js` serves the category landing page, the interactive Revenue OS workspace, and D1-backed APIs. The previous sales-training workspace remains available at `/legacy` during migration.
+The hosted worker in `dist/server/index.js` serves the category landing page, the interactive Revenue OS workspace, a synthetic Demo Lab at `/demo`, and D1-backed APIs. The previous sales-training workspace remains available at `/legacy` during migration.
 
 ## Environment variables
 
@@ -45,15 +45,20 @@ See `.env.example`. OpenAI model IDs are separately configurable for evidence/sc
 
 `connector → consent gate → normalized call → evidence graph → 20-asset factory → approval and routing → outcome feedback`
 
-Every Revenue OS table includes `organization_id`. Organization access is resolved server-side, never from a browser-supplied tenant identifier. Every generated object keeps source lineage and an approval lifecycle.
+Every Revenue OS table includes `organization_id`. Organization access is resolved server-side, never from a browser-supplied tenant identifier. Every generated object keeps source lineage and an approval lifecycle. Synthetic Demo Lab records use a separate scope and are excluded from live calls, graph counts, intelligence signals, and Revenue DNA.
+
+## Synthetic Demo Lab
+
+Open `/demo` to generate one fictional transcript or a three-to-six-call synthetic cohort. Each call produces six evidence nodes and exactly 20 review-required revenue assets. Repeated demo patterns generate their own content-gap and product signals without contaminating live intelligence. The whole synthetic dataset can be reset in one governed operation.
 
 ## Current limitations
 
-- The hosted V1 accepts pasted/TXT evidence and presents Gong, Chorus, Zoom, Teams, and Salesforce as pilot source adapters; production OAuth, webhooks, backfills, and provider-side deletion reconciliation remain V2 work.
-- The 20 hosted asset outputs and graph extraction use deterministic demo contracts. Provider-backed structured generation will use the same typed boundaries when credentials are configured.
-- Revenue DNA, Knowledge Drift, and Content Gap surfaces are implemented as product workflows; production scoring needs multi-call evidence thresholds and outcome calibration.
+- The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
+- The 20 hosted asset outputs and graph extraction use deterministic contracts. Provider-backed structured generation will use the same validated boundaries when credentials are configured.
+- Revenue DNA, Knowledge Drift, and Content Gap use deterministic calculations and minimum cross-call evidence thresholds. Outcome calibration still requires representative customer data and approved success metrics.
 - The hosted preview derives a single authorized organization server-side. The canonical Next.js/Supabase application owns production authentication, membership resolution, and RLS.
 - Security architecture is designed for enterprise review, but SOC 2, SSO/SCIM, regional data residency, a signed DPA, and jurisdiction-specific legal review are roadmap items, not current certifications.
+- Pricing is intentionally **TBD**; the public site makes no commercial commitment.
 
 ## Documentation
 
@@ -65,3 +70,5 @@ Every Revenue OS table includes `organization_id`. Organization access is resolv
 - [Testing](docs/TESTING.md)
 - [Tasks and roadmap](docs/TASKS.md)
 - [Sales-leader research](docs/SALES-LEADER-RESEARCH.md)
+- [Connector implementation](docs/CONNECTORS.md)
+- [Production readiness](docs/PRODUCTION-READINESS.md)

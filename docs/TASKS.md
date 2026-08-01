@@ -16,10 +16,16 @@
 - [x] Connector health registry with honest native, OAuth, and manual-pilot connection modes
 - [x] Human-gated proactive-advisor action queue with no automatic external side effects
 - [x] Governed deletion request UI and append-only revenue action audit trail
-- [x] Enterprise security, legal operating model, pricing, and V1–V3 strategy documented
-- [ ] Production connector OAuth, webhooks, backfills, token rotation, and provider deletion reconciliation
-- [ ] Multi-call entity resolution and human-reviewed graph merge workflow
-- [ ] Production drift/gap computation with minimum evidence thresholds
+- [x] Replay-protected HMAC connector gateway with normalized event validation and idempotency
+- [x] Multi-call signal computation with distinct-call thresholds and evidence lineage
+- [x] Canonical graph entities, duplicate detection, and human-reviewed merge API
+- [x] Lineage-aware local call deletion execution, cooling-off cancellation, and protected due-request processor
+- [x] Isolated Synthetic Demo Lab with one-call and cohort generation, 20 assets per call, and one-action reset
+- [x] Production-readiness control surface that distinguishes configuration from customer authorization
+- [x] Landing-page pricing reduced to an explicit TBD with no commercial figures
+- [x] Enterprise security, legal operating model, and V1–V3 strategy documented
+- [ ] Provider-specific OAuth screens, customer authorization, backfills, token rotation, and marketplace approval
+- [ ] Provider-side source retention confirmation for externally owned copies
 - [ ] DPA, privacy notice, subprocessor page, and jurisdiction-specific counsel review
 - [ ] SSO/SAML, SCIM, step-up authentication, legal holds, and regional data residency
 
