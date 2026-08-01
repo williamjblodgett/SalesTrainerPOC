@@ -3,9 +3,11 @@ import { describe, expect, it } from "vitest";
 import {
   assetBlueprints,
   calculateRevenueDna,
-  landingHtml,
-  revenueAppHtml,
+  connectorCatalog,
+  repairedLandingHtml as landingHtml,
+  repairedRevenueAppHtml as revenueAppHtml,
   revenueSchemaStatements,
+  validateAssetReview,
 } from "../../dist/server/revenue-os.js";
 
 describe("Suadence Revenue OS", () => {
@@ -32,25 +34,41 @@ describe("Suadence Revenue OS", () => {
     const result = calculateRevenueDna({
       callCount: 1,
       assetCount: 20,
+      approvedAssetCount: 20,
       nodeCount: 6,
-      readinessAssetCount: 3,
+      approvedReadinessAssetCount: 3,
       recentCallCount: 1,
       consentedCallCount: 1,
       signals: [{ signal_type: "knowledge_drift", severity: "high" }],
     });
 
     expect(result.status).toBe("complete");
-    expect(result.overall).toBe(84);
+    expect(result.overall).toBe(88);
     expect(result.confidence).toBe(52);
     expect(result.components).toEqual({
       marketCoverage: 68,
       messagingConsistency: 82,
       behaviorReadiness: 100,
       evidenceFreshness: 100,
-      closedLoopActivation: 60,
+      closedLoopActivation: 100,
       governanceHealth: 100,
     });
     expect(calculateRevenueDna({ callCount: 0 }).status).toBe("insufficient_evidence");
+
+    const unapproved = calculateRevenueDna({
+      callCount: 1,
+      assetCount: 20,
+      approvedAssetCount: 0,
+      nodeCount: 6,
+      approvedReadinessAssetCount: 0,
+      recentCallCount: 1,
+      consentedCallCount: 1,
+      signals: [{ signal_type: "knowledge_drift", severity: "high" }],
+    });
+
+    expect(unapproved.overall).toBe(58);
+    expect(unapproved.components?.behaviorReadiness).toBe(0);
+    expect(unapproved.components?.closedLoopActivation).toBe(0);
   });
 
   it("keeps the category promise and enterprise buying narrative explicit", () => {
@@ -73,7 +91,7 @@ describe("Suadence Revenue OS", () => {
       statement.startsWith("CREATE TABLE"),
     );
 
-    expect(tables.length).toBeGreaterThanOrEqual(6);
+    expect(tables.length).toBeGreaterThanOrEqual(10);
     expect(tables.every((statement) => statement.includes("organization_id TEXT NOT NULL"))).toBe(true);
     expect(revenueSchemaStatements.join("\n")).toContain(
       "revenue_calls(organization_id, idempotency_key)",
@@ -96,5 +114,48 @@ describe("Suadence Revenue OS", () => {
     expect(revenueAppHtml).toContain("Knowledge graph");
     expect(revenueAppHtml).toContain("Revenue DNA Score");
     expect(revenueAppHtml).toContain("Proactive revenue advisor");
+  });
+
+  it("models connector health without claiming unconfigured OAuth imports", () => {
+    expect(connectorCatalog.map((connector) => connector.provider)).toEqual([
+      "gong",
+      "chorus",
+      "zoom",
+      "teams",
+      "salesforce",
+      "upload",
+    ]);
+    expect(revenueAppHtml).toContain("Run pilot check");
+    expect(revenueAppHtml).toContain("Permitted scopes");
+  });
+
+  it("requires human review rationale for adverse asset decisions", () => {
+    expect(validateAssetReview({ decision: "approved" })).toMatchObject({
+      ok: true,
+      decision: "approved",
+    });
+    expect(
+      validateAssetReview({
+        decision: "changes_requested",
+        rationale: "Needs more evidence.",
+      }),
+    ).toMatchObject({ ok: true, decision: "changes_requested" });
+    expect(validateAssetReview({ decision: "rejected", rationale: "no" })).toEqual({
+      ok: false,
+      code: "rationale_required",
+    });
+    expect(validateAssetReview({ decision: "published" })).toEqual({
+      ok: false,
+      code: "validation_failed",
+    });
+  });
+
+  it("exposes evidence review, governed advisor, and deletion workflows", () => {
+    expect(revenueAppHtml).toContain("Evidence-backed asset review");
+    expect(revenueAppHtml).toContain("Human governance");
+    expect(revenueAppHtml).toContain("Governed action queue");
+    expect(revenueAppHtml).toContain("72-hour cooling-off window");
+    expect(revenueAppHtml).toContain("Append-only accountability");
+    expect(revenueAppHtml).not.toMatch(/[ÃÂâÎ]/);
   });
 });

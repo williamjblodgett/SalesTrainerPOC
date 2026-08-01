@@ -304,8 +304,8 @@ const worker = { async fetch(request, env) {
   if (url.pathname === "/health") return new Response("ok");
   const pageHeaders = { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "permissions-policy": "microphone=(self)", "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.openai.com; media-src 'self' blob:;" };
   if (url.pathname === "/" || url.pathname === "/app" || url.pathname.startsWith("/app/")) {
-    const { landingHtml, revenueAppHtml } = await import("./revenue-os.js");
-    return new Response(url.pathname === "/" ? landingHtml : revenueAppHtml, { headers: pageHeaders });
+    const { repairedLandingHtml, repairedRevenueAppHtml } = await import("./revenue-os.js");
+    return new Response(url.pathname === "/" ? repairedLandingHtml : repairedRevenueAppHtml, { headers: pageHeaders });
   }
   if (url.pathname === "/legacy") return new Response(renderedHtml, { headers: pageHeaders });
   return new Response(renderedHtml, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "permissions-policy": "microphone=(self)", "content-security-policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.openai.com; media-src 'self' blob:;" } });

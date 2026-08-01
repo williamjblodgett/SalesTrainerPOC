@@ -11,6 +11,11 @@
 - [x] Revenue DNA, Knowledge Drift, Content Gap, digital-twin, and proactive-advisor product surfaces
 - [x] Idempotent ingestion keys and organization-bound queries in the hosted V1
 - [x] Cross-department activation for Sales, Enablement, Marketing, Product, CS, and Leadership
+- [x] Evidence-lineage asset inspection with persistent approve, change-request, and reject decisions
+- [x] Approval-aware Revenue DNA calculation that excludes unreviewed AI drafts from activation readiness
+- [x] Connector health registry with honest native, OAuth, and manual-pilot connection modes
+- [x] Human-gated proactive-advisor action queue with no automatic external side effects
+- [x] Governed deletion request UI and append-only revenue action audit trail
 - [x] Enterprise security, legal operating model, pricing, and V1–V3 strategy documented
 - [ ] Production connector OAuth, webhooks, backfills, token rotation, and provider deletion reconciliation
 - [ ] Multi-call entity resolution and human-reviewed graph merge workflow

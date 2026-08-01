@@ -21,3 +21,11 @@ Tenant access is resolved from authenticated membership, never a browser-supplie
 OpenAI and Supabase service keys remain server-only. Practice clients receive only `repVisible`. Do not log full transcripts or hidden scenario partitions. Documents are untrusted, storage downloads use signed URLs, and upload adapters must validate type and size. Raw voice audio will not be retained by default.
 
 Transcript deletion will soft-delete immediately and queue hard deletion. Organization deletion requires owner reauthentication, a cooling-off period, and cascaded tenant-data removal with an audit record containing no transcript content.
+
+## Revenue workflow controls
+
+AI-generated assets remain `review_required` until an authorized human records a decision. Change requests and rejections require a rationale. Original generation content and every review event are preserved, and only approved assets contribute to readiness or closed-loop Revenue DNA metrics.
+
+Connector APIs return catalog metadata, health state, permitted scopes, and whether server credentials are configured; they never return OAuth tokens or secrets. A manual pilot check records `importedCalls: 0` and cannot be represented as a production backfill. Production OAuth, webhook verification, token rotation, source-side deletion reconciliation, and step-up authorization remain required before general availability.
+
+Advisor actions are proposals, not autonomous commands. V1 records the requested action, actor, owner department, review status, and bounded internal steps but performs no CRM write, message send, content publication, or deletion. Deletion requests use a 72-hour cooling-off state and append a non-content audit event for operator review.

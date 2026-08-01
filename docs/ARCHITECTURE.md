@@ -35,3 +35,11 @@ Role authorization is duplicated intentionally at two boundaries: server code co
 `ScenarioSpec` partitions data into `repVisible`, `buyerHidden`, and `evaluatorOnly`. Practice responses are constructed with `toPracticeBrief`; private partitions are loaded only in server code. Published versions are immutable and sessions always reference their exact version.
 
 The primary flow is onboarding → structured scenario → immutable publication → session/turns → formal completion → one post-call evaluation → deterministic weighted score → evidence-first results.
+
+## Governed revenue workflows
+
+Generated revenue assets begin in `review_required`; generation is not activation. Reviewers inspect source-call metadata and organization-scoped knowledge-node evidence before recording `approved`, `changes_requested`, or `rejected`. Every decision is durable in `asset_reviews`, while current status supports fast dashboard queries. Revenue DNA behavior-readiness and closed-loop-activation components count approved assets only.
+
+`connector_connections` is a provider-neutral health registry. The UI merges that state with a server-defined connector catalog and reports `native`, `oauth`, `manual_pilot`, or `not_configured` honestly. A pilot check does not claim that calls were imported, and credentials are represented only as a boolean capability signal; secrets never enter API responses.
+
+The proactive advisor creates bounded `advisor_actions` with explicit steps, an owning department, and `humanApprovalRequired: true`. V1 advisor actions have no external side effects. Asset decisions, connector checks, advisor commands, and deletion requests append actor-scoped records to `revenue_audit_events` without copying transcripts into the audit stream.
