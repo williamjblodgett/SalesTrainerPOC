@@ -23,7 +23,10 @@
 - [x] Isolated Synthetic Demo Lab with one-call and cohort generation, 20 assets per call, and one-action reset
 - [x] Production-readiness control surface that distinguishes configuration from customer authorization
 - [x] Landing-page pricing reduced to an explicit TBD with no commercial figures
+- [x] Desktop browser walkthrough covering logo rendering, live/demo isolation, ingestion defaults, graph/advisor/executive empty states, and client console errors
+- [x] Hosted HTML validation for logo paths, client-script syntax, synthetic labeling, outage fallbacks, and TBD pricing
 - [x] Enterprise security, legal operating model, and V1–V3 strategy documented
+- [ ] Deploy the validated commit and run the persistent D1 synthetic-cohort smoke flow in production
 - [ ] Provider-specific OAuth screens, customer authorization, backfills, token rotation, and marketplace approval
 - [ ] Provider-side source retention confirmation for externally owned copies
 - [ ] DPA, privacy notice, subprocessor page, and jurisdiction-specific counsel review

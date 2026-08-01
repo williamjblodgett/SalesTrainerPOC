@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate:hosted": "node scripts/validate-hosted-html.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
