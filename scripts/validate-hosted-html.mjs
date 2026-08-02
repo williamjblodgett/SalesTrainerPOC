@@ -24,6 +24,11 @@ for (const [name, html] of pages) {
 assert.match(repairedLandingHtml, />TBD</, "landing page must display TBD pricing");
 assert.doesNotMatch(repairedLandingHtml, /\$[\d,]+/, "landing page must not publish a price");
 assert.match(demoLabHtml, /SYNTHETIC DATA ONLY/, "demo must visibly label synthetic data");
+assert.match(
+  demoLabHtml,
+  /\.demo-top\.demo-top\{align-items:center;gap:8px;padding:10px 12px\}/,
+  "demo must include the mobile header overflow guard",
+);
 assert.match(repairedRevenueAppHtml, /Storage unavailable/, "app must include a safe storage fallback");
 
 await access(new URL("../public/brand/suadence-logo.webp", import.meta.url));
