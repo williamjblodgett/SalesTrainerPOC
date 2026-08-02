@@ -26,7 +26,8 @@
 - [x] Desktop browser walkthrough covering logo rendering, live/demo isolation, ingestion defaults, graph/advisor/executive empty states, and client console errors
 - [x] Hosted HTML validation for logo paths, client-script syntax, synthetic labeling, outage fallbacks, and TBD pricing
 - [x] Enterprise security, legal operating model, and V1–V3 strategy documented
-- [ ] Deploy the validated commit and run the persistent D1 synthetic-cohort smoke flow in production
+- [x] Deploy the validated commit and run the persistent D1 synthetic-cohort smoke flow in production
+- [x] Verify owner-only access, desktop and 375px mobile layouts, live/demo isolation, synthetic reset, browser console, and production worker logs
 - [ ] Provider-specific OAuth screens, customer authorization, backfills, token rotation, and marketplace approval
 - [ ] Provider-side source retention confirmation for externally owned copies
 - [ ] DPA, privacy notice, subprocessor page, and jurisdiction-specific counsel review
