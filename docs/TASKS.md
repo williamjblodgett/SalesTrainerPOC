@@ -25,6 +25,7 @@
 - [x] Landing-page pricing reduced to an explicit TBD with no commercial figures
 - [x] Desktop browser walkthrough covering logo rendering, live/demo isolation, ingestion defaults, graph/advisor/executive empty states, and client console errors
 - [x] Hosted HTML validation for logo paths, client-script syntax, synthetic labeling, outage fallbacks, and TBD pricing
+- [x] Public GitHub Pages preview with a governed handoff to the secure product runtime
 - [x] Enterprise security, legal operating model, and V1–V3 strategy documented
 - [x] Deploy the validated commit and run the persistent D1 synthetic-cohort smoke flow in production
 - [x] Verify owner-only access, desktop and 375px mobile layouts, live/demo isolation, synthetic reset, browser console, and production worker logs

@@ -6,6 +6,13 @@ It converts consented calls and transcripts into an organization-scoped knowledg
 
 The product retains the original sales-practice vertical slice while expanding it into a cross-department operating system for Sales, Enablement, Marketing, Product, Customer Success, Revenue Operations, and Leadership.
 
+## Deployments
+
+- Public product preview: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
+- Secure Revenue OS and Synthetic Demo Lab: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
+
+GitHub Pages serves the static public narrative. Calls-to-action open the hosted application because authentication, persistence, consent controls, and AI operations require a server runtime.
+
 ## Stack
 
 Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgres/RLS, Zod, OpenAI JavaScript SDK/Responses API, OpenAI Realtime over WebRTC, Vitest, Playwright, and a D1-backed hosted preview.
@@ -40,6 +47,7 @@ See `.env.example`. OpenAI model IDs are separately configurable for evidence/sc
 - `pnpm test` — unit and contract tests
 - `pnpm test:e2e` — Playwright flows
 - `pnpm build` — production build
+- `pnpm build:pages` — build the static GitHub Pages preview into `pages-dist`
 - `pnpm validate:hosted` — hosted-page logo, pricing, synthetic-label, fallback, and inline-script release checks
 
 ## Revenue OS data flow
