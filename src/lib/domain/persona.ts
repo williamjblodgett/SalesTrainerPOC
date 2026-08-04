@@ -84,6 +84,15 @@ export const transcriptPersonaRequestSchema = z.object({
     }),
   ).min(1).max(20),
   retentionMode: z.enum(["redact_then_delete", "retain_for_audit"]),
+  consentAttested: z.literal(true, { error: "Transcript authority or synthetic status must be attested" }),
+}).superRefine((value, context) => {
+  const ids = new Set<string>();
+  value.transcripts.forEach((transcript, index) => {
+    if (ids.has(transcript.sourceId)) {
+      context.addIssue({ code: "custom", message: "Transcript source IDs must be unique", path: ["transcripts", index, "sourceId"] });
+    }
+    ids.add(transcript.sourceId);
+  });
 });
 
 export type PersonaDraft = z.infer<typeof personaDraftSchema>;
@@ -101,6 +110,35 @@ export function normalizeTranscript(content: string) {
     }));
 }
 
+const injectionPatterns = [
+  /ignore (?:all |the )?(?:previous|prior|system) instructions?/i,
+  /reveal (?:the )?(?:system prompt|hidden prompt|rubric)/i,
+  /you are now (?:an?|the) /i,
+  /act as (?:an?|the) (?:assistant|system|evaluator|coach)/i,
+  /<\/?(?:system|assistant|developer)>/i,
+];
+
+export function isPromptInjectionAttempt(content: string) {
+  return injectionPatterns.some((pattern) => pattern.test(content));
+}
+
+export class PersonaEvidenceError extends Error {
+  constructor(public readonly issues: string[]) {
+    super(issues.join(" "));
+    this.name = "PersonaEvidenceError";
+  }
+}
+
+export function assessTranscriptEvidence(sources: TranscriptPersonaRequest["transcripts"]) {
+  const turns = sources.flatMap((source) => normalizeTranscript(source.content).map((turn) => ({ ...turn, sourceId: source.sourceId })));
+  const injectionTurnIds = turns.filter((turn) => isPromptInjectionAttempt(turn.content)).map((turn) => `${turn.sourceId}:${turn.turnId}`);
+  const usableBuyerTurns = turns.filter((turn) => turn.speaker === "buyer" && !isPromptInjectionAttempt(turn.content));
+  const issues: string[] = [];
+  if (usableBuyerTurns.length < 2) issues.push("At least two usable buyer turns are required to create a persona.");
+  if (usableBuyerTurns.every((turn) => turn.content.length < 20)) issues.push("Buyer evidence is too brief to support a persona.");
+  return { turns, usableBuyerTurns, injectionTurnIds, issues };
+}
+
 export function validatePersonaEvidence(draft: PersonaDraft, sources: TranscriptPersonaRequest["transcripts"]) {
   const turns = new Map<string, string>();
   for (const source of sources) {
@@ -108,9 +146,12 @@ export function validatePersonaEvidence(draft: PersonaDraft, sources: Transcript
   }
   for (const claim of draft.evidenceClaims) {
     const sourceTurn = turns.get(`${claim.sourceId}:${claim.turnId}`);
-    if (!sourceTurn || !sourceTurn.toLocaleLowerCase().includes(claim.excerpt.toLocaleLowerCase())) {
+    const normalizedSource = sourceTurn?.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+    const normalizedExcerpt = claim.excerpt.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+    if (!normalizedSource || isPromptInjectionAttempt(claim.excerpt) || !normalizedSource.includes(normalizedExcerpt)) {
       throw new Error(`Persona evidence does not match ${claim.sourceId}:${claim.turnId}`);
     }
   }
+  if (!draft.evidenceClaims.length) throw new Error("Persona draft must include transcript evidence");
   return draft;
 }

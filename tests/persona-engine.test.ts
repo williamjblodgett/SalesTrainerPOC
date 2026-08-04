@@ -26,6 +26,7 @@ describe("transcript persona contracts", () => {
     const source = transcriptPersonaRequestSchema.parse({
       industryId: "b2b-saas",
       retentionMode: "redact_then_delete",
+      consentAttested: true,
       transcripts: [{ sourceId: "source-1", title: "Discovery", content: transcript, consentStatus: "synthetic" }],
     });
     const draft = personaDraftSchema.parse({

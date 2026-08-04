@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { OpenAIPersonaEngine } from "@/lib/ai/persona-engine";
 import { requireAppContext } from "@/lib/auth/context";
 import { canManage } from "@/lib/auth/roles";
-import { transcriptPersonaRequestSchema } from "@/lib/domain/persona";
+import { PersonaEvidenceError, transcriptPersonaRequestSchema } from "@/lib/domain/persona";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -40,7 +40,10 @@ export async function POST(request: Request) {
       });
     }
     return NextResponse.json({ personaId, draft: result.draft, model: result.model, persisted: Boolean(personaId) });
-  } catch {
+  } catch (error) {
+    if (error instanceof PersonaEvidenceError) {
+      return NextResponse.json({ code: "validation_failed", message: error.message, issues: error.issues }, { status: 422 });
+    }
     return NextResponse.json({ code: "ai_provider_error", message: "Persona analysis could not be completed. Your transcript was not published." }, { status: 502 });
   }
 }

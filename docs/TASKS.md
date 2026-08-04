@@ -86,6 +86,17 @@
 - [x] Voice device selection, reconnection controls, and organization usage limits
 - [ ] Playwright authenticated workflow
 
+## Persona QA
+
+- [x] Add a seven-industry persona QA matrix.
+- [x] Reject seller-only transcripts and duplicate source IDs.
+- [x] Quarantine prompt-injection-like transcript turns.
+- [x] Detect conflicting budget evidence across sources.
+- [x] Require consent or synthetic-data attestation.
+- [x] Add evidence-quality preflight metrics to the Transcript Lab.
+- [ ] Persist complete transcript-to-claim lineage in one transaction.
+- [ ] Add provider-backed, manager-labeled persona calibration tests.
+
 ## Later
 
 - [ ] Live Realtime token/minute metering and provider spend reconciliation
