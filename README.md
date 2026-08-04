@@ -8,10 +8,10 @@ The product retains the original sales-practice vertical slice while expanding i
 
 ## Deployments
 
-- Public product preview: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
-- Secure Revenue OS and Synthetic Demo Lab: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
+- Public interactive synthetic demo: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
+- Secure private pilot: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
 
-GitHub Pages serves the static public narrative. Calls-to-action open the hosted application because authentication, persistence, consent controls, and AI operations require a server runtime.
+GitHub Pages now provides a complete hash-routed demo: seven industry packs, 35 scenarios, local transcript-to-persona extraction, practice, evidence scoring, coaching, analytics, and browser voice input. It intentionally accepts synthetic data only. The Next.js application is the canonical secure surface for authentication, tenant data, server-side AI, uploads, and production voice.
 
 ## Stack
 
@@ -62,6 +62,9 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 
 ## Current limitations
 
+- GitHub Pages processes synthetic data only and intentionally cannot run server-side AI or customer authentication.
+- The secure Transcript Lab accepts pasted text and TXT directly; production DOCX/PDF parsing and connector OAuth remain follow-up work.
+- The Vercel and Supabase production environments still require project credentials and the latest migration to be applied.
 - The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
 - The 20 hosted asset outputs and graph extraction use deterministic contracts. Provider-backed structured generation will use the same validated boundaries when credentials are configured.
 - Revenue DNA, Knowledge Drift, and Content Gap use deterministic calculations and minimum cross-call evidence thresholds. Outcome calibration still requires representative customer data and approved success metrics.

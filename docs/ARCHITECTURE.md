@@ -1,5 +1,13 @@
 # Architecture
 
+## Deployment surfaces
+
+- `demo/` is the public GitHub Pages application. It uses bundled synthetic fixtures, device-local state, and hash routes so every tab works under the repository subpath.
+- `src/app/` is the canonical Next.js application for a server-capable host. Supabase provides authentication, Postgres, RLS, and private storage.
+- `public/data/industry-packs.json` is the launch catalog shared by both surfaces.
+
+The Pages bundle never receives OpenAI keys, Supabase service credentials, private scenario partitions, or real customer transcripts.
+
 ## Revenue intelligence operating system
 
 The expanded product uses a second vertical pipeline:

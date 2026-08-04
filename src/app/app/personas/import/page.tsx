@@ -1,8 +1,7 @@
+import industryPacks from "../../../../../public/data/industry-packs.json";
+
+import { PersonaImportForm } from "@/components/persona-import-form";
+
 export default function Page() {
-  return <><p className="text-xs font-bold uppercase tracking-widest text-teal-600">Transcript Lab</p><h1 className="mt-2 text-4xl font-semibold">Turn customer calls into buyer evidence.</h1>
-  <p className="mt-2 max-w-2xl text-slate-600">Add several conversations. Suadence identifies repeated priorities, objections, language patterns, and conflicts before proposing a persona for your approval.</p>
-  <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]"><form className="card space-y-5"><div className="rounded-xl border-2 border-dashed border-slate-200 p-10 text-center"><p className="font-semibold">Drop TXT, DOCX, or PDF transcripts</p><p className="mt-1 text-sm text-slate-500">or select files · 20 MB maximum each</p><input className="mt-4" type="file" multiple accept=".txt,.docx,.pdf" /></div>
-    <div><label>Or paste a transcript</label><textarea rows={8} placeholder={"Seller: Thanks for making time…\nBuyer: I have about twenty minutes…"} /></div><button className="button" type="button">Analyze transcript evidence</button></form>
-    <aside className="card h-fit"><span className="badge">Privacy controls</span><h2 className="mt-4 font-semibold">Manager-controlled retention</h2><label className="mt-4 block"><input className="mr-2 w-auto" type="radio" name="retention" defaultChecked /> Redact, then delete original</label><label className="mt-3 block"><input className="mr-2 w-auto" type="radio" name="retention" /> Retain securely for audit</label><p className="mt-5 text-xs leading-5 text-slate-500">Names, emails, phone numbers, and account identifiers are flagged before AI analysis. Nothing publishes without review.</p></aside>
-  </div></>;
+  return <><p className="text-xs font-bold uppercase tracking-widest text-teal-600">Transcript Lab</p><h1 className="mt-2 text-4xl font-semibold">Turn customer calls into buyer evidence.</h1><p className="mt-2 max-w-3xl text-slate-600">Normalize the conversation, extract claims with stable turn references, flag gaps, and propose a structured persona for manager approval.</p><div className="mt-8"><PersonaImportForm industries={industryPacks.map(({ id, name }) => ({ id, name }))} /></div></>;
 }

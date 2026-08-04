@@ -1,5 +1,11 @@
 # AI system
 
+## Transcript-to-persona engine
+
+The persona engine is an upstream intelligence boundary. It normalizes consent-confirmed transcripts into stable turns, produces structured persona claims with exact source/turn/excerpt citations, and validates those citations before persistence. Conflicts, assumptions, missing information, and evidence coverage remain visible. A manager must approve the draft before an immutable persona version can power a scenario.
+
+Transcript contents are untrusted reference data, never model instructions. Deterministic mock mode uses the same PersonaDraft schema and evidence validator without making an external call.
+
 Revenue OS adds two bounded responsibilities ahead of the existing simulation loop:
 
 1. Evidence Extractor converts consented, normalized transcript segments into candidate graph nodes and relationships with source turn IDs, confidence, and freshness.

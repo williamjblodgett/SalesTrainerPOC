@@ -8,6 +8,7 @@ import {
   GraduationCap,
   History,
   Home,
+  LibraryBig,
   Settings,
   Sparkles,
   Target,
@@ -44,6 +45,7 @@ const groups = {
       label: "Build",
       links: [
         ["Personas", "/app/personas", Users],
+        ["Industry library", "/app/industries", LibraryBig],
         ["Scenarios", "/app/scenarios", BriefcaseBusiness],
         ["Scorecards", "/app/scorecards", GraduationCap],
         ["Playbooks", "/app/playbooks", BookOpenCheck],
@@ -64,6 +66,7 @@ const groups = {
       label: "Build",
       links: [
         ["Personas", "/app/personas", Users],
+        ["Industry library", "/app/industries", LibraryBig],
         ["Scenarios", "/app/scenarios", BriefcaseBusiness],
         ["Scorecards", "/app/scorecards", GraduationCap],
         ["Playbooks", "/app/playbooks", BookOpenCheck],

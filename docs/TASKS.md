@@ -1,5 +1,20 @@
 # Tasks
 
+## 2026-08-04 interactive demo and persona engine
+
+- [x] Replace the single-page GitHub Pages preview with a hash-routed interactive demo.
+- [x] Make all ten product tabs navigable without private-site redirects.
+- [x] Add seven industry packs and 35 synthetic simulations.
+- [x] Add local synthetic persona extraction, browser voice input, evidence scoring, export, and reset.
+- [x] Add PersonaDraft and transcript-ingestion boundary schemas.
+- [x] Add Responses API persona synthesis with deterministic mock mode and evidence verification.
+- [x] Add tenant-scoped transcript/persona tables, RLS, indexes, and immutable persona versions.
+- [x] Connect the secure Transcript Lab and industry library.
+- [ ] Apply the new Supabase migration to the production project.
+- [ ] Configure the canonical Vercel project, runtime values, and domain.
+- [ ] Add DOCX/PDF server parsing, durable ingestion jobs, and provider OAuth.
+- [ ] Complete production voice persistence, monitoring, and launch compliance review.
+
 ## Revenue OS V1
 
 - [x] Category landing page built around “one call in, 20 revenue assets out”

@@ -1,0 +1,135 @@
+[
+  {
+    "id": "financial-services",
+    "name": "Financial services",
+    "icon": "FIN",
+    "color": "#2d6cdf",
+    "description": "Trust-led discovery across wealth, treasury, lending, and risk-sensitive decisions.",
+    "buyerRoles": ["Private client", "CFO", "Treasurer", "Business owner", "Investment committee"],
+    "sellerRole": "Advisor or relationship manager",
+    "signals": ["risk tolerance", "liquidity", "fees", "time horizon", "fiduciary confidence"],
+    "guardrails": ["Do not promise returns", "Explain material fees and conflicts", "Ground recommendations in the customer profile"],
+    "criteria": ["trust and agenda", "customer-profile discovery", "risk and impact", "clear disclosures", "next-step control"],
+    "scenarios": [
+      {"id":"retirement-rollover","title":"Retirement rollover discovery","buyer":"Dana Brooks","buyerTitle":"Recently retired executive","difficulty":"medium","objective":"Understand goals, time horizon, liquidity needs, and risk before discussing a rollover."},
+      {"id":"wealth-transfer","title":"Wealth-transfer planning","buyer":"Morgan Ellis","buyerTitle":"Business owner","difficulty":"hard","objective":"Surface family priorities, advisor relationships, tax-team dependencies, and decision criteria."},
+      {"id":"commercial-treasury","title":"Commercial treasury review","buyer":"Priya Shah","buyerTitle":"Chief Financial Officer","difficulty":"hard","objective":"Diagnose cash visibility, payment risk, working-capital friction, and implementation constraints."},
+      {"id":"growth-lending","title":"Growth lending needs analysis","buyer":"Chris Park","buyerTitle":"Founder and CEO","difficulty":"medium","objective":"Clarify use of funds, repayment capacity, timing, alternatives, and risk posture."},
+      {"id":"fee-objection","title":"Fees and conflict objection","buyer":"Taylor Reed","buyerTitle":"High-net-worth investor","difficulty":"expert","objective":"Address fee skepticism transparently without minimizing costs or making unsupported claims."}
+    ]
+  },
+  {
+    "id": "b2b-saas",
+    "name": "B2B SaaS",
+    "icon": "SaaS",
+    "color": "#7c5ce5",
+    "description": "Multi-stakeholder software buying with value, adoption, security, and procurement pressure.",
+    "buyerRoles": ["VP Operations", "CFO", "CIO", "Department leader", "Procurement director"],
+    "sellerRole": "Account executive",
+    "signals": ["workflow friction", "adoption risk", "integration burden", "ROI", "change management"],
+    "guardrails": ["Do not invent integrations", "Separate product capability from roadmap", "Do not claim guaranteed ROI"],
+    "criteria": ["agenda alignment", "workflow discovery", "business-impact discovery", "relevant positioning", "mutual next step"],
+    "scenarios": [
+      {"id":"operations-discovery","title":"Operations workflow discovery","buyer":"Jordan Lee","buyerTitle":"VP Sales Operations","difficulty":"medium","objective":"Map the current process, quantify manual work, and determine whether deeper discovery is justified."},
+      {"id":"technical-validation","title":"Technical validation","buyer":"Sam Rivera","buyerTitle":"Director of Enterprise Applications","difficulty":"hard","objective":"Clarify architecture, data flow, integration ownership, and acceptance criteria without overclaiming."},
+      {"id":"cfo-value-case","title":"CFO value case","buyer":"Avery Chen","buyerTitle":"Chief Financial Officer","difficulty":"expert","objective":"Translate discovered operational problems into a credible, measurable value hypothesis."},
+      {"id":"security-review","title":"Security and privacy review","buyer":"Riley Morgan","buyerTitle":"Chief Information Security Officer","difficulty":"hard","objective":"Understand data sensitivity, controls, review process, and evidence required for approval."},
+      {"id":"renewal-procurement","title":"Renewal and procurement negotiation","buyer":"Casey Wilson","buyerTitle":"Strategic Sourcing Lead","difficulty":"expert","objective":"Defend value, investigate concessions, and establish a fair decision path without premature discounting."}
+    ]
+  },
+  {
+    "id": "healthcare-medical",
+    "name": "Healthcare & medical devices",
+    "icon": "MED",
+    "color": "#e05a72",
+    "description": "Clinical, operational, technical, and value-analysis buying with patient-safety constraints.",
+    "buyerRoles": ["Clinical champion", "Service-line leader", "Value analysis", "Clinical IT", "Supply chain"],
+    "sellerRole": "Healthcare account manager",
+    "signals": ["patient outcomes", "workflow burden", "training", "interoperability", "total cost"],
+    "guardrails": ["Stay within approved intended use", "Do not make unsupported clinical claims", "Respect privacy and procurement policy"],
+    "criteria": ["clinical context", "workflow and stakeholder discovery", "evidence discipline", "value articulation", "implementation next step"],
+    "scenarios": [
+      {"id":"clinician-discovery","title":"Clinician workflow discovery","buyer":"Dr. Cameron Mills","buyerTitle":"Clinical service-line lead","difficulty":"medium","objective":"Understand clinical workflow, patient population, current limitations, and desired outcomes."},
+      {"id":"value-analysis","title":"Value-analysis committee","buyer":"Jamie Patel","buyerTitle":"Value Analysis Director","difficulty":"hard","objective":"Build a balanced clinical, operational, and economic case with explicit evidence requirements."},
+      {"id":"operational-workflow","title":"Operational workflow review","buyer":"Robin Grant","buyerTitle":"Nursing Operations Director","difficulty":"hard","objective":"Surface staffing, training, throughput, safety, and adoption constraints."},
+      {"id":"clinical-it","title":"Clinical IT integration","buyer":"Drew Kim","buyerTitle":"VP Clinical Informatics","difficulty":"expert","objective":"Map interoperability, security, data governance, validation, and support ownership."},
+      {"id":"procurement-compliance","title":"Procurement and compliance","buyer":"Alexis Brown","buyerTitle":"Strategic Sourcing Manager","difficulty":"expert","objective":"Navigate contracting, evidence, vendor policy, and implementation risk without unsupported claims."}
+    ]
+  },
+  {
+    "id": "cybersecurity",
+    "name": "Cybersecurity",
+    "icon": "CYB",
+    "color": "#0b8f82",
+    "description": "Risk-based buying across security operations, governance, architecture, and procurement.",
+    "buyerRoles": ["CISO", "SOC director", "CIO", "Security architect", "Risk committee"],
+    "sellerRole": "Security account executive",
+    "signals": ["risk exposure", "coverage gaps", "alert burden", "evidence", "operational resilience"],
+    "guardrails": ["Never promise breach prevention", "Distinguish validation from certification", "Avoid fear-based manipulation"],
+    "criteria": ["risk framing", "technical discovery", "operational impact", "evidence-based positioning", "security next step"],
+    "scenarios": [
+      {"id":"platform-consolidation","title":"Security platform consolidation","buyer":"Quinn Foster","buyerTitle":"Chief Information Security Officer","difficulty":"hard","objective":"Understand tool sprawl, risk priorities, economics, and migration constraints."},
+      {"id":"soc-workflow","title":"SOC workflow and alert fatigue","buyer":"Emerson Diaz","buyerTitle":"Director of Security Operations","difficulty":"medium","objective":"Map alert volume, triage workflow, staffing pressure, and measurable success."},
+      {"id":"incident-readiness","title":"Incident readiness review","buyer":"Parker James","buyerTitle":"VP Infrastructure","difficulty":"hard","objective":"Discover response gaps, dependencies, recovery priorities, and executive expectations."},
+      {"id":"secure-procurement","title":"Secure software procurement","buyer":"Skyler Nguyen","buyerTitle":"Third-Party Risk Lead","difficulty":"expert","objective":"Clarify secure-development evidence, supplier risk, remediation, and approval requirements."},
+      {"id":"board-risk","title":"Executive cyber-risk discussion","buyer":"Reese Thompson","buyerTitle":"Chief Information Officer","difficulty":"expert","objective":"Translate technical exposure into decision-relevant operational and financial risk."}
+    ]
+  },
+  {
+    "id": "industrial-manufacturing",
+    "name": "Industrial & manufacturing",
+    "icon": "MFG",
+    "color": "#d17b24",
+    "description": "Operational selling around throughput, reliability, workforce, safety, and capital discipline.",
+    "buyerRoles": ["Plant manager", "COO", "Engineering director", "Supply-chain VP", "Procurement"],
+    "sellerRole": "Industrial sales engineer",
+    "signals": ["downtime", "scrap", "throughput", "labor constraints", "supply continuity"],
+    "guardrails": ["Validate technical assumptions", "Do not promise unverified savings", "Include safety and change-control stakeholders"],
+    "criteria": ["operational discovery", "technical credibility", "economic impact", "stakeholder mapping", "validation plan"],
+    "scenarios": [
+      {"id":"plant-automation","title":"Plant automation discovery","buyer":"Bailey Stone","buyerTitle":"Plant Manager","difficulty":"medium","objective":"Map manual work, constraints, safety, throughput, and automation readiness."},
+      {"id":"downtime-reduction","title":"Unplanned downtime reduction","buyer":"Hayden Clark","buyerTitle":"Maintenance Director","difficulty":"hard","objective":"Diagnose failure patterns, production impact, current maintenance process, and evidence needs."},
+      {"id":"supply-resilience","title":"Supply-chain resilience","buyer":"Rowan Singh","buyerTitle":"VP Supply Chain","difficulty":"hard","objective":"Surface supplier concentration, lead-time variability, working capital, and mitigation priorities."},
+      {"id":"workforce-constraints","title":"Skilled-workforce constraints","buyer":"Finley Carter","buyerTitle":"Chief Operating Officer","difficulty":"expert","objective":"Connect labor availability, training, quality, and capacity to an actionable operating case."},
+      {"id":"technical-procurement","title":"Technical procurement validation","buyer":"Dakota Evans","buyerTitle":"Director of Strategic Procurement","difficulty":"expert","objective":"Align engineering, operations, commercial terms, qualification, and implementation risk."}
+    ]
+  },
+  {
+    "id": "automotive",
+    "name": "Automotive retail",
+    "icon": "AUTO",
+    "color": "#2878b8",
+    "description": "Transparent, needs-based vehicle sales across discovery, trade, financing, and ownership.",
+    "buyerRoles": ["First-time buyer", "Family buyer", "Enthusiast", "Budget buyer", "Service customer"],
+    "sellerRole": "Sales or client advisor",
+    "signals": ["use case", "monthly budget", "trade condition", "ownership cost", "decision timing"],
+    "guardrails": ["Be transparent about price and terms", "Do not fabricate availability", "Separate vehicle value from financing"],
+    "criteria": ["needs discovery", "trust and transparency", "vehicle relevance", "objection handling", "clear next step"],
+    "scenarios": [
+      {"id":"showroom-discovery","title":"Showroom needs discovery","buyer":"Mia Anderson","buyerTitle":"Family vehicle shopper","difficulty":"easy","objective":"Understand use, passengers, driving patterns, priorities, timing, and budget range."},
+      {"id":"trade-in","title":"Trade-in value discussion","buyer":"Noah Bennett","buyerTitle":"Returning customer","difficulty":"medium","objective":"Set a transparent appraisal process and separate trade value from the new-vehicle decision."},
+      {"id":"financing","title":"Financing transparency","buyer":"Sophia Martinez","buyerTitle":"First-time buyer","difficulty":"hard","objective":"Clarify budget and preferences while explaining terms without steering or pressure."},
+      {"id":"competitor-objection","title":"Competitor and price objection","buyer":"Liam Turner","buyerTitle":"Comparison shopper","difficulty":"hard","objective":"Investigate comparison criteria and position value without attacking competitors."},
+      {"id":"service-retention","title":"Service retention conversation","buyer":"Olivia Harris","buyerTitle":"Vehicle owner","difficulty":"medium","objective":"Understand service concerns, restore confidence, and agree on a practical resolution."}
+    ]
+  },
+  {
+    "id": "real-estate",
+    "name": "Residential real estate",
+    "icon": "HOME",
+    "color": "#4a9565",
+    "description": "Advisory selling across representation, financing, listings, negotiation, and transaction risk.",
+    "buyerRoles": ["First-time buyer", "Move-up buyer", "Seller", "Investor", "Relocation client"],
+    "sellerRole": "Real-estate professional",
+    "signals": ["motivation", "financing readiness", "property tradeoffs", "timing", "risk tolerance"],
+    "guardrails": ["Avoid steering and protected-class discussions", "Do not guarantee price or appreciation", "Disclose representation and material conflicts"],
+    "criteria": ["motivation discovery", "advisory trust", "financial and timing readiness", "negotiation judgment", "documented next step"],
+    "scenarios": [
+      {"id":"buyer-consultation","title":"First-time buyer consultation","buyer":"Ethan Walker","buyerTitle":"First-time homebuyer","difficulty":"easy","objective":"Clarify goals, financing readiness, timing, representation, and property tradeoffs."},
+      {"id":"listing-presentation","title":"Competitive listing presentation","buyer":"Grace Hall","buyerTitle":"Homeowner and seller","difficulty":"hard","objective":"Understand motivation and expectations, then explain evidence, process, and positioning."},
+      {"id":"financing-readiness","title":"Financing readiness conversation","buyer":"Lucas Young","buyerTitle":"Move-up buyer","difficulty":"medium","objective":"Discuss readiness, contingency, timing, and lender coordination without giving financial advice."},
+      {"id":"offer-negotiation","title":"Multiple-offer negotiation","buyer":"Harper King","buyerTitle":"Relocation buyer","difficulty":"expert","objective":"Clarify priorities and risk tolerance while explaining options without guaranteeing acceptance."},
+      {"id":"inspection-recovery","title":"Inspection and appraisal recovery","buyer":"Henry Scott","buyerTitle":"Seller under contract","difficulty":"hard","objective":"De-escalate concerns, clarify facts and options, and establish an accountable decision process."}
+    ]
+  }
+]
