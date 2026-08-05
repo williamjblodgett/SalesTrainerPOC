@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 
 import { OpenAIPersonaEngine } from "@/lib/ai/persona-engine";
 import { requireAppContext } from "@/lib/auth/context";
 import { canManage } from "@/lib/auth/roles";
 import { PersonaEvidenceError, transcriptPersonaRequestSchema } from "@/lib/domain/persona";
+import { normalizeTranscript } from "@/lib/domain/persona";
+import { redactSensitiveText } from "@/lib/security/pii-redaction";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -13,31 +16,46 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ code: "validation_failed", message: "Review the transcript, consent, and industry fields.", fields: parsed.error.flatten() }, { status: 400 });
 
   try {
+    const idempotencyKey = request.headers.get("idempotency-key");
+    if (!idempotencyKey || !/^[0-9a-f-]{36}$/i.test(idempotencyKey)) return NextResponse.json({ code: "validation_failed", message: "A valid idempotency key is required." }, { status: 400 });
     const started = Date.now();
-    const result = await new OpenAIPersonaEngine().synthesize(parsed.data);
+    const piiBySource = new Map<string, ReturnType<typeof redactSensitiveText>["findings"]>();
+    const safeInput = {
+      ...parsed.data,
+      transcripts: parsed.data.transcripts.map((source) => {
+        const redacted = redactSensitiveText(source.content);
+        piiBySource.set(source.sourceId, redacted.findings);
+        return { ...source, content: redacted.text };
+      }),
+    };
+    const result = await new OpenAIPersonaEngine().synthesize(safeInput);
     const supabase = await createSupabaseServerClient();
     let personaId: string | null = null;
     if (supabase && !context.demo) {
-      const { data, error } = await supabase.from("persona_drafts").insert({
-        organization_id: context.organization.id,
-        created_by: context.user.id,
-        industry_id: parsed.data.industryId,
-        status: "ai_generated",
-        structured_data: result.draft,
-        evidence_coverage: result.draft.evidenceCoverage,
-        source_count: parsed.data.transcripts.length,
-      }).select("id").single();
-      if (error) throw error;
-      personaId = data.id;
-      await supabase.from("usage_events").insert({
-        organization_id: context.organization.id,
-        user_id: context.user.id,
-        operation_type: "persona_synthesis",
-        model: result.model,
-        input_tokens: result.inputTokens,
-        output_tokens: result.outputTokens,
-        latency_ms: Date.now() - started,
+      const sources = safeInput.transcripts.map((source) => ({
+        sourceId: source.sourceId,
+        title: source.title,
+        consentStatus: source.consentStatus,
+        provider: "paste",
+        contentHash: createHash("sha256").update(source.content).digest("hex"),
+        piiFindings: piiBySource.get(source.sourceId) ?? [],
+        scannerStatus: "not_applicable",
+        turns: normalizeTranscript(source.content).map((turn, index) => ({ ...turn, sequence: index + 1 })),
+      }));
+      const { data, error } = await supabase.rpc("create_persona_draft_with_lineage", {
+        p_organization_id: context.organization.id,
+        p_industry_id: safeInput.industryId,
+        p_retention_mode: safeInput.retentionMode,
+        p_draft: result.draft,
+        p_sources: sources,
+        p_idempotency_key: idempotencyKey,
+        p_model: result.model,
+        p_input_tokens: result.inputTokens,
+        p_output_tokens: result.outputTokens,
+        p_latency_ms: Date.now() - started,
       });
+      if (error) throw error;
+      personaId = data;
     }
     return NextResponse.json({ personaId, draft: result.draft, model: result.model, persisted: Boolean(personaId) });
   } catch (error) {

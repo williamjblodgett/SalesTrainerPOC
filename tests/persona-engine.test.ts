@@ -36,7 +36,10 @@ describe("transcript persona contracts", () => {
       decisionProcess: { stakeholders: [], budgetPosture: "unknown", timeline: "unknown", approvalProcess: "unknown", alternatives: [] },
       behavior: { communicationStyle: "direct", talkativeness: 3, skepticism: 4, patience: 3, riskTolerance: 2 },
       vocabulary: [], complianceConstraints: [], conflicts: [], assumptions: [], missingInformation: [], evidenceCoverage: 0.5,
-      evidenceClaims: [{ sourceId: "source-1", turnId: "T2", excerpt: "This text was invented", claimType: "pain", claim: "Spreadsheet inconsistency", confidence: 0.8 }],
+      evidenceClaims: [{ id: "E1", sourceId: "source-1", turnId: "T2", excerpt: "This text was invented", claimType: "pain", claim: "Spreadsheet inconsistency", confidence: 0.8 }],
+      fieldEvidence: [
+        "identity.title", "responsibilities", "kpis", "priorities", "pains", "objections", "decisionProcess", "behavior.communicationStyle", "vocabulary",
+      ].map((path) => ({ path, support: "unknown", evidenceClaimIds: [], explanation: "Not established" })),
     });
     expect(() => validatePersonaEvidence(draft, source.transcripts)).toThrow(/does not match/);
   });

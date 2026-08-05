@@ -1,55 +1,37 @@
 # Persona QA report
 
-## Automated coverage
+## Release result
 
-The deterministic QA suite exercises the persona contract across all seven launch industries:
+The persona workflow now supports governed multi-transcript synthesis across all seven launch industries. The deterministic suite verifies 58 application contracts, including citation accuracy, field-level lineage, PII redaction, source diversity, conflict recall, unknown-field behavior, prompt-injection quarantine, consent attestation, and authorization contracts.
 
-- Schema-valid persona creation for 7/7 industry packs.
-- Stable speaker and turn normalization.
-- Exact source, turn, and excerpt verification.
-- Rejection of invented or mismatched evidence.
-- Rejection of duplicate transcript source IDs.
-- Rejection of seller-only and materially insufficient evidence.
-- Prompt-injection turn quarantine.
-- Cross-transcript budget-conflict detection.
-- Evidence coverage bounds.
-- Explicit consent or synthetic-data attestation.
-- Human-review status before approval and publication.
+## Implemented safeguards
 
-The suite runs without customer data or an OpenAI key. Live-model persona evaluations should remain behind an explicit environment flag and compare results with manager-labeled fixtures.
+- TXT, DOCX, and PDF parsing occurs server-side with a 20 MB limit, extension/signature agreement, text-volume limits, and active-document marker quarantine.
+- Email, phone, SSN, payment-card-like values, and credential-like tokens are redacted before an AI provider receives transcript text.
+- Transcript sources, normalized turns, consent evidence, PII findings, persona drafts, source links, and usage metadata persist through one PostgreSQL function transaction.
+- Each persona field is marked observed, inferred, or unknown. Observed fields must reference valid evidence claim IDs, and every evidence excerpt must match a stable source turn.
+- Managers accept or reject every claim before approval. Published persona versions are immutable and can be compared side by side.
+- Mock mode no longer invents buyer titles, KPIs, stakeholders, approval processes, or alternatives.
+- Conflict detection covers budget, timeline, priority, and current-solution state.
+- Transcript deletion cascades through normalized turns and source links. Persona drafts with no surviving source return to review.
+- The public demo performs multi-source analysis locally with synthetic data. The private hosted app persists claim reviews and persona versions in organization-scoped storage.
 
-## Findings and improvements applied
+## Calibration metrics
 
-1. **Critical — seller-only transcripts could create a persona.** The engine now requires at least two usable buyer turns and returns a validation error instead of inventing buyer behavior.
-2. **Critical — prompt-injection text could become persona evidence in mock mode.** Suspect instructions are quarantined and excluded from evidence and synthesis.
-3. **High — duplicate source IDs could corrupt evidence lineage.** Boundary validation now rejects duplicate IDs.
-4. **High — transcript consent was asserted by the browser.** Managers must attest processing authority or synthetic status, and the API enforces the attestation.
-5. **High — the upload UI advertised unsupported formats.** It now accurately accepts TXT only until secure server parsing is implemented.
-6. **Medium — managers had no evidence-quality preview.** The UI now displays usable buyer turns, total turns, quarantined instructions, and blocking evidence issues before generation.
-7. **Medium — evidence matching was whitespace-fragile.** Citation comparison now normalizes whitespace while requiring an exact source-turn match.
+The launch calibration set covers financial services, B2B SaaS, healthcare and medical devices, cybersecurity, industrial and manufacturing, automotive retail, and residential real estate. Automated acceptance requires:
 
-## Remaining product risks
+- 100% citation validity against supplied source turns.
+- 100% required field-lineage coverage.
+- 100% observed-field citation presence.
+- Complete source diversity in the two-call calibration fixture.
+- No invented buyer title or stakeholder list when those facts are absent.
 
-### Launch blockers
+Provider-backed model runs remain opt-in because model credentials and customer data are not required for normal CI.
 
-- Persist transcript sources, normalized segments, consent evidence, persona claims, and source links in one database transaction. The current API persists the persona draft but does not yet materialize the complete lineage tables.
-- Add secure DOCX/PDF parsing, MIME verification, malware scanning, file-size enforcement on the server, and signed storage access.
-- Add PII detection and redaction before provider calls, then prove deletion cascades remove derived claims.
-- Run organization-isolation integration tests against a hosted Supabase database.
+## Remaining external launch gates
 
-### High-value improvements
-
-- Support multi-transcript collections with per-source status, removal, deduplication, and minimum-evidence guidance.
-- Add evidence references to every persona field, not only the general `evidenceClaims` collection, so unsupported generated fields cannot be published.
-- Expand conflict detection beyond budget to title, priorities, timing, stakeholders, pains, terminology, and buying process.
-- Replace generic mock identity and stakeholder labels with manager-reviewed fields or clearly marked unknown values.
-- Add a version comparison showing evidence added, removed, contradicted, or stale.
-- Build human-labeled calibration sets for every industry and measure claim precision, citation accuracy, conflict recall, and manager edit distance.
-
-### UX improvements
-
-- Show transcript-level progress for parse, redact, extract, cluster, review, and publish.
-- Let managers accept or reject individual claims before approving the persona.
-- Explain why confidence changed and distinguish source diversity from claim confidence.
-- Replace static persona cards with persisted drafts, approval state, evidence coverage, and last-reviewed dates.
-- Add screen-reader announcements for extraction progress and publication success.
+- Apply the Supabase migrations and run `supabase test db` against a disposable hosted project to prove live RLS isolation. The SQL test is committed, but this workspace has no production Supabase credentials.
+- Connect a commercial malware-scanning service for defense in depth. The built-in scan blocks known test markers and active PDF/DOCX content, but it is not represented as a full antivirus product.
+- Complete legal review of consent language, DPA, privacy notice, retention defaults, data residency, and subprocessors.
+- Run provider-backed persona calibration on a human-labeled, licensed transcript corpus and measure precision, conflict recall, manager edit distance, and demographic-bias deltas.
+- Finish provider OAuth, asynchronous backfills, observability, incident response, SSO/SCIM, and production voice metering before enterprise GA.

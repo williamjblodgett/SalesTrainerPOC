@@ -12,7 +12,8 @@
 - [x] Connect the secure Transcript Lab and industry library.
 - [ ] Apply the new Supabase migration to the production project.
 - [ ] Configure the canonical Vercel project, runtime values, and domain.
-- [ ] Add DOCX/PDF server parsing, durable ingestion jobs, and provider OAuth.
+- [x] Add server-side TXT/DOCX/PDF parsing, signature verification, safety scanning, PII redaction, and 20 MB enforcement.
+- [ ] Add durable asynchronous ingestion jobs, commercial malware-scanner adapter, and provider OAuth.
 - [ ] Complete production voice persistence, monitoring, and launch compliance review.
 
 ## Revenue OS V1
@@ -73,10 +74,11 @@
 - [x] Role-aware owner/manager/rep application shell and manager action dashboard
 - [x] Complete initial RLS write-policy baseline and unit-level policy contract tests
 - [ ] Run pgTAP cross-tenant suite against a disposable hosted Supabase project
-- [ ] Port hosted D1 workflow repositories into canonical Supabase transactions
+- [x] Add a canonical atomic Supabase RPC for transcript sources, normalized turns, persona draft, lineage, consent evidence, and usage.
 - [ ] Responses API structured-output providers
 - [ ] Complete idempotent API surface and rate limiting
-- [ ] Production manager override and transcript/organization deletion workflows
+- [x] Add a tenant-scoped transcript deletion RPC and cascade contract.
+- [ ] Complete the organization deletion approval/export workflow.
 - [x] PDF/DOCX persona extraction through server-side OpenAI file inputs, with deterministic TXT/paste mode
 - [x] Persisted coaching priority inbox and automatic follow-up drills
 - [x] Role certification paths and manager rubric calibration
@@ -94,8 +96,16 @@
 - [x] Detect conflicting budget evidence across sources.
 - [x] Require consent or synthetic-data attestation.
 - [x] Add evidence-quality preflight metrics to the Transcript Lab.
-- [ ] Persist complete transcript-to-claim lineage in one transaction.
-- [ ] Add provider-backed, manager-labeled persona calibration tests.
+- [x] Persist complete transcript-to-claim lineage in one transaction.
+- [x] Add evidence mapping to every persona field and block unsupported observed fields.
+- [x] Add multi-transcript source collection, per-source status/removal/dedup, and evidence preflight.
+- [x] Add individual claim accept/reject review before persona approval.
+- [x] Add conflict detection for budget, timing, priorities, and current-solution state.
+- [x] Replace invented mock identity, stakeholder, KPI, and buying-process values with explicit unknowns.
+- [x] Add persisted persona-library states and immutable version comparison.
+- [x] Add manager-labeled deterministic calibration checks across all seven industry packs.
+- [x] Add Supabase pgTAP persona RLS/immutability contract suite.
+- [ ] Run provider-backed calibration and pgTAP isolation suites against a disposable hosted Supabase project.
 
 ## Later
 

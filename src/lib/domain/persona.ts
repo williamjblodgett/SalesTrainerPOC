@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const evidenceClaimSchema = z.object({
+  id: z.string().min(1).max(100),
   sourceId: z.string().min(1),
   turnId: z.string().min(1),
   excerpt: z.string().min(1).max(500),
@@ -18,6 +19,13 @@ const evidenceClaimSchema = z.object({
   ]),
   claim: z.string().min(1).max(1_000),
   confidence: z.number().min(0).max(1),
+});
+
+const fieldEvidenceSchema = z.object({
+  path: z.string().min(1).max(200),
+  support: z.enum(["observed", "inferred", "unknown"]),
+  evidenceClaimIds: z.array(z.string().min(1)).max(50),
+  explanation: z.string().min(1).max(500),
 });
 
 const objectionSchema = z.object({
@@ -67,6 +75,7 @@ export const personaDraftSchema = z.object({
   vocabulary: z.array(z.string()),
   complianceConstraints: z.array(z.string()),
   evidenceClaims: z.array(evidenceClaimSchema),
+  fieldEvidence: z.array(fieldEvidenceSchema),
   conflicts: z.array(z.object({ field: z.string(), description: z.string(), sourceIds: z.array(z.string()) })),
   assumptions: z.array(z.string()),
   missingInformation: z.array(z.string()),
@@ -97,6 +106,11 @@ export const transcriptPersonaRequestSchema = z.object({
 
 export type PersonaDraft = z.infer<typeof personaDraftSchema>;
 export type TranscriptPersonaRequest = z.infer<typeof transcriptPersonaRequestSchema>;
+
+export const requiredPersonaEvidencePaths = [
+  "identity.title", "responsibilities", "kpis", "priorities", "pains", "objections",
+  "decisionProcess", "behavior.communicationStyle", "vocabulary",
+] as const;
 
 export function normalizeTranscript(content: string) {
   return content
@@ -144,7 +158,10 @@ export function validatePersonaEvidence(draft: PersonaDraft, sources: Transcript
   for (const source of sources) {
     for (const turn of normalizeTranscript(source.content)) turns.set(`${source.sourceId}:${turn.turnId}`, turn.content);
   }
+  const claimIds = new Set<string>();
   for (const claim of draft.evidenceClaims) {
+    if (claimIds.has(claim.id)) throw new Error(`Duplicate persona evidence ID ${claim.id}`);
+    claimIds.add(claim.id);
     const sourceTurn = turns.get(`${claim.sourceId}:${claim.turnId}`);
     const normalizedSource = sourceTurn?.replace(/\s+/g, " ").trim().toLocaleLowerCase();
     const normalizedExcerpt = claim.excerpt.replace(/\s+/g, " ").trim().toLocaleLowerCase();
@@ -153,5 +170,13 @@ export function validatePersonaEvidence(draft: PersonaDraft, sources: Transcript
     }
   }
   if (!draft.evidenceClaims.length) throw new Error("Persona draft must include transcript evidence");
+  const paths = new Set(draft.fieldEvidence.map((item) => item.path));
+  for (const path of requiredPersonaEvidencePaths) {
+    if (!paths.has(path)) throw new Error(`Persona field evidence is missing ${path}`);
+  }
+  for (const field of draft.fieldEvidence) {
+    if (field.support === "observed" && field.evidenceClaimIds.length === 0) throw new Error(`Observed field ${field.path} must cite evidence`);
+    if (field.evidenceClaimIds.some((id) => !claimIds.has(id))) throw new Error(`Persona field ${field.path} cites unknown evidence`);
+  }
   return draft;
 }

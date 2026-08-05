@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS persona_claim_reviews (id TEXT PRIMARY KEY, organization_id TEXT NOT NULL, persona_asset_id TEXT NOT NULL, claim_id TEXT NOT NULL, disposition TEXT NOT NULL, reviewer TEXT NOT NULL, reviewed_at TEXT NOT NULL, UNIQUE(organization_id, persona_asset_id, claim_id));
+CREATE TABLE IF NOT EXISTS persona_versions (id TEXT PRIMARY KEY, organization_id TEXT NOT NULL, persona_asset_id TEXT NOT NULL, version INTEGER NOT NULL, snapshot_json TEXT NOT NULL, published_by TEXT NOT NULL, published_at TEXT NOT NULL, UNIQUE(organization_id, persona_asset_id, version));
+CREATE INDEX IF NOT EXISTS persona_claim_reviews_asset_idx ON persona_claim_reviews(organization_id, persona_asset_id);
+CREATE INDEX IF NOT EXISTS persona_versions_asset_idx ON persona_versions(organization_id, persona_asset_id, version);
