@@ -8,10 +8,11 @@ const repositoryRoot = path.resolve(scriptDirectory, "..");
 const sourceDirectory = path.join(repositoryRoot, "demo");
 const outputDirectory = path.join(repositoryRoot, "pages-dist");
 const demoOutputDirectory = path.join(outputDirectory, "demo");
+const appOutputDirectory = path.join(outputDirectory, "app");
 const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "SalesTrainerPOC";
 const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER ?? "williamjblodgett";
 const pagesUrl = process.env.GITHUB_PAGES_URL ?? `https://${repositoryOwner.toLowerCase()}.github.io/${repositoryName}/`;
-const secureAppUrl = process.env.SECURE_APP_URL ?? "https://salessim-training-demo.williamjblodgett.chatgpt.site/app";
+const publicAppUrl = `${pagesUrl}app/`;
 
 const { repairedLandingHtml } = await import("../dist/server/revenue-os.js");
 
@@ -31,32 +32,37 @@ assert.doesNotMatch(html, /\$[\d,]+/, "Pages must not publish pricing");
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(path.join(outputDirectory, "brand"), { recursive: true });
-await mkdir(path.join(demoOutputDirectory, "brand"), { recursive: true });
-await mkdir(path.join(demoOutputDirectory, "data"), { recursive: true });
+await cp(sourceDirectory, demoOutputDirectory, { recursive: true });
+await cp(sourceDirectory, appOutputDirectory, { recursive: true });
 await Promise.all([
-  cp(sourceDirectory, demoOutputDirectory, { recursive: true }),
   cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(outputDirectory, "brand", "suadence-logo.webp")),
   cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(demoOutputDirectory, "brand", "suadence-logo.webp")),
+  cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(appOutputDirectory, "brand", "suadence-logo.webp")),
   cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(demoOutputDirectory, "data", "industry-packs.json")),
+  cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(appOutputDirectory, "data", "industry-packs.json")),
   cp(path.join(repositoryRoot, "public", "og-revenue-os.png"), path.join(outputDirectory, "og-revenue-os.png")),
 ]);
 
 const landingPageHtml = repairedLandingHtml
-  .replaceAll('href="/app"', `href="${secureAppUrl}"`)
+  .replaceAll('href="/app"', `href="${publicAppUrl}"`)
   .replaceAll('href="/demo"', `href="${pagesUrl}demo/"`)
   .replaceAll('src="/brand/suadence-logo.webp"', 'src="./brand/suadence-logo.webp"')
   .replace("</head>", `<link rel="canonical" href="${pagesUrl}"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
 const demoPageHtml = html.replace("</head>", `<link rel="canonical" href="${pagesUrl}demo/"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
-const demoScript = script.replace("https://github.com/williamjblodgett/SalesTrainerPOC", secureAppUrl);
+const appPageHtml = html
+  .replace("Interactive Demo", "Revenue OS")
+  .replace("</head>", `<link rel="canonical" href="${publicAppUrl}"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
+assert.doesNotMatch(landingPageHtml, /chatgpt\.site/, "GitHub landing page must not require the private host");
 await Promise.all([
   writeFile(path.join(outputDirectory, "index.html"), landingPageHtml, "utf8"),
   writeFile(path.join(outputDirectory, "404.html"), landingPageHtml, "utf8"),
   writeFile(path.join(demoOutputDirectory, "index.html"), demoPageHtml, "utf8"),
-  writeFile(path.join(demoOutputDirectory, "app.js"), demoScript, "utf8"),
+  writeFile(path.join(appOutputDirectory, "index.html"), appPageHtml, "utf8"),
   writeFile(path.join(outputDirectory, ".nojekyll"), "", "utf8"),
   writeFile(path.join(outputDirectory, "robots.txt"), `User-agent: *\nAllow: /\n`, "utf8"),
 ]);
 
 console.log(`GitHub Pages marketing site built at ${outputDirectory}`);
 console.log(`Main site: ${pagesUrl}`);
+console.log(`Revenue OS: ${publicAppUrl}`);
 console.log(`Interactive demo: ${pagesUrl}demo/`);

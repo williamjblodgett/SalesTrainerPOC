@@ -68,7 +68,7 @@ function frame(content) {
       <a class="brand" href="#/dashboard"><img src="./brand/suadence-logo.webp" alt="Suadence"></a>
       <div class="workspace"><small>DEMO WORKSPACE</small><b>Northstar Revenue Team</b><span>Synthetic data only · manager</span></div>
       <nav class="nav" aria-label="Demo application">${nav.map(([label, links]) => `<div><p class="nav-label">${label}</p>${links.map(([id, title, icon]) => `<a href="#/${id}" class="${active === id ? "active" : ""}"><span class="nav-icon">${icon}</span>${title}</a>`).join("")}</div>`).join("")}</nav>
-      <a class="secure-link" href="https://github.com/williamjblodgett/SalesTrainerPOC" target="_blank" rel="noreferrer"><b>SECURE PRODUCT WORKSPACE</b>Real customer transcripts, authentication, and AI remain server-side. View the source and deployment status →</a>
+      <a class="secure-link" href="../"><b>MAIN SITE</b>Features, security, roadmap, and pricing →</a>
     </aside>
     <section class="surface">
       <header class="topbar"><div class="synthetic"><button class="button-quiet mobile-menu" data-action="menu" aria-label="Open navigation">Menu</button><i></i><b>Interactive public demo</b><span>· no customer data leaves this browser</span></div><div class="top-actions"><button class="button-quiet" data-action="reset">Reset demo</button><a class="button" href="#/practice">Start practice →</a></div></header>
