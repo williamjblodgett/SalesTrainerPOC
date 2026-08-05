@@ -4,6 +4,7 @@ import { requireAppContext } from "@/lib/auth/context";
 import { canManage } from "@/lib/auth/roles";
 import { parseTranscriptFile, TranscriptFileError } from "@/lib/transcripts/file-parser";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { DocumentScannerError } from "@/lib/security/document-scanner";
 
 export const runtime = "nodejs";
 
@@ -28,6 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ...result, storagePath, originalFilename: file.name, originalMimeType: result.mime, originalSizeBytes: file.size });
   } catch (error) {
     if (error instanceof TranscriptFileError) return NextResponse.json({ code: "validation_failed", message: error.message }, { status: 400 });
+    if (error instanceof DocumentScannerError) return NextResponse.json({ code: "internal_error", message: "Secure upload scanning is temporarily unavailable." }, { status: 503 });
     return NextResponse.json({ code: "internal_error", message: "The document could not be processed safely." }, { status: 500 });
   }
 }

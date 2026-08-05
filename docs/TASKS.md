@@ -12,8 +12,10 @@
 - [x] Add evaluator evidence validation, fail-closed mock scoring, and append-only manager overrides.
 - [x] Add adversarial realism and transcript-file tests.
 - [ ] Apply migration `202608050002_realism_remediation.sql` to a disposable Supabase project and run pgTAP isolation tests.
-- [ ] Configure a commercial document scanner before design-partner customer uploads.
-- [ ] Calibrate provider-backed persona, buyer, and evaluator models on the human-scored corpus.
+- [x] Add a fail-closed Cloudmersive Advanced commercial scanner adapter and production configuration contract.
+- [x] Add the live persona/buyer/evaluator calibration harness and two-reviewer release thresholds.
+- [ ] Supply the Cloudmersive key and verify a real clean/quarantine scan in the canonical environment.
+- [ ] Run the live calibration harness on the licensed human-scored corpus.
 - [ ] Add Realtime/WebRTC voice after the text realism gate passes.
 
 ## 2026-08-04 interactive demo and persona engine
@@ -29,7 +31,7 @@
 - [ ] Apply the new Supabase migration to the production project.
 - [ ] Configure the canonical Vercel project, runtime values, and domain.
 - [x] Add server-side TXT/DOCX/PDF parsing, signature verification, safety scanning, PII redaction, and 20 MB enforcement.
-- [ ] Add durable asynchronous ingestion jobs, commercial malware-scanner adapter, and provider OAuth.
+- [ ] Add durable asynchronous ingestion jobs and provider OAuth.
 - [ ] Complete production voice persistence, monitoring, and launch compliance review.
 
 ## Revenue OS V1

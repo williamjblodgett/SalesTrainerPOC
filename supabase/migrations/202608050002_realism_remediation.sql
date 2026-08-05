@@ -24,9 +24,18 @@ create policy transcript_originals_manager_delete on storage.objects for delete 
 
 drop policy if exists transcript_sources_select on public.transcript_sources;
 drop policy if exists transcript_segments_select on public.transcript_segments;
+drop policy if exists persona_drafts_select on public.persona_drafts;
+drop policy if exists persona_source_links_select on public.persona_source_links;
+drop policy if exists persona_versions_select on public.persona_versions;
 create policy transcript_sources_manager_select on public.transcript_sources for select
   using (public.has_org_role(organization_id, array['owner','manager']::public.organization_role[]));
 create policy transcript_segments_manager_select on public.transcript_segments for select
+  using (public.has_org_role(organization_id, array['owner','manager']::public.organization_role[]));
+create policy persona_drafts_manager_select on public.persona_drafts for select
+  using (public.has_org_role(organization_id, array['owner','manager']::public.organization_role[]));
+create policy persona_source_links_manager_select on public.persona_source_links for select
+  using (public.has_org_role(organization_id, array['owner','manager']::public.organization_role[]));
+create policy persona_versions_manager_select on public.persona_versions for select
   using (public.has_org_role(organization_id, array['owner','manager']::public.organization_role[]));
 
 alter table public.persona_claim_reviews drop constraint if exists persona_claim_reviews_disposition_check;

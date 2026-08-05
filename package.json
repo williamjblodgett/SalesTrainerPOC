@@ -12,7 +12,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
-    "validate:hosted": "node scripts/validate-hosted-html.mjs"
+    "validate:hosted": "node scripts/validate-hosted-html.mjs",
+    "check:production-env": "node scripts/check-production-env.mjs",
+    "calibrate:openai": "node --conditions=react-server --import tsx scripts/calibrate-openai.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.3",
@@ -26,6 +28,7 @@
     "pdf-parse": "^2.4.5",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },
@@ -39,6 +42,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
+    "tsx": "^4.23.5",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

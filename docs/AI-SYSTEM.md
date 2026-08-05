@@ -26,3 +26,5 @@ All text providers use the Responses API and structured outputs validated with Z
 ## Realtime voice
 
 Browser voice uses WebRTC. The browser sends its SDP offer to a SalesSim server endpoint; that endpoint combines the offer with server-owned buyer instructions and opens the OpenAI Realtime call using the standard API key. The browser receives only the SDP answer. `OPENAI_REALTIME_MODEL` controls the model, and credential-free deployments fall back to a clearly bounded browser voice demonstration. Audio is not stored by default; transcript events feed the same post-call evaluator used by text sessions.
+
+Production Realtime remains release-gated. `ENABLE_REALTIME_VOICE=true` is ignored unless `TEXT_REALISM_BENCHMARK_STATUS=passed`; the benchmark requires a licensed, two-reviewer corpus and the thresholds in `calibration/README.md`. The current official unified WebRTC flow uses the server-owned standard key at `/v1/realtime/calls`; that key is never returned to the browser.

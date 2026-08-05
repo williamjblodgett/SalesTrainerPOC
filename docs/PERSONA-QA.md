@@ -31,7 +31,7 @@ Provider-backed model runs remain opt-in because model credentials and customer 
 ## Remaining external launch gates
 
 - Apply the Supabase migrations and run `supabase test db` against a disposable hosted project to prove live RLS isolation. The SQL test is committed, but this workspace has no production Supabase credentials.
-- Connect a commercial malware-scanning service for defense in depth. The built-in scan blocks known test markers and active PDF/DOCX content, but it is not represented as a full antivirus product.
+- The canonical app now has a fail-closed Cloudmersive Advanced scanner adapter that blocks malware, invalid files, scripts, macros, password-protected files, unsafe archives, and mismatched formats. A real provider key and clean/quarantine production smoke test are still required; the built-in scanner remains development-only.
 - Complete legal review of consent language, DPA, privacy notice, retention defaults, data residency, and subprocessors.
-- Run provider-backed persona calibration on a human-labeled, licensed transcript corpus and measure precision, conflict recall, manager edit distance, and demographic-bias deltas.
+- Run `pnpm calibrate:openai` on the human-labeled, licensed transcript corpus. The committed gate requires two reviewers, 50 evaluator transcripts, 10 buyer paths, 10 persona cases, evidence fidelity, bounded score error, and zero forbidden-disclosure tolerance before voice can be enabled.
 - Finish provider OAuth, asynchronous backfills, observability, incident response, SSO/SCIM, and production voice metering before enterprise GA.

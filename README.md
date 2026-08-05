@@ -39,6 +39,8 @@ The hosted D1 worker remains a compatibility preview during migration. New trans
 
 See `.env.example`. OpenAI model IDs are separately configurable for evidence/scenario work, buyer simulation, evaluation, and Realtime voice. Provider and service keys stay server-side.
 
+Canonical hosting and environment promotion are documented in `docs/DEPLOYMENT.md`.
+
 ## Commands
 
 - `pnpm dev` — local application
@@ -63,7 +65,7 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 ## Current limitations
 
 - GitHub Pages processes synthetic data only and intentionally cannot run server-side AI or customer authentication.
-- The secure Transcript Lab accepts pasted text and scanned TXT/DOCX/PDF files. A commercial malware-scanner adapter and connector OAuth remain launch gates for external customer data.
+- The secure Transcript Lab accepts pasted text and scanned TXT/DOCX/PDF files. Production upload processing now requires the Cloudmersive Advanced scanner and fails closed without it; a provider credential and production smoke test remain launch gates for external customer data.
 - The Vercel and Supabase production environments still require project credentials and the latest migration to be applied.
 - The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
 - The D1-hosted asset outputs and graph extraction remain deterministic compatibility demonstrations and are not the canonical evidence engine.

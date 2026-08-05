@@ -5,6 +5,7 @@ import mammoth from "mammoth";
 import { PDFParse } from "pdf-parse";
 
 import { redactSensitiveText } from "@/lib/security/pii-redaction";
+import { createDocumentScanner, DocumentScannerError } from "@/lib/security/document-scanner";
 
 export const MAX_TRANSCRIPT_BYTES = 20 * 1024 * 1024;
 const MAX_EXTRACTED_CHARACTERS = 200_000;
@@ -25,23 +26,22 @@ function extension(name: string) {
   return name.toLowerCase().split(".").pop() ?? "";
 }
 
-function scanForMalware(buffer: Uint8Array) {
-  const preview = new TextDecoder("latin1").decode(buffer.slice(0, Math.min(buffer.length, 2_000_000)));
-  const unsafe = ["EICAR-STANDARD-ANTIVIRUS-TEST-FILE", "/JavaScript", "/OpenAction", "vbaProject.bin"];
-  const match = unsafe.find((marker) => preview.includes(marker));
-  if (match) throw new TranscriptFileError("The file was quarantined by the document safety scan.");
-  return { provider: "built-in-document-safety", status: "passed" as const };
-}
-
 export async function parseTranscriptFile(file: File) {
   if (!file.size || file.size > MAX_TRANSCRIPT_BYTES) throw new TranscriptFileError("Transcript files must be between 1 byte and 20 MB.");
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
   const ext = extension(file.name);
   const detected = await fileTypeFromBuffer(bytes);
   const mime = detected?.mime ?? (ext === "txt" ? "text/plain" : "");
   const extensions = allowedTypes.get(mime);
   if (!extensions || !extensions.includes(ext)) throw new TranscriptFileError("The file extension and detected document type do not match an allowed TXT, DOCX, or PDF transcript.");
-  const scan = scanForMalware(bytes);
+  let scan;
+  try {
+    scan = await createDocumentScanner().scan({ buffer, fileName: file.name, mime });
+  } catch (error) {
+    if (error instanceof DocumentScannerError && error.reason === "quarantined") throw new TranscriptFileError(error.message);
+    throw error;
+  }
 
   let rawText = "";
   if (mime === "text/plain") rawText = new TextDecoder("utf-8", { fatal: false }).decode(bytes);

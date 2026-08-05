@@ -4,6 +4,8 @@
 
 The deployed Sites build is suitable as a private, authenticated product demonstration and controlled design-partner pilot. It is not represented as generally available enterprise SaaS until the external controls below are completed.
 
+The repository now includes manual, environment-scoped workflows for the canonical Vercel deployment and hosted Supabase migration/pgTAP validation. GitHub environments exist, but their provider secrets and the corresponding Vercel/Supabase projects are not yet connected.
+
 The runtime exposes `GET /api/revenue-os/readiness`. That response reports configuration state; it does not convert missing legal, identity, or provider authorization into a green status.
 
 ## Implemented controls
