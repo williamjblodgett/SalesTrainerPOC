@@ -11,7 +11,7 @@ The product retains the original sales-practice vertical slice while expanding i
 - Public interactive synthetic demo: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
 - Secure private pilot: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
 
-GitHub Pages now provides a complete hash-routed demo: seven industry packs, 35 scenarios, local transcript-to-persona extraction, practice, evidence scoring, coaching, analytics, and browser voice input. It intentionally accepts synthetic data only. The Next.js application is the canonical secure surface for authentication, tenant data, server-side AI, uploads, and production voice.
+GitHub Pages provides a hash-routed synthetic preview with seven industry packs, 35 scenarios, one locked transcript/persona evidence fixture, scripted practice, explicitly illustrative local scoring, coaching, and analytics. It does not accept or infer from customer transcripts. The Next.js application is the canonical secure surface for authentication, private uploads, governed persona extraction, stateful text practice, evaluation, and future production voice.
 
 ## Stack
 
@@ -33,7 +33,7 @@ Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgr
 5. Run `pnpm install` and `pnpm dev`.
 6. Open `http://localhost:3000/app`.
 
-The hosted worker in `dist/server/index.js` serves the category landing page, the interactive Revenue OS workspace, a synthetic Demo Lab at `/demo`, and D1-backed APIs. The previous sales-training workspace remains available at `/legacy` during migration.
+The hosted D1 worker remains a compatibility preview during migration. New transcript, persona, practice, and evaluation work belongs only in Next.js/Supabase; `/legacy` is not approved for design-partner customer data.
 
 ## Environment variables
 
@@ -63,10 +63,10 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 ## Current limitations
 
 - GitHub Pages processes synthetic data only and intentionally cannot run server-side AI or customer authentication.
-- The secure Transcript Lab accepts pasted text and TXT directly; production DOCX/PDF parsing and connector OAuth remain follow-up work.
+- The secure Transcript Lab accepts pasted text and scanned TXT/DOCX/PDF files. A commercial malware-scanner adapter and connector OAuth remain launch gates for external customer data.
 - The Vercel and Supabase production environments still require project credentials and the latest migration to be applied.
 - The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
-- The 20 hosted asset outputs and graph extraction use deterministic contracts. Provider-backed structured generation will use the same validated boundaries when credentials are configured.
+- The D1-hosted asset outputs and graph extraction remain deterministic compatibility demonstrations and are not the canonical evidence engine.
 - Revenue DNA, Knowledge Drift, and Content Gap use deterministic calculations and minimum cross-call evidence thresholds. Outcome calibration still requires representative customer data and approved success metrics.
 - The hosted preview derives a single authorized organization server-side. The canonical Next.js/Supabase application owns production authentication, membership resolution, and RLS.
 - Security architecture is designed for enterprise review, but SOC 2, SSO/SCIM, regional data residency, a signed DPA, and jurisdiction-specific legal review are roadmap items, not current certifications.

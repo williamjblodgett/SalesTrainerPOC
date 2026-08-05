@@ -1,6 +1,6 @@
 # Testing
 
-`pnpm test` covers schemas, rubric totals, hidden-data filtering, authorization invariants, mock contracts, deterministic scoring, the 20-asset invariant, Revenue DNA, asset governance, synthetic transcript labeling, graph normalization, normalized connector validation, HMAC tamper detection, and webhook replay rejection.
+`pnpm test` covers schemas, rubric totals, hidden-data filtering, transcript scanning/redaction, exact persona spans, insufficient-evidence negative controls, exact claim governance, stateful buyer disclosure/repetition/manipulation behavior, evaluator evidence fidelity, deterministic override scoring, the 20-asset invariant, Revenue DNA, connector validation, and webhook replay rejection.
 
 Release gates are:
 

@@ -1,5 +1,21 @@
 # Tasks
 
+## 2026-08-05 realism and evidence remediation
+
+- [x] Make GitHub Pages fixture-only and label local scoring/practice as synthetic.
+- [x] Add exact evidence spans, semantic deterministic classification, and insufficient-evidence negative controls.
+- [x] Require exact accept/edit/reject review sets and publish accepted projections only.
+- [x] Add manager-only transcript RLS, private retained originals, authoritative evidence claims, and lineage deletion.
+- [x] Add immutable persona references to scenario versions and practice sessions.
+- [x] Add stateful text BuyerActor contracts, guarded disclosure, objection state, repetition, patience, and ending behavior.
+- [x] Add authenticated session start/turn/complete/evaluate/read APIs with idempotent atomic turn persistence.
+- [x] Add evaluator evidence validation, fail-closed mock scoring, and append-only manager overrides.
+- [x] Add adversarial realism and transcript-file tests.
+- [ ] Apply migration `202608050002_realism_remediation.sql` to a disposable Supabase project and run pgTAP isolation tests.
+- [ ] Configure a commercial document scanner before design-partner customer uploads.
+- [ ] Calibrate provider-backed persona, buyer, and evaluator models on the human-scored corpus.
+- [ ] Add Realtime/WebRTC voice after the text realism gate passes.
+
 ## 2026-08-04 interactive demo and persona engine
 
 - [x] Replace the single-page GitHub Pages preview with a hash-routed interactive demo.

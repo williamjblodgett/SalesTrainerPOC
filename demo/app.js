@@ -29,6 +29,11 @@ const initialState = {
 
 const stored = JSON.parse(localStorage.getItem("suadence-demo") || "null");
 const state = { ...initialState, ...(stored && typeof stored === "object" ? stored : {}) };
+if (state.persona && !Array.isArray(state.persona.claims)) {
+  state.persona = null;
+  state.claimReviews = {};
+  state.personaHistory = [];
+}
 const save = () => localStorage.setItem("suadence-demo", JSON.stringify(state));
 const routeNames = ["dashboard", "transcripts", "personas", "industries", "scenarios", "practice", "results", "coaching", "analytics", "settings"];
 const route = () => {
@@ -101,30 +106,34 @@ function scenarios() {
     <section class="grid-2"><article class="card"><div class="section-title"><h2>Buyer intelligence</h2><span class="tag">Buyer-private</span></div><div class="claim-grid">${pack.signals.map((signal, index) => `<div class="claim"><span>Signal ${index + 1}</span><b>${signal}</b><small class="confidence">Used only when naturally revealed</small></div>`).join("")}</div></article><article class="card"><div class="section-title"><h2>Responsible-selling guardrails</h2></div><div class="list">${pack.guardrails.map((item, index) => `<div class="row"><span class="row-mark">${index + 1}</span><div><h3>${item}</h3><p>Applied to evaluator evidence and unsupported-claim review.</p></div></div>`).join("")}</div></article></section>`);
 }
 
-function transcripts() {
-  return frame(`${pageHead("Transcript intelligence", "Turn conversations into governed buyer evidence.", "Paste a synthetic transcript or use the included sample. This public demo analyzes locally; the secure product adds consent records, private storage, multi-call clustering, and AI structured output.")}
-    <div class="workflow"><div class="done"><b>1 · Consent</b>Synthetic sample verified</div><div><b>2 · Normalize</b>Speakers and turns</div><div><b>3 · Extract</b>Evidence-backed claims</div><div><b>4 · Review</b>Human approval</div></div>
-    <section class="grid-2"><form class="card form-grid" id="transcriptForm"><div class="drop"><strong>Local transcript workspace</strong><span>Use synthetic or de-identified content in this public demo.</span></div><label>Industry<select id="transcriptIndustry">${packs.map((pack) => `<option value="${pack.id}" ${pack.id === state.industryId ? "selected" : ""}>${pack.name}</option>`).join("")}</select></label><label>Transcript<textarea id="transcriptText" rows="16" required>${clean(state.transcript)}</textarea></label><div class="actions"><button type="button" class="button-quiet" data-action="sample">Restore sample</button><button class="button" type="submit">Create persona from evidence →</button></div></form><aside class="card"><span class="eyebrow">WHAT THE ENGINE LOOKS FOR</span><h2>More than demographics</h2><div class="list">${["Responsibilities and measurable KPIs","Priorities, pains, symptoms, and business impact","Objections, triggers, and underlying concerns","Decision process, stakeholders, timing, and alternatives","Communication style, trust, patience, and risk posture","Vocabulary, evidence coverage, conflicts, and assumptions"].map((item,index)=>`<div class="row"><span class="row-mark">${index+1}</span><div><h3>${item}</h3><p>Every assertion retains a source-turn reference and confidence.</p></div></div>`).join("")}</div></aside></section>`);
-}
-
 function extractPersona(transcript, pack) {
+  if (transcript.trim() !== defaultTranscript.trim() || pack.id !== "b2b-saas") throw new Error("The public demo supports only its verified synthetic fixture.");
   const lines = transcript.split(/\n+/).map((line) => line.trim()).filter(Boolean);
-  const buyerLines = lines.filter((line) => /^buyer:/i.test(line));
-  const quote = (pattern, fallback) => buyerLines.find((line) => pattern.test(line))?.replace(/^buyer:\s*/i, "") || fallback;
-  const text = transcript.toLowerCase();
-  const nameMatch = transcript.match(/(?:Seller:\s*)?([A-Z][a-z]+),\s+(?:thanks|appreciate)/);
+  const buyerLines = lines.filter((line) => /^buyer:/i.test(line)).map((line) => line.replace(/^buyer:\s*/i, ""));
+  const claim = (label, pattern, support = "observed") => {
+    const turnIndex = lines.findIndex((line) => /^buyer:/i.test(line) && pattern.test(line));
+    const excerpt = turnIndex >= 0 ? lines[turnIndex].replace(/^buyer:\s*/i, "") : "";
+    return { label, value: excerpt || "Unknown", support: excerpt ? support : "unknown", source: "Verified Northstar synthetic fixture", turnId: excerpt ? `T${turnIndex + 1}` : null, excerpt };
+  };
   return {
-    name: nameMatch?.[1] || currentScenario().buyer.split(" ")[0] || "Jordan",
-    title: currentScenario().buyerTitle,
+    name: "Jordan Lee",
+    title: "VP of Sales Operations",
     industry: pack.name,
-    style: /skeptic|already|not sure|concern/i.test(transcript) ? "Direct, skeptical, evidence-oriented" : "Pragmatic and outcome-oriented",
-    priorities: pack.signals.slice(0, 3),
-    pain: text.includes("late") || text.includes("reconcil") ? "Inconsistent workflow creates delay and manual reconciliation" : `Unresolved ${pack.signals[0]} pressure`,
-    impact: quote(/leadership|cost|time|risk|downtime|patient|budget/i, "The business impact requires a stronger follow-up question."),
-    objection: quote(/already|don't|cannot|price|fee|concern|skeptic/i, `The buyer is concerned about ${pack.signals[1]}.`),
-    decision: "Requires a validated next step with the appropriate operational and economic stakeholders.",
-    confidence: Math.min(96, 62 + buyerLines.length * 6),
+    style: "Manager-authored synthetic template",
+    priorities: [],
+    pain: buyerLines[1],
+    impact: buyerLines[2],
+    objection: buyerLines[0],
+    decision: buyerLines[3],
+    confidence: 100,
     evidenceTurns: buyerLines.length,
+    claims: [
+      claim("Current workflow and pain", /regions still send spreadsheets/i),
+      claim("Business and emotional impact", /leadership questions/i),
+      claim("Surface objection", /already report through our crm/i),
+      claim("Mutual next step", /bring a simple integration view/i),
+      { label: "Communication style", value: "Direct, skeptical, time-conscious", support: "industry_template", source: "Manager-authored synthetic scenario", turnId: null, excerpt: "" },
+    ],
   };
 }
 
@@ -155,14 +164,13 @@ function practice() {
   if (!state.turns.length) state.turns = [{ role: "buyer", content: `Thanks for joining. I have about ${scenario.difficulty === "easy" ? "twenty" : "ten"} minutes—what did you want to cover?`, at: Date.now() }];
   if (!state.startedAt) state.startedAt = Date.now();
   save();
-  return frame(`${pageHead("Live simulation", scenario.title, "The buyer responds from private persona state. No score, coaching, or hidden information appears during the call.", '<button class="button-quiet" data-action="newCall">Restart</button><button class="button danger" data-action="endCall">End call</button>')}
+  return frame(`${pageHead("Scripted synthetic simulation", scenario.title, "This Pages preview uses local illustrative buyer rules. The authenticated product uses the server-side stateful BuyerActor.", '<button class="button-quiet" data-action="newCall">Restart</button><button class="button danger" data-action="endCall">End call</button>')}
     <section class="practice-layout"><aside class="card brief"><span class="eyebrow">REP-VISIBLE BRIEF</span><h2>${scenario.buyer}</h2><p>${scenario.buyerTitle} · ${pack.name}</p><span class="tag ${difficultyClass(scenario.difficulty)}">${scenario.difficulty}</span><h3>Call objective</h3><p>${scenario.objective}</p><h3>Known facts</h3><ul><li>The meeting followed an initial outreach.</li><li>The buyer is time-conscious.</li><li>Your goal is a credible next step, not an automatic purchase.</li></ul><p class="evidence">Buyer pains, triggers, decision details, and the rubric remain server-private.</p></aside>
-    <article class="card conversation"><header class="conversation-head"><div class="buyer-id"><div class="avatar">${initials(scenario.buyer)}</div><div><b>${scenario.buyer}</b><span>${scenario.buyerTitle} · simulated buyer</span></div></div><span class="timer" id="timer">00:00</span></header><div class="turns" id="turns">${state.turns.map((turn,index)=>`<div class="turn ${turn.role}"><div class="bubble">${clean(turn.content)}</div><small>${turn.role === "seller" ? "You" : scenario.buyer} · T${index+1}</small></div>`).join("")}</div><form class="composer" id="messageForm"><button class="voice" type="button" data-action="voice" aria-label="Use voice input">●</button><input id="messageInput" autocomplete="off" maxlength="1200" placeholder="Respond as the seller…" aria-label="Seller message"><button class="button" type="submit">Send</button></form></article></section>`);
+    <article class="card conversation"><header class="conversation-head"><div class="buyer-id"><div class="avatar">${initials(scenario.buyer)}</div><div><b>${scenario.buyer}</b><span>${scenario.buyerTitle} · scripted synthetic buyer</span></div></div><span class="timer" id="timer">00:00</span></header><div class="turns" id="turns">${state.turns.map((turn,index)=>`<div class="turn ${turn.role}"><div class="bubble">${clean(turn.content)}</div><small>${turn.role === "seller" ? "You" : scenario.buyer} · T${index+1}</small></div>`).join("")}</div><form class="composer" id="messageForm"><button class="voice" type="button" data-action="voice" aria-label="Dictate seller message">●</button><input id="messageInput" autocomplete="off" maxlength="1200" placeholder="Respond as the seller…" aria-label="Seller message"><button class="button" type="submit">Send</button></form></article></section>`);
 }
 
 function calculateScore() {
   const seller = state.turns.filter((turn) => turn.role === "seller");
-  const joined = seller.map((turn) => turn.content.toLowerCase()).join(" ");
   const checks = [
     [/agenda|time|cover|useful/, "Opening and agenda"],
     [/how|what|walk me|tell me/, "Question quality"],
@@ -187,8 +195,8 @@ function calculateScore() {
 function results() {
   if (!state.score) return frame(`${pageHead("Evidence scorecard", "Complete a practice call to see results.", "Scores are calculated independently from observable transcript evidence.", '<a class="button" href="#/practice">Start practice →</a>')}<section class="card empty"><div><h2>No completed call yet</h2><p>Your scorecard will preserve transcript evidence, rationale, and a specific next action for every criterion.</p></div></section>`);
   const score = state.score;
-  return frame(`${pageHead("Evidence-first results", score.status === "complete" ? "Discovery call scorecard" : "More evidence required", "The application calculates the final score deterministically from the published rubric.", '<a class="button-quiet" href="#/practice">Retry scenario</a><a class="button" href="#/coaching">Open coaching plan</a>')}
-    <section class="card score-hero"><div class="score-ring" style="--score:${score.overall}%"><strong>${score.overall}</strong></div><div><span class="tag ${score.status === "complete" ? "green" : "orange"}">${score.status.replace("_"," ")}</span><h2>${currentScenario().title}</h2><p>${currentScenario().buyer} · ${currentPack().name} · ${state.turns.length} transcript turns</p><p><b>Outcome:</b> ${score.overall >= 70 ? "Advanced to a credible next step" : "Neutral — improvement required"}</p></div></section>
+  return frame(`${pageHead("Illustrative synthetic results", score.status === "complete" ? "Local practice preview" : "More evidence required", "This Pages score is a transparent local heuristic for the synthetic demo—not the production evaluator.", '<a class="button-quiet" href="#/practice">Retry scenario</a><a class="button" href="#/coaching">Open coaching plan</a>')}
+    <section class="card score-hero"><div class="score-ring" style="--score:${score.overall}%"><strong>${score.overall}</strong></div><div><span class="tag orange">SYNTHETIC HEURISTIC</span><h2>${currentScenario().title}</h2><p>${currentScenario().buyer} · ${currentPack().name} · ${state.turns.length} transcript turns</p><p><b>Production outcome:</b> Not evaluated in this static preview.</p></div></section>
     <section class="grid-2"><article class="card"><div class="section-title"><h2>Criterion evidence</h2><span class="tag">Weights total 100</span></div>${score.criteria.map((item)=>`<div class="criterion"><div><b>${item.name}</b><p>${item.weight}% weight · ${item.turnId}</p></div><div><div class="progress"><i style="width:${item.score/4*100}%"></i></div><p>“${clean(item.evidence.slice(0,145))}”</p></div><strong>${item.score}/4</strong></div>`).join("")}</article><aside class="card"><div class="section-title"><h2>Priority coaching</h2></div><div class="list">${score.criteria.filter(item=>item.score<3).slice(0,3).map((item,index)=>`<div class="row"><span class="row-mark">${index+1}</span><div><h3>${item.name}</h3><p>${item.score === 0 ? "Not demonstrated. Ask a direct, relevant question and follow the answer." : "Move beyond the topic mention to a specific, measurable discovery."}</p></div></div>`).join("")}</div><article class="card insight"><span class="eyebrow">NEXT DRILL</span><p>Practice moving from an observed symptom to operational and financial impact without leading the buyer.</p></article></aside></section>`);
 }
 
@@ -209,22 +217,21 @@ function settings() {
 }
 
 function transcriptsV2() {
-  const sources = state.transcriptSources?.length ? state.transcriptSources : [{ id: "synthetic-1", title: "Northstar discovery", content: state.transcript, status: "ready" }];
-  const buyerTurns = sources.reduce((count, source) => count + source.content.split(/\n+/).filter((line) => /^buyer:/i.test(line.trim())).length, 0);
-  return frame(`${pageHead("Transcript intelligence", "Build personas from a body of customer evidence.", "Add multiple synthetic or de-identified calls, inspect source quality, and create a governed persona draft. Secure deployments add file scanning, PII redaction, signed storage, and atomic database lineage.")}
-    <div class="workflow"><div class="done"><b>1 · Add evidence</b>${sources.length} source${sources.length === 1 ? "" : "s"}</div><div class="done"><b>2 · Privacy check</b>Synthetic workspace</div><div class="${buyerTurns >= 2 ? "done" : ""}"><b>3 · Preflight</b>${buyerTurns} buyer turns</div><div><b>4 · Manager review</b>Accept or reject claims</div></div>
-    <section class="grid-2"><form class="card form-grid" id="transcriptForm"><div class="section-title"><div><span class="eyebrow">MULTI-CALL COLLECTION</span><h2>Persona evidence sources</h2></div><button type="button" class="button-quiet" data-action="addSource">Add source</button></div><label>Industry<select id="transcriptIndustry">${packs.map((pack) => `<option value="${pack.id}" ${pack.id === state.industryId ? "selected" : ""}>${pack.name}</option>`).join("")}</select></label>${sources.map((source, index) => `<fieldset class="source-card"><legend>Source ${index + 1} · ${clean(source.status)}</legend><label>Source title<input data-source-title="${source.id}" value="${clean(source.title)}" maxlength="100"></label><label>Transcript<textarea data-source-content="${source.id}" rows="9" required>${clean(source.content)}</textarea></label><div class="source-status"><span class="tag green">${source.content.length} characters</span><span>${source.content.split(/\n+/).filter((line) => /^buyer:/i.test(line.trim())).length} buyer turns</span>${sources.length > 1 ? `<button type="button" class="button-quiet" data-remove-source="${source.id}">Remove</button>` : ""}</div></fieldset>`).join("")}<div class="actions"><button type="button" class="button-quiet" data-action="sample">Restore sample</button><button class="button" type="submit">Extract governed claims →</button></div></form><aside class="card"><span class="eyebrow">EVIDENCE QUALITY</span><h2>${sources.length} sources · ${buyerTurns} buyer turns</h2><p class="evidence">Source diversity improves pattern confidence. A clear single-call statement can still be high-confidence, while repeated independent calls improve persona coverage.</p><div class="list">${["Every field is observed, inferred, or unknown","Every observed claim links to a source and turn","Conflicts remain visible for manager resolution","Unknown titles and stakeholders are never invented","Every claim requires accept or reject before approval","Published versions remain immutable"].map((item,index)=>`<div class="row"><span class="row-mark">${index+1}</span><div><h3>${item}</h3><p>Governance is part of the persona, not an afterthought.</p></div></div>`).join("")}</div></aside></section>`);
+  const buyerTurns = defaultTranscript.split(/\n+/).filter((line) => /^buyer:/i.test(line.trim())).length;
+  return frame(`${pageHead("Verified synthetic fixture", "See how governed evidence becomes a persona.", "GitHub Pages uses one locked synthetic transcript. It does not process uploaded customer data or claim to run the production AI extractor.")}
+    <div class="workflow"><div class="done"><b>1 · Fixture</b>Verified synthetic call</div><div class="done"><b>2 · Privacy</b>No customer data</div><div class="done"><b>3 · Lineage</b>${buyerTurns} buyer turns</div><div><b>4 · Review</b>Manager simulation</div></div>
+    <section class="grid-2"><form class="card form-grid" id="transcriptForm"><div class="section-title"><div><span class="eyebrow">SYNTHETIC DATA ONLY</span><h2>Northstar discovery fixture</h2></div><span class="tag green">Locked</span></div><label>Industry<input value="B2B SaaS" readonly></label><label>Transcript<textarea rows="16" readonly>${clean(defaultTranscript)}</textarea></label><div class="actions"><button class="button" type="submit">Load verified persona →</button></div></form><aside class="card"><span class="eyebrow">DEMO BOUNDARY</span><h2>What this proves</h2><p class="evidence">Every observed claim below uses a literal excerpt and stable turn from this fixture. The authenticated Next.js workspace handles real uploads, scanning, consent, retention, AI extraction, and tenant isolation.</p><div class="list">${["Observed claims quote exact buyer turns","Template content is labeled as template content","Unknown information is not invented","Every claim requires manager disposition","The public bundle contains no API key or customer data"].map((item,index)=>`<div class="row"><span class="row-mark">${index+1}</span><div><h3>${item}</h3></div></div>`).join("")}</div></aside></section>`);
 }
 
 function personasV2() {
   const persona = state.persona;
   if (!persona) return personas();
-  const claims = [["Primary pain",persona.pain,"observed"],["Business impact",persona.impact,"observed"],["Likely objection",persona.objection,"observed"],["Decision process",persona.decision,"inferred"],["Priorities",persona.priorities.join(" · "),"observed"],["Communication style",persona.style,"inferred"]];
+  const claims = persona.claims || [];
   const reviewed = Object.keys(state.claimReviews || {}).length;
   const history = state.personaHistory || [];
-  return frame(`${pageHead("Digital-twin persona", `${clean(persona.name)} · ${clean(persona.title)}`, `AI-generated draft · ${reviewed} of ${claims.length} claims reviewed.`, '<button class="button-quiet" data-action="editPersona">Edit evidence</button><button class="button" data-action="approvePersona">Approve reviewed persona</button>')}
-    <section class="card persona-profile"><div class="avatar">${initials(persona.name)}</div><div><span class="tag">AI-generated · in review</span><h2>${clean(persona.name)}</h2><p>${clean(persona.title)} · ${clean(persona.industry)}</p><p><b>${clean(persona.style)}</b> · ${persona.confidence}% evidence coverage · ${(state.transcriptSources || []).length} independent source${(state.transcriptSources || []).length === 1 ? "" : "s"}</p></div></section>
-    <section class="claim-grid">${claims.map(([label,value,support],index)=>`<article class="claim card"><div class="section-title"><span>${label}</span><span class="tag ${support === "observed" ? "green" : "orange"}">${support}</span></div><b>${clean(value)}</b><div class="evidence">Source ${index % Math.max(1,(state.transcriptSources || []).length) + 1} · T${index+2} · “${clean(String(value).slice(0,105))}”</div><span class="confidence">${Math.max(58,persona.confidence-index*3)}% claim confidence</span><div class="claim-actions"><button class="button-quiet ${state.claimReviews?.[index] === "accepted" ? "selected" : ""}" data-claim="${index}" data-disposition="accepted">Accept</button><button class="button-quiet ${state.claimReviews?.[index] === "rejected" ? "selected reject" : ""}" data-claim="${index}" data-disposition="rejected">Reject</button></div></article>`).join("")}</section>
+  return frame(`${pageHead("Verified synthetic persona", `${clean(persona.name)} · ${clean(persona.title)}`, `Curated fixture · ${reviewed} of ${claims.length} claims reviewed.`, '<button class="button-quiet" data-action="editPersona">View source fixture</button><button class="button" data-action="approvePersona">Approve reviewed persona</button>')}
+    <section class="card persona-profile"><div class="avatar">${initials(persona.name)}</div><div><span class="tag">SYNTHETIC FIXTURE · in review</span><h2>${clean(persona.name)}</h2><p>${clean(persona.title)} · ${clean(persona.industry)}</p><p>This fixture demonstrates governance; it is not an AI extraction result.</p></div></section>
+    <section class="claim-grid">${claims.map((item,index)=>`<article class="claim card"><div class="section-title"><span>${clean(item.label)}</span><span class="tag ${item.support === "observed" ? "green" : "orange"}">${clean(item.support)}</span></div><b>${clean(item.value)}</b>${item.excerpt ? `<div class="evidence">${clean(item.source)} · ${clean(item.turnId)} · “${clean(item.excerpt)}”</div>` : `<div class="evidence">${clean(item.source)} · not transcript evidence</div>`}<div class="claim-actions"><button class="button-quiet ${state.claimReviews?.[index] === "accepted" ? "selected" : ""}" data-claim="${index}" data-disposition="accepted">Accept ${clean(item.label)}</button><button class="button-quiet ${state.claimReviews?.[index] === "rejected" ? "selected reject" : ""}" data-claim="${index}" data-disposition="rejected">Reject ${clean(item.label)}</button></div></article>`).join("")}</section>
     <section class="card version-panel"><div class="section-title"><h2>Version history</h2><span class="tag">Immutable lineage</span></div>${history.length ? history.map((item,index)=>`<div class="version-row"><b>v${history.length-index}.0</b><span>${clean(item.summary)}</span><small>${clean(item.at)}</small></div>`).join("") : '<p class="evidence">Approve all claims to create version 1. Future transcript collections produce a side-by-side change record.</p>'}</section>`);
 }
 
@@ -258,19 +265,14 @@ function bind() {
   }));
   document.querySelector("#transcriptForm")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const sources = Array.from(document.querySelectorAll("[data-source-content]")).map((textarea) => {
-      const id = textarea.dataset.sourceContent;
-      return { id, title: document.querySelector(`[data-source-title="${id}"]`).value.trim(), content: textarea.value.trim(), status: "ready" };
-    });
-    if (sources.some((source) => source.content.length < 120)) return toast("Each source needs at least 120 characters of synthetic evidence.");
-    if (new Set(sources.map((source) => source.title.toLowerCase())).size !== sources.length) return toast("Give every source a unique title.");
-    if (sources.reduce((count, source) => count + source.content.split(/\n+/).filter((line) => /^buyer:/i.test(line)).length, 0) < 2) return toast("At least two buyer turns are required.");
-    state.industryId = document.querySelector("#transcriptIndustry").value;
+    const sources = [{ id: "verified-northstar-fixture", title: "Northstar synthetic discovery", content: defaultTranscript, status: "verified_synthetic" }];
+    state.industryId = "b2b-saas";
     state.scenarioId = currentPack().scenarios[0].id;
     state.transcriptSources = sources;
-    state.transcript = sources.map((source) => source.content).join("\n");
+    state.transcript = defaultTranscript;
     state.persona = extractPersona(state.transcript, currentPack());
     state.claimReviews = {};
+    state.personaHistory = [];
     save(); location.hash = "/personas";
   });
   document.querySelectorAll("[data-remove-source]").forEach((button) => button.addEventListener("click", () => {
@@ -293,10 +295,11 @@ function bind() {
 function action(name) {
   if (name === "menu") return document.querySelector(".shell").classList.toggle("menu-open");
   if (name === "reset") { localStorage.removeItem("suadence-demo"); Object.assign(state, initialState); toast("Synthetic demo data reset."); return render(); }
-  if (name === "sample") { state.transcript = defaultTranscript; state.transcriptSources = [{ id: `synthetic-${Date.now()}`, title: "Northstar discovery", content: defaultTranscript, status: "ready" }]; save(); render(); return toast("Synthetic sample restored."); }
+  if (name === "sample") { state.industryId = "b2b-saas"; state.transcript = defaultTranscript; state.transcriptSources = [{ id: `synthetic-${Date.now()}`, title: "Northstar discovery", content: defaultTranscript, status: "verified_synthetic" }]; state.persona = null; state.personaHistory = []; save(); render(); return toast("Verified synthetic fixture restored."); }
   if (name === "addSource") { state.transcriptSources = [...(state.transcriptSources || []), { id: `synthetic-${Date.now()}`, title: `Discovery transcript ${(state.transcriptSources || []).length + 1}`, content: "", status: "empty" }]; save(); return render(); }
   if (name === "approvePersona") {
-    if (Object.keys(state.claimReviews || {}).length < 6) return toast("Accept or reject all six claims before approval.");
+    const claimCount = state.persona?.claims?.length ?? 0;
+    if (Object.keys(state.claimReviews || {}).length !== claimCount) return toast(`Accept or reject all ${claimCount} claims before approval.`);
     state.personaHistory = [{ summary: `${Object.values(state.claimReviews).filter((value) => value === "accepted").length} accepted claims · ${(state.transcriptSources || []).length} sources`, at: new Date().toLocaleDateString() }, ...(state.personaHistory || [])]; save(); render(); return toast("Persona approved. Immutable version and evidence lineage preserved.");
   }
   if (name === "editPersona") { location.hash = "/transcripts"; return; }

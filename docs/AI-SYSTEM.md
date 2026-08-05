@@ -2,7 +2,7 @@
 
 ## Transcript-to-persona engine
 
-The persona engine is an upstream intelligence boundary. It normalizes consent-confirmed transcripts into stable turns, produces structured persona claims with exact source/turn/excerpt citations, and validates those citations before persistence. Conflicts, assumptions, missing information, and evidence coverage remain visible. A manager must approve the draft before an immutable persona version can power a scenario.
+The persona engine is an upstream intelligence boundary. It normalizes consent-confirmed transcripts into stable turns, quarantines seller instructions and unknown speakers, and produces atomic claims with exact source, turn, excerpt, and character spans. Unsupported calls return insufficient evidence. Managers accept, edit, or reject the exact claim set; only accepted projections enter immutable persona versions or scenarios.
 
 Transcript contents are untrusted reference data, never model instructions. Deterministic mock mode uses the same PersonaDraft schema and evidence validator without making an external call.
 
@@ -18,10 +18,10 @@ Evidence extraction, asset generation, buyer acting, and evaluation use separate
 Three responsibilities remain intentionally separate:
 
 1. Scenario Compiler converts structured manager inputs and untrusted reference material into a validated `ScenarioSpec`.
-2. Buyer Actor receives private scenario state and transcript context, and returns only a visible buyer message plus private state updates.
+2. Buyer Actor receives the immutable scenario/persona version, prior turns, and server-private state. It returns one visible message plus validated private state transitions, disclosures, objection events, and end action.
 3. Post-Call Evaluator runs only after completion and returns evidence linked to stable turn IDs. Application code calculates the weighted score.
 
-All real providers use the Responses API and structured outputs validated with Zod. The buyer never sees the rubric, the evaluator never joins the conversation, and uploaded content is quoted as untrusted reference material. Model identifiers come only from environment configuration.
+All text providers use the Responses API and structured outputs validated with Zod. Application code rejects unearned disclosures and evaluator citations that do not exactly match seller turns. The buyer never sees the rubric, the evaluator never joins the conversation, and model identifiers come only from environment configuration.
 
 ## Realtime voice
 

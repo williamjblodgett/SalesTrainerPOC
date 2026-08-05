@@ -28,6 +28,9 @@ export async function POST(request: Request) {
         return { ...source, content: redacted.text };
       }),
     };
+    for (const source of safeInput.transcripts) {
+      if (source.storagePath && !source.storagePath.startsWith(`${context.organization.id}/`)) return NextResponse.json({ code: "unauthorized", message: "Transcript storage reference is invalid." }, { status: 403 });
+    }
     const result = await new OpenAIPersonaEngine().synthesize(safeInput);
     const supabase = await createSupabaseServerClient();
     let personaId: string | null = null;
@@ -36,10 +39,14 @@ export async function POST(request: Request) {
         sourceId: source.sourceId,
         title: source.title,
         consentStatus: source.consentStatus,
-        provider: "paste",
+        provider: source.provider ?? (source.storagePath ? "upload" : "paste"),
+        storagePath: source.storagePath,
+        originalFilename: source.originalFilename,
+        originalMimeType: source.originalMimeType,
+        originalSizeBytes: source.originalSizeBytes,
         contentHash: createHash("sha256").update(source.content).digest("hex"),
-        piiFindings: piiBySource.get(source.sourceId) ?? [],
-        scannerStatus: "not_applicable",
+        piiFindings: source.piiFindings ?? piiBySource.get(source.sourceId) ?? [],
+        scannerStatus: source.scannerStatus ?? (source.storagePath ? "passed" : "not_applicable"),
         turns: normalizeTranscript(source.content).map((turn, index) => ({ ...turn, sequence: index + 1 })),
       }));
       const { data, error } = await supabase.rpc("create_persona_draft_with_lineage", {
