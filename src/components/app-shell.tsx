@@ -33,6 +33,10 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <small>{context.role}</small>
         </div>
         <AppNavigation role={context.role} />
+        <Link href="/" className="main-site-link">
+          <span aria-hidden="true">←</span>
+          Main site
+        </Link>
         <div className="rail-account">
           <div className="account-avatar" aria-hidden="true">
             {initials}
@@ -62,7 +66,12 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
               height={62}
             />
           </Link>
-          <span className="role-chip">{context.role}</span>
+          <div className="mobile-bar-actions">
+            <Link href="/" className="mobile-main-site-link">
+              Main site
+            </Link>
+            <span className="role-chip">{context.role}</span>
+          </div>
         </header>
         <main className="app-main">{children}</main>
       </div>

@@ -167,6 +167,20 @@ label { display: grid; gap: 0.45rem; color: var(--ink); font-size: 0.78rem; font
 }
 .nav-group a:hover, .nav-group a.active { background: #12355f; color: #fff; }
 .nav-group a.active { box-shadow: inset 3px 0 var(--green); }
+.main-site-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+  border: 1px solid #315577;
+  border-radius: 0.65rem;
+  padding: 0.62rem 0.7rem;
+  color: #dceafb;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+.main-site-link:hover { border-color: var(--green); background: #12355f; color: #fff; }
 .rail-account {
   display: flex;
   align-items: center;
@@ -193,6 +207,8 @@ label { display: grid; gap: 0.45rem; color: var(--ink); font-size: 0.78rem; font
 .app-surface { min-width: 0; }
 .app-main { width: 100%; max-width: 1480px; margin: 0 auto; padding: 2rem 2.4rem 4rem; }
 .mobile-bar { display: none; }
+.mobile-bar-actions { display: flex; align-items: center; gap: 0.65rem; }
+.mobile-main-site-link { color: var(--teal); font-size: 0.72rem; font-weight: 800; }
 
 .eyebrow {
   display: inline-block;
