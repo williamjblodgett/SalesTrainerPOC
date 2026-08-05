@@ -6,6 +6,10 @@ import { requireAppContext } from "@/lib/auth/context";
 
 import { AppNavigation } from "./app-navigation";
 
+const mainSiteUrl =
+  process.env.NEXT_PUBLIC_MAIN_SITE_URL ??
+  "https://williamjblodgett.github.io/SalesTrainerPOC/";
+
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const context = await requireAppContext();
   const initials = context.user.displayName
@@ -33,7 +37,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <small>{context.role}</small>
         </div>
         <AppNavigation role={context.role} />
-        <Link href="/" className="main-site-link">
+        <Link href={mainSiteUrl} className="main-site-link">
           <span aria-hidden="true">←</span>
           Main site
         </Link>
@@ -67,7 +71,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             />
           </Link>
           <div className="mobile-bar-actions">
-            <Link href="/" className="mobile-main-site-link">
+            <Link href={mainSiteUrl} className="mobile-main-site-link">
               Main site
             </Link>
             <span className="role-chip">{context.role}</span>

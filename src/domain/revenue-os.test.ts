@@ -171,8 +171,12 @@ describe("Suadence Revenue OS", () => {
     expect(revenueAppHtml).toContain("Append-only accountability");
     expect(revenueAppHtml).toContain("Production readiness");
     expect(revenueAppHtml).toContain("Open Synthetic Demo Lab");
-    expect(revenueAppHtml).toContain('href="/">← Main site</a>');
-    expect(revenueAppHtml).toContain('href="/">Main site</a>');
+    expect(revenueAppHtml).toContain(
+      'href="https://williamjblodgett.github.io/SalesTrainerPOC/">← Main site</a>',
+    );
+    expect(revenueAppHtml).toContain(
+      'href="https://williamjblodgett.github.io/SalesTrainerPOC/">Main site</a>',
+    );
     expect(revenueAppHtml).not.toMatch(/[ÃÂâÎ]/);
   });
 });

@@ -623,6 +623,7 @@ document.querySelector('#advisor .advisor-hero').insertAdjacentHTML('afterend','
 </script></body></html>`;
 
 function decorateRevenueAppHtml(html) {
+  const mainSiteUrl = "https://williamjblodgett.github.io/SalesTrainerPOC/";
   const enhancements = `<script>
 const signalEmpty='<div class="empty">No repeated pattern meets the evidence threshold yet. Process at least three related live calls to generate a signal.</div>';
 const emptyLiveDashboard={callCount:0,approvedAssetCount:0,reviewRequiredCount:0,nodeCount:0,revenueDnaScore:'—',knowledgeCoverage:0,revenueDna:{status:'insufficient_evidence'},signals:[],departments:[]};
@@ -651,8 +652,9 @@ document.querySelector('[data-page="security"]').addEventListener('click',loadRe
     .replace(/<label>Transcript evidence<textarea name="transcript" rows="10" required>[\s\S]*?<\/textarea><\/label>/, '<label>Transcript evidence<textarea name="transcript" rows="10" required placeholder="Paste a consent-confirmed transcript here. Use the Synthetic Demo Lab for fictional data."></textarea></label>')
     .replace('type="checkbox" name="consent" checked', 'type="checkbox" name="consent"')
     .replace("</style>", `.revenue-route-link{display:flex;align-items:center;justify-content:center;margin:9px 0 0;border:1px solid #2e597d;border-radius:9px;background:#0d3158;color:#d9efff;padding:10px;font-size:9px;font-weight:800}.revenue-route-link:hover{border-color:#43d4b5;background:#123d66}.main-site-link{background:transparent}.readiness-panel{margin-top:14px}.readiness-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.readiness-control{display:flex;align-items:flex-start;gap:9px;border:1px solid var(--line);border-radius:10px;padding:11px}.readiness-control i{display:grid;width:22px;height:22px;flex:0 0 22px;place-items:center;border-radius:7px;font-style:normal;font-size:9px;font-weight:800}.readiness-control i.pass{background:#e7f8ec;color:#237b44}.readiness-control i.pending{background:#fff3d8;color:#8b6200}.readiness-control b,.readiness-control span{display:block}.readiness-control b{font-size:9px}.readiness-control span{margin-top:3px;color:var(--muted);font-size:7px;line-height:1.45}.button.compact{margin-top:7px;padding:7px 10px;font-size:8px}@media(max-width:720px){.readiness-grid{grid-template-columns:1fr}}</style>`)
-    .replace("</nav><div class=\"rail-foot\">", "</nav><a class=\"revenue-route-link main-site-link\" href=\"/\">← Main site</a><a class=\"revenue-route-link demo-lab-link\" href=\"/demo\">✦ Open Synthetic Demo Lab</a><div class=\"rail-foot\">")
-    .replace('href=\"/\">View site</a>', 'href=\"/\">Main site</a>')
+    .replace('<a class="brand" href="/">', `<a class="brand" href="${mainSiteUrl}">`)
+    .replace("</nav><div class=\"rail-foot\">", `</nav><a class="revenue-route-link main-site-link" href="${mainSiteUrl}">← Main site</a><a class="revenue-route-link demo-lab-link" href="/demo">✦ Open Synthetic Demo Lab</a><div class="rail-foot">`)
+    .replace('href=\"/\">View site</a>', `href="${mainSiteUrl}">Main site</a>`)
     .replace("</body>", `${enhancements}</body>`);
 }
 
