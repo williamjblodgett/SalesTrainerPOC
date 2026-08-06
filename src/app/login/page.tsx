@@ -6,9 +6,9 @@ import { signIn } from "@/app/auth/actions";
 export default async function Login({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; message?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, message } = await searchParams;
   return (
     <main className="auth-shell">
       <section className="auth-story">
@@ -41,6 +41,7 @@ export default async function Login({
             <p>Continue managing practice, coaching, and team readiness.</p>
           </div>
           {error && <div className="form-alert">{error}</div>}
+          {message && <div className="form-alert">{message}</div>}
           <label>
             Work email
             <input
@@ -64,6 +65,10 @@ export default async function Login({
           <button className="button button-block" type="submit">
             Sign in
           </button>
+          <p className="privacy-note">
+            Authentication is provided by Suadence through Supabase. A ChatGPT
+            account is never required.
+          </p>
           <p className="auth-switch">
             New to Suadence? <Link href="/signup">Start your 14-day trial</Link>
           </p>

@@ -11,6 +11,7 @@ The repository has `preview`, `production`, and `supabase-staging` environments.
 
 Configure the runtime values in Vercel rather than GitHub. Required production values are checked by `pnpm check:production-env`:
 
+- `APP_ENV=production`
 - `NEXT_PUBLIC_APP_URL`
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -22,6 +23,8 @@ Configure the runtime values in Vercel rather than GitHub. Required production v
 - `CLOUDMERSIVE_API_KEY`
 - `ENABLE_REALTIME_VOICE=false` until the text benchmark passes
 - `TEXT_REALISM_BENCHMARK_STATUS=pending` until the approved calibration report passes
+
+The production GitHub environment also requires `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated, least-privilege release-test user that already belongs to a seeded organization. The canonical workflow deploys, checks `/api/health`, and runs the authenticated Chromium flow. Supabase handles identity directly; ChatGPT login is never part of application authentication.
 
 The Supabase workflow first links the explicitly supplied staging project and performs a migration dry run. It applies migrations and runs `supabase test db --linked` only when `apply_migrations` is deliberately selected. Never point that validation workflow at a customer production database.
 

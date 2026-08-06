@@ -8,10 +8,11 @@ The product retains the original sales-practice vertical slice while expanding i
 
 ## Deployments
 
-- Public interactive synthetic demo: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
+- Public marketing site: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
+- Public no-login synthetic Revenue OS: [GitHub Pages app](https://williamjblodgett.github.io/SalesTrainerPOC/app/)
 - Secure private pilot: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
 
-GitHub Pages provides a hash-routed synthetic preview with seven industry packs, 35 scenarios, one locked transcript/persona evidence fixture, scripted practice, explicitly illustrative local scoring, coaching, and analytics. It does not accept or infer from customer transcripts. The Next.js application is the canonical secure surface for authentication, private uploads, governed persona extraction, stateful text practice, evaluation, and future production voice.
+GitHub Pages provides a hash-routed synthetic preview with seven industry packs, 35 scenarios, one locked transcript/persona evidence fixture, scripted practice, explicitly illustrative local scoring, coaching, and analytics. It does not accept or infer from customer transcripts. The Next.js application is the canonical secure surface for Supabase authentication, private uploads, governed persona extraction, stateful text practice, evaluation, and future production voice. Suadence authentication is independent of ChatGPT; no ChatGPT account is required.
 
 ## Stack
 
@@ -48,6 +49,7 @@ Canonical hosting and environment promotion are documented in `docs/DEPLOYMENT.m
 - `pnpm lint` — ESLint
 - `pnpm test` — unit and contract tests
 - `pnpm test:e2e` — Playwright flows
+- `pnpm test:e2e:authenticated` — Supabase-authenticated production release flow
 - `pnpm build` — production build
 - `pnpm build:pages` — build the static GitHub Pages preview into `pages-dist`
 - `pnpm validate:hosted` — hosted-page logo, pricing, synthetic-label, fallback, and inline-script release checks
@@ -65,6 +67,7 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 ## Current limitations
 
 - GitHub Pages processes synthetic data only and intentionally cannot run server-side AI or customer authentication.
+- Canonical production fails closed if Supabase authentication is missing. Local development may use deterministic demo mode.
 - The secure Transcript Lab accepts pasted text and scanned TXT/DOCX/PDF files. Production upload processing now requires the Cloudmersive Advanced scanner and fails closed without it; a provider credential and production smoke test remain launch gates for external customer data.
 - The Vercel and Supabase production environments still require project credentials and the latest migration to be applied.
 - The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
@@ -73,6 +76,7 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 - The hosted preview derives a single authorized organization server-side. The canonical Next.js/Supabase application owns production authentication, membership resolution, and RLS.
 - Security architecture is designed for enterprise review, but SOC 2, SSO/SCIM, regional data residency, a signed DPA, and jurisdiction-specific legal review are roadmap items, not current certifications.
 - Pricing is intentionally **TBD**; the public site makes no commercial commitment.
+- Public legal pages and operating runbooks are drafts; counsel approval, named incident owners, external monitoring, alert routing, and recovery exercises remain launch gates.
 
 ## Documentation
 

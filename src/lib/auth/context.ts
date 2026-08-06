@@ -3,6 +3,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isCanonicalProduction } from "@/lib/supabase/config";
 
 import type { OrganizationRole } from "./roles";
 export { canManage, canOwn } from "./roles";
@@ -27,7 +28,12 @@ const demoContext: AppContext = {
 
 export async function getOptionalAppContext(): Promise<AppContext | null> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) return demoContext;
+  if (!supabase) {
+    if (isCanonicalProduction()) {
+      throw new Error("Supabase authentication is required in production.");
+    }
+    return demoContext;
+  }
 
   const {
     data: { user },

@@ -17,6 +17,12 @@
 - [ ] Supply the Cloudmersive key and verify a real clean/quarantine scan in the canonical environment.
 - [ ] Run the live calibration harness on the licensed human-scored corpus.
 - [ ] Add Realtime/WebRTC voice after the text realism gate passes.
+- [x] Fail closed when canonical production is missing Supabase authentication.
+- [x] Add a no-secret health endpoint, redacted operational events, and a deployment health gate.
+- [x] Add public draft legal disclosures plus incident, retention, monitoring, and DPA runbooks.
+- [x] Add an authenticated Playwright release workflow using a pre-provisioned Supabase user.
+- [ ] Configure external monitoring, paging, backup restoration, and named incident owners.
+- [ ] Obtain counsel approval for privacy, DPA, consent, retention, and subprocessor materials.
 
 ## 2026-08-04 interactive demo and persona engine
 
@@ -104,7 +110,8 @@
 - [x] Manual outcome overlays for stage conversion, win rate, and ramp time
 - [x] Database-derived leader metrics and append-only action audit history
 - [x] Voice device selection, reconnection controls, and organization usage limits
-- [ ] Playwright authenticated workflow
+- [x] Playwright authenticated workflow
+- [ ] Run the authenticated Playwright workflow against the canonical production deployment.
 
 ## Persona QA
 

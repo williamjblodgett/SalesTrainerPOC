@@ -10,6 +10,10 @@ The runtime exposes `GET /api/revenue-os/readiness`. That response reports confi
 
 ## Implemented controls
 
+- Canonical production fails closed without Supabase authentication; no ChatGPT identity dependency exists
+- No-secret `/api/health` readiness contract and redacted structured operational events
+- Authenticated Playwright deployment gate with a dedicated Supabase release-test identity
+- Draft public legal disclosures and incident, retention, monitoring, and DPA operating runbooks
 - Private hosted access policy
 - Organization-bound database records and server-resolved organization context
 - Consent-confirmed live paste/TXT ingestion and consent quarantine in the connector gateway
@@ -34,6 +38,7 @@ The runtime exposes `GET /api/revenue-os/readiness`. That response reports confi
 - Confirm the customer owns or is authorized to process every imported call
 - Complete a threat model and penetration test for the chosen deployment
 - Configure monitoring, alerting, backups, recovery objectives, and incident response ownership
+- Obtain counsel approval for the draft legal disclosures and execute the DPA/customer terms
 
 ## Required before multi-tenant general availability
 

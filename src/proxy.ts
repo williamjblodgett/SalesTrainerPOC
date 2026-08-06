@@ -1,10 +1,21 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { isSupabaseConfigured } from "@/lib/supabase/config";
+import {
+  isCanonicalProduction,
+  isSupabaseConfigured,
+} from "@/lib/supabase/config";
 
 export async function proxy(request: NextRequest) {
-  if (!isSupabaseConfigured()) return NextResponse.next();
+  if (!isSupabaseConfigured()) {
+    if (isCanonicalProduction() && request.nextUrl.pathname !== "/api/health") {
+      return new NextResponse("Service configuration unavailable.", {
+        status: 503,
+        headers: { "cache-control": "no-store" },
+      });
+    }
+    return NextResponse.next();
+  }
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(

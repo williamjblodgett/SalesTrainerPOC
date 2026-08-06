@@ -40,7 +40,35 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - run: pnpm dlx vercel@latest deploy --prebuilt ${{ inputs.production && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+      - id: deploy
+        shell: bash
+        run: |
+          deployment_url="$(pnpm dlx vercel@latest deploy --prebuilt ${{ inputs.production && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})"
+          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Verify production health
+        run: curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ steps.deploy.outputs.url }}/api/health"
+      - if: inputs.production
+        name: Require authenticated release-test identity
+        run: test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD"
+        env:
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - if: inputs.production
+        run: pnpm exec playwright install --with-deps chromium
+      - if: inputs.production
+        run: pnpm test:e2e:authenticated --project=chromium
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-deployment-test-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

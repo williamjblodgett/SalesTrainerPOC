@@ -4,3 +4,10 @@ export function isSupabaseConfigured() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   );
 }
+
+export function isCanonicalProduction() {
+  return (
+    process.env.APP_ENV === "production" ||
+    process.env.VERCEL_ENV === "production"
+  );
+}

@@ -41,12 +41,18 @@ export async function signUp(formData: FormData) {
   if (!supabase)
     authError("/signup", "Authentication is not configured in this environment.");
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: { data: { display_name: parsed.data.displayName } },
   });
   if (error) authError("/signup", "We could not create that account.");
+  if (!data.session) {
+    redirect(
+      "/login?message=" +
+        encodeURIComponent("Check your email to confirm your Suadence account."),
+    );
+  }
   redirect("/app/onboarding");
 }
 

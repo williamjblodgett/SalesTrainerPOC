@@ -568,9 +568,11 @@ function replaceHtmlSection(html, id, replacement) {
 function decorateLandingHtml(html) {
   const pricing = `<section id="pricing" class="section pricing"><div class="section-head"><span class="eyebrow">Commercial model</span><h2>Pricing</h2><p class="muted">Packaging and commercial terms are being finalized.</p></div><article class="price-card featured" style="max-width:620px"><span class="tag ready">Pricing status</span><div class="price" style="margin-top:18px">TBD</div><p class="muted">Contact the team for pilot availability. No pricing commitment is represented on this site.</p></article></section>`;
   return replaceHtmlSection(html, "pricing", pricing)
+    .replace("</style>", `.legal-links{display:flex;flex-wrap:wrap;gap:14px}.legal-links a:hover{color:#d9e8f7}</style>`)
     .replace('<a href="#pricing">Pricing</a>', '<a href="#pricing">Pricing</a><a href="/demo">Synthetic Demo Lab</a>')
     .replace('<div class="hero-actions"><a class="button" href="/app">', '<div class="hero-actions"><a class="button" href="/app">')
-    .replace('<a class="button secondary" href="#platform">See how it works</a>', '<a class="button secondary" href="/demo">Run a synthetic demo</a>');
+    .replace('<a class="button secondary" href="#platform">See how it works</a>', '<a class="button secondary" href="/demo">Run a synthetic demo</a>')
+    .replace('<span>Revenue intelligence operating system · Customer intelligence remains customer-owned.</span>', '<div><span>Revenue intelligence operating system · Customer intelligence remains customer-owned.</span><div class="legal-links"><a href="/legal/privacy.html">Privacy</a><a href="/legal/terms.html">Terms</a><a href="/legal/subprocessors.html">Subprocessors</a><a href="/legal/security.html">Security</a></div></div>');
 }
 
 export const repairedLandingHtml = decorateLandingHtml(repairCopy(landingHtml));

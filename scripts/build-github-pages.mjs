@@ -41,11 +41,13 @@ await Promise.all([
   cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(demoOutputDirectory, "data", "industry-packs.json")),
   cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(appOutputDirectory, "data", "industry-packs.json")),
   cp(path.join(repositoryRoot, "public", "og-revenue-os.png"), path.join(outputDirectory, "og-revenue-os.png")),
+  cp(path.join(repositoryRoot, "public", "legal"), path.join(outputDirectory, "legal"), { recursive: true }),
 ]);
 
 const landingPageHtml = repairedLandingHtml
   .replaceAll('href="/app"', `href="${publicAppUrl}"`)
   .replaceAll('href="/demo"', `href="${pagesUrl}demo/"`)
+  .replaceAll('href="/legal/', `href="${pagesUrl}legal/`)
   .replaceAll('src="/brand/suadence-logo.webp"', 'src="./brand/suadence-logo.webp"')
   .replace("</head>", `<link rel="canonical" href="${pagesUrl}"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
 const demoPageHtml = html.replace("</head>", `<link rel="canonical" href="${pagesUrl}demo/"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);

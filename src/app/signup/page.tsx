@@ -72,6 +72,10 @@ export default async function Signup({
           <button className="button button-block" type="submit">
             Create workspace
           </button>
+          <p className="privacy-note">
+            Your Suadence account is secured through Supabase and is independent
+            of ChatGPT.
+          </p>
           <p className="auth-switch">
             Already have an account? <Link href="/login">Sign in</Link>
           </p>

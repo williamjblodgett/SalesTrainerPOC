@@ -1,4 +1,5 @@
 const required = [
+  "APP_ENV",
   "NEXT_PUBLIC_APP_URL",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
@@ -14,6 +15,7 @@ const required = [
 
 const missing = required.filter((key) => !process.env[key]);
 const invalid = [];
+if (process.env.APP_ENV !== "production") invalid.push("APP_ENV must equal production");
 if (process.env.AI_PROVIDER !== "openai") invalid.push("AI_PROVIDER must equal openai");
 if (process.env.DOCUMENT_SCANNER_MODE !== "cloudmersive") invalid.push("DOCUMENT_SCANNER_MODE must equal cloudmersive");
 if (process.env.ENABLE_REALTIME_VOICE === "true" && process.env.TEXT_REALISM_BENCHMARK_STATUS !== "passed") {
