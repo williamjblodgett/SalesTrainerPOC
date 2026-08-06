@@ -8,7 +8,7 @@ permissions:
 
 concurrency:
   group: canonical-vercel-production
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
