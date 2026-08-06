@@ -1,0 +1,64 @@
+name: Bootstrap canonical Vercel deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canonical-vercel-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - name: Create and link Vercel project
+        shell: bash
+        run: |
+          pnpm dlx vercel@latest project inspect salessim --scope suadence --token "$VERCEL_TOKEN" >/dev/null 2>&1 || \
+            pnpm dlx vercel@latest project add salessim --scope suadence --token "$VERCEL_TOKEN"
+          pnpm dlx vercel@latest link --yes --team suadence --project salessim --token "$VERCEL_TOKEN"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy production application
+        id: deploy
+        shell: bash
+        run: |
+          deployment_url="$(pnpm dlx vercel@latest deploy --yes --prod --scope suadence --token "$VERCEL_TOKEN" \
+            --env APP_ENV=production \
+            --env AI_PROVIDER=mock \
+            --env NEXT_PUBLIC_APP_URL=https://salessim.vercel.app \
+            --env NEXT_PUBLIC_MAIN_SITE_URL=https://williamjblodgett.github.io/SalesTrainerPOC/ \
+            --env NEXT_PUBLIC_SUPABASE_URL=https://iwigbylktbudvmjtqdvi.supabase.co \
+            --env NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY" \
+            --env SUPABASE_SERVICE_ROLE_KEY="$SUPABASE_SERVICE_ROLE_KEY" \
+            --env PERSONA_ENGINE_V2=true \
+            --env BUYER_ACTOR_V2=true \
+            --env EVALUATOR_V2=true \
+            --env DOCUMENT_SCANNER_MODE=built_in \
+            --env ENABLE_REALTIME_VOICE=false \
+            --env STORE_RAW_CALL_AUDIO=false \
+            --build-env NEXT_PUBLIC_APP_URL=https://salessim.vercel.app \
+            --build-env NEXT_PUBLIC_MAIN_SITE_URL=https://williamjblodgett.github.io/SalesTrainerPOC/ \
+            --build-env NEXT_PUBLIC_SUPABASE_URL=https://iwigbylktbudvmjtqdvi.supabase.co \
+            --build-env NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY")"
+          echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Verify production health
+        run: curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ steps.deploy.outputs.url }}/api/health"
