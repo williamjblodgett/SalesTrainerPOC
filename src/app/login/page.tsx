@@ -62,6 +62,9 @@ export default async function Login({
               required
             />
           </label>
+          <p className="auth-switch">
+            <Link href="/forgot-password">Forgot your password?</Link>
+          </p>
           <button className="button button-block" type="submit">
             Sign in
           </button>
