@@ -1,54 +1,34 @@
 "use client";
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-function createRecoveryClient(): SupabaseClient {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        flowType: "implicit",
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false,
-      },
-    },
-  );
-}
-
 export default function ResetPassword() {
-  const supabaseRef = useRef<SupabaseClient | null>(null);
+  const accessTokenRef = useRef<string | null>(null);
   const [ready, setReady] = useState(false);
   const [message, setMessage] = useState("Verifying your secure link…");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const supabase = createRecoveryClient();
-    supabaseRef.current = supabase;
     const hash = new URLSearchParams(window.location.hash.slice(1));
     const accessToken = hash.get("access_token");
-    const refreshToken = hash.get("refresh_token");
-    if (!accessToken || !refreshToken || hash.get("type") !== "recovery") {
+    if (!accessToken) {
+      const errorCode = hash.get("error_code");
       void Promise.resolve().then(() =>
-        setMessage("This reset link is invalid or has expired. Request a new one below."),
+        setMessage(
+          errorCode === "otp_expired"
+            ? "Supabase reports that this one-time link was already used or expired. Request a new one below."
+            : "This reset link did not contain a recovery session. Request a new one below.",
+        ),
       );
       return;
     }
-
-    void supabase.auth
-      .setSession({ access_token: accessToken, refresh_token: refreshToken })
-      .then(({ error }) => {
-        if (error) {
-          setMessage("This reset link is invalid or has expired. Request a new one below.");
-          return;
-        }
-        window.history.replaceState({}, "", window.location.pathname);
-        setMessage("");
-        setReady(true);
-      });
+    accessTokenRef.current = accessToken;
+    window.history.replaceState({}, "", window.location.pathname);
+    void Promise.resolve().then(() => {
+      setMessage("");
+      setReady(true);
+    });
   }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -61,20 +41,29 @@ export default function ResetPassword() {
       return;
     }
 
-    const supabase = supabaseRef.current;
-    if (!supabase) {
+    const accessToken = accessTokenRef.current;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!accessToken || !supabaseUrl || !anonKey) {
       setMessage("The secure session is not ready. Request a new reset link and try again.");
       return;
     }
 
     setSubmitting(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      method: "PUT",
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${accessToken}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ password }),
+    });
     setSubmitting(false);
-    if (error) {
+    if (!response.ok) {
       setMessage("We could not save that password. Request a new reset link and try again.");
       return;
     }
-    await supabase.auth.signOut();
     window.location.assign("/login?message=Password%20updated.%20You%20can%20sign%20in%20now.");
   }
 
