@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { signOut } from "@/app/auth/actions";
-import { requireAppContext } from "@/lib/auth/context";
+import { getOptionalAppContext } from "@/lib/auth/context";
 
 import { AppNavigation } from "./app-navigation";
 
@@ -11,7 +12,16 @@ const mainSiteUrl =
   "https://williamjblodgett.github.io/SalesTrainerPOC/";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
-  const context = await requireAppContext();
+  const context = await getOptionalAppContext();
+  if (!context) redirect("/login");
+
+  // Onboarding lives under /app, but it must render before a membership exists.
+  // Rendering the organization shell here would call the organization guard and
+  // redirect /app/onboarding back to itself indefinitely.
+  if (!context.organization.id) {
+    return <main className="min-h-screen bg-slate-50 p-6 sm:p-10">{children}</main>;
+  }
+
   const initials = context.user.displayName
     .split(/\s+/)
     .map((part) => part[0])
