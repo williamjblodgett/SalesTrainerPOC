@@ -79,7 +79,12 @@ export default async function Onboarding({
           <p className="privacy-note">
             <Check size={15} /> You can change the display name later.
           </p>
-          <button className="text-button" formAction={signOut} type="submit">
+          <button
+            className="text-button"
+            formAction={signOut}
+            formNoValidate
+            type="submit"
+          >
             Sign out and finish later
           </button>
         </form>
