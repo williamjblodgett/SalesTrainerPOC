@@ -62,6 +62,38 @@ export async function signOut() {
   redirect("/");
 }
 
+const changePasswordSchema = z
+  .object({
+    password: z.string().min(12).max(128),
+    confirmPassword: z.string().min(12).max(128),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword);
+
+export async function changePassword(formData: FormData) {
+  const parsed = changePasswordSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success)
+    authError(
+      "/app/settings",
+      "Use matching passwords of at least 12 characters.",
+    );
+  const supabase = await createSupabaseServerClient();
+  if (!supabase)
+    authError("/app/settings", "Authentication is not configured.");
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error)
+    authError(
+      "/app/settings",
+      "We could not change the password. Sign in again and retry.",
+    );
+  redirect(
+    "/app/settings?message=" +
+      encodeURIComponent("Password updated successfully."),
+  );
+}
+
 const organizationSchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: z
