@@ -4,7 +4,7 @@
 
 The deployed Sites build is suitable as a private, authenticated product demonstration and controlled design-partner pilot. It is not represented as generally available enterprise SaaS until the external controls below are completed.
 
-The repository now includes manual, environment-scoped workflows for the canonical Vercel deployment and hosted Supabase migration/pgTAP validation. GitHub environments exist, but their provider secrets and the corresponding Vercel/Supabase projects are not yet connected.
+The canonical Next.js application is deployed to Vercel and connected to the hosted Supabase project. All five migrations were applied and the hosted pgTAP suite passed 22/22 checks on 2026-08-06. The application remains a controlled pilot rather than generally available enterprise SaaS because the production AI provider, commercial scanner, reliable SMTP, live calibration, connector OAuth, monitoring, and legal approvals are not complete.
 
 The runtime exposes `GET /api/revenue-os/readiness`. That response reports configuration state; it does not convert missing legal, identity, or provider authorization into a green status.
 
@@ -42,8 +42,8 @@ The runtime exposes `GET /api/revenue-os/readiness`. That response reports confi
 
 ## Required before multi-tenant general availability
 
-- Port hosted D1 repositories to the canonical Supabase/Postgres transaction and RLS layer, or implement an equivalent membership-enforced identity boundary in the worker
-- Run cross-tenant database tests against a disposable hosted environment
+- Port the separate Sites/D1 Revenue OS repositories and domain logic to the canonical Supabase/Postgres transaction and RLS layer
+- Expand the passing hosted cross-tenant suite as Revenue OS tables are added
 - Add SSO/SAML, SCIM, MFA/step-up authentication, support-access controls, and access-review workflows
 - Encrypt OAuth refresh tokens with a managed key service and implement rotation/revocation
 - Complete provider-specific OAuth, webhook, backfill, and marketplace review

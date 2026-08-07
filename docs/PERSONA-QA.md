@@ -30,7 +30,7 @@ Provider-backed model runs remain opt-in because model credentials and customer 
 
 ## Remaining external launch gates
 
-- Apply the Supabase migrations and run `supabase test db` against a disposable hosted project to prove live RLS isolation. The SQL test is committed, but this workspace has no production Supabase credentials.
+- Keep the hosted RLS suite in the release gate and expand it with every new tenant-owned table. All five migrations and 22/22 pgTAP checks passed on 2026-08-06.
 - The canonical app now has a fail-closed Cloudmersive Advanced scanner adapter that blocks malware, invalid files, scripts, macros, password-protected files, unsafe archives, and mismatched formats. A real provider key and clean/quarantine production smoke test are still required; the built-in scanner remains development-only.
 - Complete legal review of consent language, DPA, privacy notice, retention defaults, data residency, and subprocessors.
 - Run `pnpm calibrate:openai` on the human-labeled, licensed transcript corpus. The committed gate requires two reviewers, 50 evaluator transcripts, 10 buyer paths, 10 persona cases, evidence fidelity, bounded score error, and zero forbidden-disclosure tolerance before voice can be enabled.

@@ -11,7 +11,7 @@
 - [x] Add authenticated session start/turn/complete/evaluate/read APIs with idempotent atomic turn persistence.
 - [x] Add evaluator evidence validation, fail-closed mock scoring, and append-only manager overrides.
 - [x] Add adversarial realism and transcript-file tests.
-- [ ] Apply migration `202608050002_realism_remediation.sql` to a disposable Supabase project and run pgTAP isolation tests.
+- [x] Apply migration `202608050002_realism_remediation.sql` to the hosted Supabase project and run pgTAP isolation tests (22/22 passed on 2026-08-06).
 - [x] Add a fail-closed Cloudmersive Advanced commercial scanner adapter and production configuration contract.
 - [x] Add the live persona/buyer/evaluator calibration harness and two-reviewer release thresholds.
 - [ ] Supply the Cloudmersive key and verify a real clean/quarantine scan in the canonical environment.
@@ -34,8 +34,8 @@
 - [x] Add Responses API persona synthesis with deterministic mock mode and evidence verification.
 - [x] Add tenant-scoped transcript/persona tables, RLS, indexes, and immutable persona versions.
 - [x] Connect the secure Transcript Lab and industry library.
-- [ ] Apply the new Supabase migration to the production project.
-- [ ] Configure the canonical Vercel project, runtime values, and domain.
+- [x] Apply the new Supabase migrations to the hosted project and pass the pgTAP suite.
+- [x] Configure and deploy the canonical Vercel project at `https://salessim-five.vercel.app`.
 - [x] Add server-side TXT/DOCX/PDF parsing, signature verification, safety scanning, PII redaction, and 20 MB enforcement.
 - [ ] Add durable asynchronous ingestion jobs and provider OAuth.
 - [ ] Complete production voice persistence, monitoring, and launch compliance review.
@@ -97,7 +97,7 @@
 - [x] Supabase SSR auth, session refresh, validated signup/sign-in, and organization bootstrap
 - [x] Role-aware owner/manager/rep application shell and manager action dashboard
 - [x] Complete initial RLS write-policy baseline and unit-level policy contract tests
-- [ ] Run pgTAP cross-tenant suite against a disposable hosted Supabase project
+- [x] Run pgTAP cross-tenant suite against the hosted Supabase project (22/22 passed)
 - [x] Add a canonical atomic Supabase RPC for transcript sources, normalized turns, persona draft, lineage, consent evidence, and usage.
 - [ ] Responses API structured-output providers
 - [ ] Complete idempotent API surface and rate limiting
