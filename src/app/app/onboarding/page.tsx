@@ -1,6 +1,6 @@
 import { Building2, Check, ShieldCheck, Sparkles } from "lucide-react";
 
-import { createOrganization } from "@/app/auth/actions";
+import { createOrganization, signOut } from "@/app/auth/actions";
 
 export default async function Onboarding({
   searchParams,
@@ -79,6 +79,9 @@ export default async function Onboarding({
           <p className="privacy-note">
             <Check size={15} /> You can change the display name later.
           </p>
+          <button className="text-button" formAction={signOut} type="submit">
+            Sign out and finish later
+          </button>
         </form>
       </div>
     </div>
