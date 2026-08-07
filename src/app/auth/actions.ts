@@ -14,16 +14,6 @@ const signupSchema = credentialsSchema.extend({
   displayName: z.string().trim().min(2).max(80),
 });
 
-const emailSchema = z.object({ email: z.string().email() });
-const newPasswordSchema = z
-  .object({
-    password: z.string().min(8).max(128),
-    confirmPassword: z.string().min(8).max(128),
-  })
-  .refine(({ password, confirmPassword }) => password === confirmPassword, {
-    message: "Passwords must match.",
-  });
-
 function authError(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
@@ -70,36 +60,6 @@ export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase?.auth.signOut();
   redirect("/");
-}
-
-export async function requestPasswordReset(formData: FormData) {
-  const parsed = emailSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) authError("/forgot-password", "Enter a valid email address.");
-  const supabase = await createSupabaseServerClient();
-  if (!supabase)
-    authError("/forgot-password", "Authentication is not configured in this environment.");
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-    redirectTo: `${appUrl}/auth/callback?next=/reset-password`,
-  });
-  redirect(
-    "/login?message=" +
-      encodeURIComponent("If that account exists, a secure password-reset link is on its way."),
-  );
-}
-
-export async function updatePassword(formData: FormData) {
-  const parsed = newPasswordSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success)
-    authError("/reset-password", "Use matching passwords of at least eight characters.");
-  const supabase = await createSupabaseServerClient();
-  if (!supabase)
-    authError("/reset-password", "Authentication is not configured in this environment.");
-
-  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
-  if (error) authError("/reset-password", "This reset link is invalid or has expired.");
-  redirect("/app");
 }
 
 const organizationSchema = z.object({
