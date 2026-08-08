@@ -3,6 +3,7 @@ import { requireAppContext } from "@/lib/auth/context";
 import { canManage } from "@/lib/auth/roles";
 import { scenarioSpecSchema } from "@/lib/domain/scenario";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const context = await requireAppContext();
@@ -21,13 +22,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   try { scenarioSpecSchema.parse(version.scenario_spec); } catch { return NextResponse.json({ code: "validation_failed", message: "Scenario specification is invalid." }, { status: 400 }); }
   const { data: persona } = await admin.from("persona_versions").select("id").eq("id", version.persona_version_id).eq("organization_id", context.organization.id).maybeSingle();
   if (!persona) return NextResponse.json({ code: "conflict", message: "Publish and attach a governed persona version first." }, { status: 409 });
-  const publishedAt = new Date().toISOString();
-  // The database immutability rule permits the one-way draft publication
-  // transition but PostgreSQL rules do not support UPDATE ... RETURNING.
-  const { error } = await admin.from("scenario_versions").update({ approved_by: context.user.id, published_at: publishedAt, idempotency_key: key }).eq("id", version.id).eq("organization_id", context.organization.id).is("published_at", null);
-  if (error) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
-  const { data } = await admin.from("scenario_versions").select("id,published_at,idempotency_key").eq("id", version.id).eq("organization_id", context.organization.id).maybeSingle();
-  if (!data?.published_at || data.idempotency_key !== key) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
-  await admin.from("scenarios").update({ status: "published" }).eq("id", id).eq("organization_id", context.organization.id);
+  const userClient = await createSupabaseServerClient();
+  if (!userClient) return NextResponse.json({ code: "internal_error", message: "Scenario persistence is unavailable." }, { status: 503 });
+  const { data: publishedId, error } = await userClient.rpc("publish_scenario_draft", { p_organization_id: context.organization.id, p_scenario_id: id, p_idempotency_key: key });
+  if (error || !publishedId) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
+  const { data } = await admin.from("scenario_versions").select("id,published_at").eq("id", publishedId).eq("organization_id", context.organization.id).maybeSingle();
+  if (!data?.published_at) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
   return NextResponse.json({ scenarioVersionId: data.id, status: "published", publishedAt: data.published_at, duplicate: false });
 }
