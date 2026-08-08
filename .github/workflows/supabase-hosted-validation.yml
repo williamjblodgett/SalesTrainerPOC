@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           encoded_password="$(node -p 'encodeURIComponent(process.env.SUPABASE_DB_PASSWORD)')"
-          pooler_host="${SUPABASE_POOLER_HOST:-aws-0-us-east-1.pooler.supabase.com}"
+          pooler_host="${SUPABASE_POOLER_HOST:-aws-0-us-east-2.pooler.supabase.com}"
           db_url="postgresql://postgres.${PROJECT_REF}:${encoded_password}@${pooler_host}:5432/postgres"
           echo "::add-mask::$db_url"
           echo "SUPABASE_DIRECT_DB_URL=$db_url" >> "$GITHUB_ENV"
