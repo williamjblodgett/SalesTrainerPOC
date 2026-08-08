@@ -34,7 +34,24 @@ export const scenarioSpecSchema = z.object({
 });
 
 export type ScenarioSpec = z.infer<typeof scenarioSpecSchema>;
-export type RepPracticeBrief = Pick<ScenarioSpec, "schemaVersion" | "metadata" | "repVisible">;
+export type RepPracticeBrief = {
+  schemaVersion: ScenarioSpec["schemaVersion"];
+  title: string;
+  difficulty: ScenarioSpec["metadata"]["difficulty"];
+  targetDurationMinutes: number;
+  accountName: string;
+  buyerName: string;
+  buyerTitle: string;
+  meetingContext: string;
+  callObjective: string;
+  knownFacts: string[];
+};
 export function toPracticeBrief(spec: ScenarioSpec): RepPracticeBrief {
-  return { schemaVersion: spec.schemaVersion, metadata: spec.metadata, repVisible: spec.repVisible };
+  return {
+    schemaVersion: spec.schemaVersion,
+    title: spec.metadata.title,
+    difficulty: spec.metadata.difficulty,
+    targetDurationMinutes: spec.metadata.targetDurationMinutes,
+    ...spec.repVisible,
+  };
 }
