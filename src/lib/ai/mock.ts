@@ -104,9 +104,9 @@ export class MockEvaluator implements Evaluator {
     const sellerTurns = turns.filter((turn) => turn.role === "seller");
     if (sellerTurns.length < 2) return { evaluationStatus: "insufficient_evidence", callOutcome: "ended", criteria: [], strengths: [], priorityImprovements: ["Complete a meaningful discovery exchange."], missedSignals: [], unsupportedClaims: [], rewriteMoments: [], recommendedNextDrill: { skill: "Discovery fundamentals", difficulty: "easy", rationale: "The transcript was too short to score reliably." } };
     const patterns: Array<[RegExp, RegExp?]> = [
-      [/agenda|cover|time|goal|purpose/i],
+      [/agenda|what (?:we|you).*cover|purpose|making time|goal for (?:the|this) (?:call|meeting)|understand .* (?:today|call|meeting|session)/i],
       [/\?|how|what|walk me through|tell me/i, /follow|more about|why|where/i],
-      [/pain|problem|challenge|break down|frustrat|manual|workflow|process/i],
+      [/pain|problem|challenge|break down|frustrat|manual|workflow|process|inconsisten|late|reconcil|issue/i],
       [/impact|consequence|cost|leadership|delay|revenue|business/i],
       [/you (?:said|mentioned)|sounds like|what i heard|so (?:you|that)/i],
       [/based on|because|reduce|without replacing|connect|relevant/i],
