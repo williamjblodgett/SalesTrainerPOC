@@ -85,6 +85,33 @@ export class MockEvaluator implements Evaluator {
   async evaluate({ scenario, turns }: Parameters<Evaluator["evaluate"]>[0]): Promise<EvaluationResult> {
     const sellerTurns = turns.filter((turn) => turn.role === "seller");
     if (sellerTurns.length < 2) return { evaluationStatus: "insufficient_evidence", callOutcome: "ended", criteria: [], strengths: [], priorityImprovements: ["Complete a meaningful discovery exchange."], missedSignals: [], unsupportedClaims: [], rewriteMoments: [], recommendedNextDrill: { skill: "Discovery fundamentals", difficulty: "easy", rationale: "The transcript was too short to score reliably." } };
-    return { evaluationStatus: "complete", callOutcome: "neutral", criteria: scenario.evaluatorOnly.rubric.map((criterion) => ({ criterionId: criterion.id, score: 0, confidence: 1, evidence: [], rationale: `${criterion.name} was not demonstrated by the deterministic mock.`, nextAction: `Demonstrate ${criterion.name.toLowerCase()} with a specific observable behavior.` })), strengths: [], priorityImprovements: scenario.evaluatorOnly.rubric.slice(0, 2).map((criterion) => criterion.name), missedSignals: [], unsupportedClaims: [], rewriteMoments: [], recommendedNextDrill: { skill: "Evidence-based discovery", difficulty: "easy", rationale: "Mock mode fails closed rather than inventing positive evidence." } };
+    const patterns: Array<[RegExp, RegExp?]> = [
+      [/agenda|cover|time|goal|purpose/i],
+      [/\?|how|what|walk me through|tell me/i, /follow|more about|why|where/i],
+      [/pain|problem|challenge|break down|frustrat|manual|workflow|process/i],
+      [/impact|consequence|cost|leadership|delay|revenue|business/i],
+      [/you (?:said|mentioned)|sounds like|what i heard|so (?:you|that)/i],
+      [/based on|because|reduce|without replacing|connect|relevant/i],
+      [/next step|follow[- ]?up|schedule|calendar|bring in|meeting/i],
+    ];
+    const criteria = scenario.evaluatorOnly.rubric.map((criterion, index) => {
+      const [primary, advanced] = patterns[index] ?? [/\?/, /you said/i];
+      const matches = sellerTurns.filter((turn) => primary.test(turn.content));
+      const advancedMatches = advanced ? sellerTurns.filter((turn) => advanced.test(turn.content)) : [];
+      const score = Math.min(4, matches.length === 0 ? 0 : 2 + (matches.length > 1 ? 1 : 0) + (advancedMatches.length > 0 ? 1 : 0)) as 0 | 1 | 2 | 3 | 4;
+      const evidence = matches.slice(0, 2).map((turn) => ({ turnId: turn.id, excerpt: turn.content.slice(0, 240) }));
+      return {
+        criterionId: criterion.id,
+        score,
+        confidence: score ? 0.65 : 0.8,
+        evidence,
+        rationale: score ? `Observable seller language matched the deterministic ${criterion.name.toLowerCase()} contract. A calibrated AI evaluator may adjust this result.` : `${criterion.name} was not demonstrated in the transcript.`,
+        nextAction: score >= 3 ? `Repeat ${criterion.name.toLowerCase()} consistently and connect it to the buyer's answer.` : `Demonstrate ${criterion.name.toLowerCase()} with one specific observable behavior.`,
+      };
+    });
+    const strengths = criteria.filter((criterion) => criterion.score >= 3).map((criterion) => scenario.evaluatorOnly.rubric.find((item) => item.id === criterion.criterionId)?.name ?? criterion.criterionId);
+    const priorityImprovements = criteria.filter((criterion) => criterion.score < 3).slice(0, 3).map((criterion) => scenario.evaluatorOnly.rubric.find((item) => item.id === criterion.criterionId)?.name ?? criterion.criterionId);
+    const advanced = sellerTurns.some((turn) => /next step|follow[- ]?up|schedule|meeting/i.test(turn.content));
+    return { evaluationStatus: "complete", callOutcome: advanced ? "advanced" : "neutral", criteria, strengths, priorityImprovements, missedSignals: [], unsupportedClaims: [], rewriteMoments: [], recommendedNextDrill: { skill: priorityImprovements[0] ?? "Evidence-based discovery", difficulty: "easy", rationale: "Practice the lowest-scoring observable behavior before increasing difficulty." } };
   }
 }

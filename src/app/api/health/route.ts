@@ -15,10 +15,12 @@ export async function GET() {
       Boolean(process.env.CLOUDMERSIVE_API_KEY),
     authProvider: "supabase",
   } as const;
-  const requiredReady = checks.supabase && checks.openai && checks.scanner;
-  const ready = isCanonicalProduction() ? requiredReady : true;
-  recordOperationalEvent(ready ? "info" : "error", "service_health_checked", {
-    ready,
+  const coreReady = checks.supabase;
+  const integrationsReady = checks.openai && checks.scanner;
+  const status = !coreReady ? "not_ready" : integrationsReady ? "ready" : "degraded";
+  recordOperationalEvent(coreReady ? (integrationsReady ? "info" : "warn") : "error", "service_health_checked", {
+    coreReady,
+    integrationsReady,
     canonicalProduction: isCanonicalProduction(),
     supabaseConfigured: checks.supabase,
     openaiConfigured: checks.openai,
@@ -26,14 +28,14 @@ export async function GET() {
   });
   return NextResponse.json(
     {
-      status: ready ? "ready" : "not_ready",
+      status,
       authentication: "supabase",
       chatgptAccountRequired: false,
       checks,
       timestamp: new Date().toISOString(),
     },
     {
-      status: ready ? 200 : 503,
+      status: coreReady ? 200 : 503,
       headers: { "cache-control": "no-store" },
     },
   );

@@ -1,5 +1,27 @@
 # Tasks
 
+## 2026-08-07 canonical production remediation
+
+- [x] Add canonical Supabase Revenue OS call, evidence, graph, 20-asset, connector, sync-job, and enterprise identity tables with RLS.
+- [x] Add a 15-check pgTAP Revenue OS tenant-isolation suite.
+- [x] Replace hard-coded Home, Practice, Scenario, History, Assignment, Team, Analytics, and Playbook data with tenant-scoped database queries.
+- [x] Make Scenario Studio compilation, draft persistence, review, and publication functional.
+- [x] Persist live text sessions, transcript turns, completion, evaluation, and evidence-first results.
+- [x] Replace zero-only deterministic evaluations with conservative evidence-citing heuristic scores.
+- [x] Port the 20-asset plan and evidence graph into the canonical Next.js/Supabase runtime.
+- [x] Make production deployment select OpenAI and Cloudmersive when credentials exist instead of hard-coding mock mode.
+- [x] Add integration and launch-gate status to organization settings.
+- [x] Add the server-mediated Realtime WebRTC session endpoint behind the calibration gate.
+- [ ] Apply migration `202608070001_canonical_revenue_os.sql` and pass both hosted pgTAP suites.
+- [ ] Add production `OPENAI_API_KEY` and validate provider-backed compiler, persona, buyer, and evaluator contracts.
+- [ ] Add `CLOUDMERSIVE_API_KEY` and validate clean and quarantined documents in production.
+- [ ] Complete provider-specific OAuth authorization, encrypted refresh-token storage, backfill workers, and marketplace approval.
+- [ ] Complete two-reviewer human calibration; voice remains disabled until it passes.
+- [ ] Configure custom Supabase Auth SMTP and production email templates.
+- [ ] Configure external monitoring/paging and exercise incident response.
+- [ ] Configure customer SSO/SCIM after an identity provider and enterprise plan are selected.
+- [ ] Obtain counsel approval for the DPA, privacy, consent, retention, and subprocessor documents.
+
 ## 2026-08-05 realism and evidence remediation
 
 - [x] Make GitHub Pages fixture-only and label local scoring/practice as synthetic.
@@ -99,7 +121,7 @@
 - [x] Complete initial RLS write-policy baseline and unit-level policy contract tests
 - [x] Run pgTAP cross-tenant suite against the hosted Supabase project (22/22 passed)
 - [x] Add a canonical atomic Supabase RPC for transcript sources, normalized turns, persona draft, lineage, consent evidence, and usage.
-- [ ] Responses API structured-output providers
+- [x] Responses API structured-output providers
 - [ ] Complete idempotent API surface and rate limiting
 - [x] Add a tenant-scoped transcript deletion RPC and cascade contract.
 - [ ] Complete the organization deletion approval/export workflow.

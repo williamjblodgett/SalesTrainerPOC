@@ -9,6 +9,7 @@ import {
   History,
   Home,
   LibraryBig,
+  Network,
   Settings,
   Sparkles,
   Target,
@@ -45,6 +46,7 @@ const groups = {
       label: "Build",
       links: [
         ["Personas", "/app/personas", Users],
+        ["Revenue OS", "/app/revenue-os", Network],
         ["Industry library", "/app/industries", LibraryBig],
         ["Scenarios", "/app/scenarios", BriefcaseBusiness],
         ["Scorecards", "/app/scorecards", GraduationCap],
@@ -66,6 +68,7 @@ const groups = {
       label: "Build",
       links: [
         ["Personas", "/app/personas", Users],
+        ["Revenue OS", "/app/revenue-os", Network],
         ["Industry library", "/app/industries", LibraryBig],
         ["Scenarios", "/app/scenarios", BriefcaseBusiness],
         ["Scorecards", "/app/scorecards", GraduationCap],

@@ -89,10 +89,13 @@ describe("evaluation evidence integrity", () => {
     expect(() => validateEvaluationAgainstTranscript(result, rubric, [{ id: "S1", role: "seller", content: "Hello there." }])).toThrow("does not match");
   });
 
-  it("mock scoring fails closed and manager overrides remain deterministic", async () => {
+  it("deterministic scoring cites evidence and manager overrides remain deterministic", async () => {
     const result = await new MockEvaluator().evaluate({ scenario: demoScenario, turns: [{ id: "S1", role: "seller", content: "agenda pain impact listen position next step" }, { id: "B1", role: "buyer", content: "Okay" }, { id: "S2", role: "seller", content: "Okay" }] });
-    expect(calculateWeightedScore(result, rubric)).toBe(0);
-    expect(calculateEffectiveWeightedScore(result, rubric, [{ criterionId: rubric[0].id, replacementScore: 4 }])).toBe(rubric[0].weight);
+    const baseScore = calculateWeightedScore(result, rubric);
+    expect(baseScore).not.toBeNull();
+    if (baseScore === null) throw new Error("Expected a deterministic score");
+    expect(baseScore).toBeGreaterThan(0);
+    expect(calculateEffectiveWeightedScore(result, rubric, [{ criterionId: rubric[0].id, replacementScore: 4 }])).toBeGreaterThan(baseScore);
   });
 });
 

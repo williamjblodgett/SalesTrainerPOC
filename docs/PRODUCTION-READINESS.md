@@ -2,9 +2,9 @@
 
 ## Release posture
 
-The deployed Sites build is suitable as a private, authenticated product demonstration and controlled design-partner pilot. It is not represented as generally available enterprise SaaS until the external controls below are completed.
+The GitHub Pages build is a public synthetic demonstration. The Vercel Next.js application is the canonical authenticated product runtime. Neither is represented as generally available enterprise SaaS until the external controls below are completed.
 
-The canonical Next.js application is deployed to Vercel and connected to the hosted Supabase project. All five migrations were applied and the hosted pgTAP suite passed 22/22 checks on 2026-08-06. The application remains a controlled pilot rather than generally available enterprise SaaS because the production AI provider, commercial scanner, reliable SMTP, live calibration, connector OAuth, monitoring, and legal approvals are not complete.
+The canonical Next.js application is deployed to Vercel and connected to the hosted Supabase project. The previously deployed schema passed 22/22 hosted pgTAP checks on 2026-08-06. The new canonical Revenue OS migration and its 15-check isolation suite must pass the hosted release workflow before the new tables are considered deployed. The application remains a controlled pilot because production provider credentials, reliable SMTP, live calibration, connector authorization, monitoring, and legal approvals are incomplete.
 
 The runtime exposes `GET /api/revenue-os/readiness`. That response reports configuration state; it does not convert missing legal, identity, or provider authorization into a green status.
 
@@ -42,7 +42,7 @@ The runtime exposes `GET /api/revenue-os/readiness`. That response reports confi
 
 ## Required before multi-tenant general availability
 
-- Port the separate Sites/D1 Revenue OS repositories and domain logic to the canonical Supabase/Postgres transaction and RLS layer
+- Complete production hardening of the newly ported Supabase Revenue OS transaction and RLS layer
 - Expand the passing hosted cross-tenant suite as Revenue OS tables are added
 - Add SSO/SAML, SCIM, MFA/step-up authentication, support-access controls, and access-review workflows
 - Encrypt OAuth refresh tokens with a managed key service and implement rotation/revocation
