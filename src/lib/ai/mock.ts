@@ -6,6 +6,24 @@ function initialState(input: Parameters<BuyerActor["respond"]>[0]): BuyerState {
   return createInitialBuyerState(input.scenario);
 }
 
+function lowerFirst(value: string) {
+  return value.length ? value[0].toLowerCase() + value.slice(1).replace(/[.!?]+$/, "") : value;
+}
+
+function symptomReply(fact: string) {
+  return `We're dealing with ${lowerFirst(fact)}. That's the clearest problem in the current process.`;
+}
+
+function impactReply(fact: string) {
+  return `The biggest impact is that ${lowerFirst(fact)}. I don't want to invent a precise cost, but it affects how we run the review.`;
+}
+
+function emotionReply(fact: string, buyerName: string) {
+  const firstName = buyerName.trim().split(/\s+/)[0];
+  const personal = fact.replace(new RegExp(`^${firstName}\\s+is\\s+`, "i"), "I'm ");
+  return `Honestly, ${lowerFirst(personal)}. I don't usually lead with that, but it has become frustrating.`;
+}
+
 function classify(message: string, state: BuyerState): SellerMove {
   const lower = message.toLowerCase();
   const fingerprint = fingerprintQuestion(message);
@@ -55,24 +73,24 @@ export class MockBuyerActor implements BuyerActor {
     } else if (move === "objection_probe" && objection && state.objections[objection.id] === "surface") {
       state.objections[objection.id] = "underlying_revealed"; state.trust = clampState(state.trust + 6);
       objectionEvent = { objectionId: objection.id, transition: "surface→underlying_revealed" };
-      message = objection.underlyingConcern;
+      message = `My concern is that ${lowerFirst(objection.underlyingConcern)}.`;
     } else if ((move === "discovery" || move === "follow_up") && pain) {
       const fact = pain.currentSymptoms.find((item) => !state.disclosedFactIds.includes(`${pain.id}:symptom:${item}`));
-      if (fact) { const id = `${pain.id}:symptom:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = fact; }
+      if (fact) { const id = `${pain.id}:symptom:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = symptomReply(fact); }
       else message = "That’s the main workflow issue. What specifically are you trying to determine from it?";
       state.openness = clampState(state.openness + 8); state.perceivedRelevance = clampState(state.perceivedRelevance + 8);
     } else if (move === "impact" && pain && state.disclosedFactIds.some((id) => id.startsWith(`${pain.id}:symptom`))) {
       const fact = pain.businessImpact.find((item) => !state.disclosedFactIds.includes(`${pain.id}:impact:${item}`));
-      if (fact) { const id = `${pain.id}:impact:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = fact; }
+      if (fact) { const id = `${pain.id}:impact:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = impactReply(fact); }
       else message = "It creates delay and makes the review harder, but I don’t have a precise number for you.";
       state.trust = clampState(state.trust + 5);
     } else if (move === "emotion" && pain && state.trust >= 45 && state.disclosedFactIds.some((id) => id.includes(":impact:"))) {
       const fact = pain.emotionalIndicators[0];
-      if (fact) { const id = `${pain.id}:emotion:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = fact; }
+      if (fact) { const id = `${pain.id}:emotion:${fact}`; disclosures.push(id); state.disclosedFactIds.push(id); message = emotionReply(fact, input.scenario.repVisible.buyerName); }
     } else if (move === "next_step") {
       const criticalObjectionOpen = Object.values(state.objections).some((value) => ["surface", "investigating", "underlying_revealed", "unresolved"].includes(value));
       const enoughDiscovery = state.disclosedFactIds.some((id) => id.includes(":impact:")) && state.trust >= 45 && !criticalObjectionOpen;
-      if (enoughDiscovery) { state.callEndState = "success"; endAction = "success"; message = input.scenario.buyerHidden.successEndConditions[0] ?? "A focused follow-up could make sense. Send me an agenda and I’ll involve the appropriate stakeholder."; }
+      if (enoughDiscovery) { state.callEndState = "success"; endAction = "success"; message = "A focused follow-up could make sense. Send me an agenda and who you want involved, and I'll confirm the right people on my side."; }
       else { state.trust = clampState(state.trust - 5); message = "We haven’t established enough yet for me to commit to another meeting. What would we accomplish?"; }
     }
     state.discussedTopicIds = [...new Set([...state.discussedTopicIds, move])];
