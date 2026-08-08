@@ -29,12 +29,14 @@ jobs:
         shell: bash
         run: |
           encoded_password="$(node -p 'encodeURIComponent(process.env.SUPABASE_DB_PASSWORD)')"
-          db_url="postgresql://postgres:${encoded_password}@db.${PROJECT_REF}.supabase.co:5432/postgres"
+          pooler_host="${SUPABASE_POOLER_HOST:-aws-0-us-east-1.pooler.supabase.com}"
+          db_url="postgresql://postgres.${PROJECT_REF}:${encoded_password}@${pooler_host}:5432/postgres"
           echo "::add-mask::$db_url"
           echo "SUPABASE_DIRECT_DB_URL=$db_url" >> "$GITHUB_ENV"
         env:
           PROJECT_REF: ${{ inputs.project_ref }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_POOLER_HOST: ${{ vars.SUPABASE_POOLER_HOST }}
       - run: supabase db push --db-url "$SUPABASE_DIRECT_DB_URL" --dry-run
       - if: inputs.apply_migrations
         run: supabase db push --db-url "$SUPABASE_DIRECT_DB_URL"
