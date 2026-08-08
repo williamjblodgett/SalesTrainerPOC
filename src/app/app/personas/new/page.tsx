@@ -1,12 +1,43 @@
-const sections = ["Identity & role", "Company context", "Goals & metrics", "Pains & consequences", "Buying process", "Objections", "Communication", "Difficulty profiles"];
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
-export default function Page() {
-  return <><p className="text-xs font-bold uppercase tracking-widest text-teal-600">Guided persona builder</p><h1 className="mt-2 text-4xl font-semibold">Create a buyer archetype</h1>
-  <div className="mt-8 grid gap-6 lg:grid-cols-[220px_1fr]"><aside className="space-y-1">{sections.map((section, index) => <div className={`rounded-lg p-3 text-sm ${index === 0 ? "bg-teal-50 font-semibold text-teal-800" : "text-slate-500"}`} key={section}>{index + 1}. {section}</div>)}</aside>
-  <form className="card max-w-3xl space-y-5"><div className="grid gap-4 md:grid-cols-2"><div><label>Persona name</label><input placeholder="Jordan Lee" /></div><div><label>Job title</label><input placeholder="VP of Sales Operations" /></div></div>
-    <div className="grid gap-4 md:grid-cols-2"><div><label>Seniority</label><select><option>VP</option><option>C-suite</option><option>Director</option><option>Manager</option></select></div><div><label>Primary function</label><input placeholder="Revenue Operations" /></div></div>
-    <div><label>Core responsibilities</label><textarea rows={4} placeholder="Forecast accuracy, sales process, planning cadence…" /></div>
-    <div><label>Top priorities and KPIs</label><textarea rows={4} placeholder="Reliable weekly forecast, manager adoption, lower reconciliation time…" /></div>
-    <div className="flex justify-between"><button className="button-secondary" type="button">Save draft</button><button className="button" type="button">Continue to company context</button></div>
-  </form></div></>;
+import { canManage, requireAppContext } from "@/lib/auth/context";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+const manualPersonaSchema = z.object({
+  name: z.string().trim().min(2).max(120), title: z.string().trim().min(2).max(160), industry: z.string().trim().min(2).max(120), seniority: z.enum(["C-suite", "VP", "Director", "Manager", "Individual contributor"]), companyProfile: z.string().trim().min(10).max(2_000), responsibilities: z.string().trim().min(3).max(3_000), priorities: z.string().trim().min(3).max(3_000), kpis: z.string().trim().min(3).max(3_000), pain: z.string().trim().min(3).max(1_000), symptoms: z.string().trim().min(3).max(2_000), businessImpact: z.string().trim().min(3).max(2_000), emotionalImpact: z.string().trim().max(2_000), buyingTriggers: z.string().trim().max(2_000), objection: z.string().trim().min(3).max(1_000), objectionTrigger: z.string().trim().min(3).max(1_000), underlyingConcern: z.string().trim().min(3).max(1_000), resolutionSignals: z.string().trim().min(3).max(2_000), stakeholders: z.string().trim().min(3).max(2_000), budgetPosture: z.string().trim().min(2).max(500), timeline: z.string().trim().min(2).max(500), approvalProcess: z.string().trim().min(3).max(1_000), alternatives: z.string().trim().max(1_000), communicationStyle: z.string().trim().min(3).max(1_000), talkativeness: z.coerce.number().int().min(1).max(5), skepticism: z.coerce.number().int().min(1).max(5), patience: z.coerce.number().int().min(1).max(5), riskTolerance: z.coerce.number().int().min(1).max(5), vocabulary: z.string().trim().max(2_000), complianceConstraints: z.string().trim().max(2_000),
+});
+
+function list(value: string) { return value.split(/\r?\n|,/).map((item) => item.trim()).filter(Boolean); }
+
+export default async function ManualPersonaPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const context = await requireAppContext();
+  if (!canManage(context.role)) redirect("/app");
+  const { error } = await searchParams;
+  async function createPersona(formData: FormData) {
+    "use server";
+    const actionContext = await requireAppContext();
+    if (!canManage(actionContext.role)) redirect("/app");
+    const parsed = manualPersonaSchema.safeParse(Object.fromEntries(formData));
+    if (!parsed.success) redirect("/app/personas/new?error=Complete+all+required+buyer+fields.");
+    const value = parsed.data;
+    const structuredData = { schemaVersion: "1.0", status: "published", identity: { name: value.name, title: value.title, industry: value.industry, seniority: value.seniority, companyProfile: value.companyProfile }, responsibilities: list(value.responsibilities), kpis: list(value.kpis), priorities: list(value.priorities), pains: [{ label: value.pain, symptoms: list(value.symptoms), businessImpact: list(value.businessImpact), emotionalImpact: list(value.emotionalImpact), buyingTriggers: list(value.buyingTriggers) }], objections: [{ surfaceStatement: value.objection, trigger: value.objectionTrigger, underlyingConcern: value.underlyingConcern, resolutionSignals: list(value.resolutionSignals) }], decisionProcess: { stakeholders: list(value.stakeholders), budgetPosture: value.budgetPosture, timeline: value.timeline, approvalProcess: value.approvalProcess, alternatives: list(value.alternatives) }, behavior: { communicationStyle: value.communicationStyle, talkativeness: value.talkativeness, skepticism: value.skepticism, patience: value.patience, riskTolerance: value.riskTolerance }, vocabulary: list(value.vocabulary), complianceConstraints: list(value.complianceConstraints), evidenceClaims: [], fieldEvidence: [], conflicts: [], assumptions: ["Manager-authored persona; validate against customer evidence before broad use."], missingInformation: [], evidenceCoverage: 0, provenance: { source: "manager_authored", createdBy: actionContext.user.id } };
+    const supabase = await createSupabaseServerClient();
+    if (!supabase) redirect("/app/personas/new?error=Persona+persistence+is+unavailable.");
+    const { data, error: rpcError } = await supabase.rpc("create_manual_persona", { p_organization_id: actionContext.organization.id, p_structured_data: structuredData });
+    if (rpcError || !data) redirect("/app/personas/new?error=Persona+could+not+be+created.");
+    redirect(`/app/personas/${data}`);
+  }
+  return <><header className="page-header"><div><span className="eyebrow">Guided persona builder</span><h1>Create a buyer archetype.</h1><p className="page-lead">Model the buyer’s operating reality, pressure, decision process, objections, and behavior. Manager-authored personas are usable immediately and clearly separated from transcript evidence.</p></div></header>
+    {error && <p className="form-alert">{error}</p>}
+    <form action={createPersona} className="card grid gap-5">
+      <section><h2 className="font-semibold">Identity and company</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label>Persona name<input name="name" required placeholder="Jordan Lee" /></label><label>Job title<input name="title" required placeholder="VP of Sales Operations" /></label><label>Industry<input name="industry" required placeholder="B2B software" /></label><label>Seniority<select name="seniority" defaultValue="VP"><option>C-suite</option><option>VP</option><option>Director</option><option>Manager</option><option>Individual contributor</option></select></label></div><label className="mt-4">Company profile<textarea name="companyProfile" rows={3} required placeholder="Mid-market company, distributed sales team, weekly forecasting cadence…" /></label></section>
+      <section><h2 className="font-semibold">Responsibilities, priorities, and metrics</h2><div className="mt-4 grid gap-4 md:grid-cols-3"><label>Responsibilities<textarea name="responsibilities" rows={4} required placeholder="Forecast accuracy&#10;Sales process&#10;Planning cadence" /></label><label>Priorities<textarea name="priorities" rows={4} required placeholder="Leadership confidence&#10;Manager adoption" /></label><label>KPIs<textarea name="kpis" rows={4} required placeholder="Forecast variance&#10;Reporting cycle time" /></label></div></section>
+      <section><h2 className="font-semibold">Pain and consequences</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label>Primary pain<input name="pain" required placeholder="Inconsistent regional forecasts" /></label><label>Observable symptoms<textarea name="symptoms" rows={3} required /></label><label>Business impact<textarea name="businessImpact" rows={3} required /></label><label>Emotional impact<textarea name="emotionalImpact" rows={3} /></label><label className="md:col-span-2">Buying triggers<textarea name="buyingTriggers" rows={2} /></label></div></section>
+      <section><h2 className="font-semibold">Objection and resolution</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label>Surface objection<input name="objection" required placeholder="We already have reporting in our CRM." /></label><label>Trigger<input name="objectionTrigger" required placeholder="Seller pitches before understanding workflow" /></label><label>Underlying concern<textarea name="underlyingConcern" rows={3} required /></label><label>Resolution signals<textarea name="resolutionSignals" rows={3} required placeholder="Acknowledge existing CRM&#10;Investigate duplicate work" /></label></div></section>
+      <section><h2 className="font-semibold">Decision process</h2><div className="mt-4 grid gap-4 md:grid-cols-2"><label>Stakeholders<textarea name="stakeholders" rows={2} required /></label><label>Budget posture<input name="budgetPosture" required /></label><label>Timeline<input name="timeline" required /></label><label>Approval process<textarea name="approvalProcess" rows={2} required /></label><label className="md:col-span-2">Alternatives<textarea name="alternatives" rows={2} /></label></div></section>
+      <section><h2 className="font-semibold">Buyer behavior</h2><label className="mt-4">Communication style<textarea name="communicationStyle" rows={2} required placeholder="Direct, skeptical, time-conscious; answers broad questions partially." /></label><div className="mt-4 grid gap-4 md:grid-cols-4">{[["talkativeness","Talkativeness"],["skepticism","Skepticism"],["patience","Patience"],["riskTolerance","Risk tolerance"]].map(([name,label]) => <label key={name}>{label}<select name={name} defaultValue="3">{[1,2,3,4,5].map((value) => <option value={value} key={value}>{value}</option>)}</select></label>)}</div><div className="mt-4 grid gap-4 md:grid-cols-2"><label>Buyer vocabulary<textarea name="vocabulary" rows={2} /></label><label>Compliance constraints<textarea name="complianceConstraints" rows={2} /></label></div></section>
+      <div className="flex justify-end"><button className="button" type="submit">Create and publish persona</button></div>
+    </form>
+  </>;
 }

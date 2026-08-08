@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { requireAppContext } from "@/lib/auth/context";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -19,10 +20,11 @@ export default async function PersonaVersionPage({ params }: { params: Promise<{
     const { data } = await supabase.from("persona_versions").select("version,structured_data,published_at").eq("persona_id", personaId).eq("organization_id", context.organization.id).order("version", { ascending: false }).limit(2);
     versions = (data ?? []).map((row) => ({ version: row.version, data: row.structured_data as Record<string, unknown>, publishedAt: row.published_at }));
   }
-  if (!versions.length) versions = [
+  if (!versions.length && context.demo) versions = [
     { version: 3, publishedAt: "2026-08-04", data: { identity: "VP Sales Operations", priorities: ["Forecast confidence", "Low administrative burden"], objections: ["We already have CRM reporting"], evidenceCoverage: 0.88 } },
     { version: 2, publishedAt: "2026-07-18", data: { identity: "Sales Operations leader", priorities: ["Forecast confidence"], objections: ["Another tool creates admin work"], evidenceCoverage: 0.76 } },
   ];
+  if (!versions.length) notFound();
   const latest = versions[0];
   const previous = versions[1];
   const changes = previous ? summarizeChanges(previous.data, latest.data) : [];
