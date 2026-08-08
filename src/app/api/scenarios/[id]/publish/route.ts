@@ -22,8 +22,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { data: persona } = await admin.from("persona_versions").select("id").eq("id", version.persona_version_id).eq("organization_id", context.organization.id).maybeSingle();
   if (!persona) return NextResponse.json({ code: "conflict", message: "Publish and attach a governed persona version first." }, { status: 409 });
   const publishedAt = new Date().toISOString();
-  const { data, error } = await admin.from("scenario_versions").update({ approved_by: context.user.id, published_at: publishedAt, idempotency_key: key }).eq("id", version.id).eq("organization_id", context.organization.id).is("published_at", null).select("id,published_at").maybeSingle();
-  if (error || !data) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
+  // The database immutability rule permits the one-way draft publication
+  // transition but PostgreSQL rules do not support UPDATE ... RETURNING.
+  const { error } = await admin.from("scenario_versions").update({ approved_by: context.user.id, published_at: publishedAt, idempotency_key: key }).eq("id", version.id).eq("organization_id", context.organization.id).is("published_at", null);
+  if (error) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
+  const { data } = await admin.from("scenario_versions").select("id,published_at,idempotency_key").eq("id", version.id).eq("organization_id", context.organization.id).maybeSingle();
+  if (!data?.published_at || data.idempotency_key !== key) return NextResponse.json({ code: "conflict", message: "The scenario changed before publication." }, { status: 409 });
   await admin.from("scenarios").update({ status: "published" }).eq("id", id).eq("organization_id", context.organization.id);
   return NextResponse.json({ scenarioVersionId: data.id, status: "published", publishedAt: data.published_at, duplicate: false });
 }
