@@ -12,7 +12,7 @@
 - [x] Make production deployment select OpenAI and Cloudmersive when credentials exist instead of hard-coding mock mode.
 - [x] Add integration and launch-gate status to organization settings.
 - [x] Add the server-mediated Realtime WebRTC session endpoint behind the calibration gate.
-- [ ] Apply migration `202608070001_canonical_revenue_os.sql` and pass both hosted pgTAP suites.
+- [x] Apply migrations `202608070001_canonical_revenue_os.sql`, `202608070002_manual_persona.sql`, and `202608070003_atomic_scenario_publish.sql`; both hosted pgTAP suites passed in GitHub Actions runs `31229922193`, `31230340785`, and `31230810424`.
 - [ ] Add production `OPENAI_API_KEY` and validate provider-backed compiler, persona, buyer, and evaluator contracts.
 - [ ] Add `CLOUDMERSIVE_API_KEY` and validate clean and quarantined documents in production.
 - [ ] Complete provider-specific OAuth authorization, encrypted refresh-token storage, backfill workers, and marketplace approval.
@@ -134,6 +134,15 @@
 - [x] Voice device selection, reconnection controls, and organization usage limits
 - [x] Playwright authenticated workflow
 - [ ] Run the authenticated Playwright workflow against the canonical production deployment.
+
+### 2026-08-07 hosted browser acceptance
+
+- [x] Create and publish an immutable scenario version in the canonical Supabase application.
+- [x] Complete a persisted multi-turn text session and generate an evidence-citing weighted evaluation.
+- [x] Verify the result page displays the real transcript, stable turn IDs, criterion evidence, and deterministic score.
+- [x] Ingest a consent-attested synthetic transcript and verify 6 observations, 6 graph entities, and exactly 20 review-required revenue assets.
+- [x] Correct the browser-safe practice brief contract and add a hidden-data regression test.
+- [x] Correct deterministic buyer phrasing and scoring false positives with realism and negative-control tests.
 
 ## Persona QA
 

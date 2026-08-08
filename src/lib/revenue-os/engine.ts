@@ -12,8 +12,8 @@ type Observation = { turnId: string; speaker: "buyer" | "seller" | "unknown"; ty
 function classify(text: string): Observation["type"] {
   if (/object|already have|too expensive|not interested|concern|risk/i.test(text)) return "objection";
   if (/impact|cost|revenue|delay|leadership|result|consequence/i.test(text)) return "impact";
-  if (/priority|important|goal|need to|must/i.test(text)) return "priority";
   if (/approve|committee|legal|security|stakeholder|decision/i.test(text)) return "stakeholder";
+  if (/priority|important|goal|need to|must/i.test(text)) return "priority";
   if (/competitor|alternative|other vendor|build it/i.test(text)) return "competitor";
   if (/problem|challenge|manual|frustrat|difficult|breaks|late/i.test(text)) return "pain";
   return "language";
@@ -47,9 +47,28 @@ export async function ingestRevenueCall(input: { organizationId: string; userId:
       const evidenceCoverage = Math.min(1, evidenceIds.length / 8);
       const assets = assetBlueprints.map(([assetType, label, department]) => ({ organization_id: input.organizationId, call_id: call.id, asset_type: assetType, title: `${label}: ${input.accountName || input.title}`, department, status: evidenceIds.length >= 2 ? "review_required" : "insufficient_evidence", evidence_coverage: evidenceCoverage, current_version: evidenceIds.length >= 2 ? 1 : 0, created_by: input.userId }));
       const { data: createdAssets } = await admin.from("revenue_assets").insert(assets).select("id,asset_type,title,status");
-      if (evidenceIds.length >= 2) for (const asset of createdAssets ?? []) {
-        const { data: version } = await admin.from("revenue_asset_versions").insert({ organization_id: input.organizationId, asset_id: asset.id, version: 1, content: { summary: `Evidence-backed ${asset.title}`, sections: [{ heading: "Customer evidence", content: (inserted ?? []).slice(0, 5).map((item) => item.claim).join("\n") }], caveats: ["Manager review is required before publication."], sourceHash: createHash("sha256").update(input.transcript).digest("hex") }, model: "deterministic-evidence-planner", prompt_version: "asset-planner-v1", generated_by: input.userId }).select("id").single();
-        if (version) await admin.from("revenue_asset_evidence").insert(evidenceIds.map((observationId) => ({ organization_id: input.organizationId, asset_version_id: version.id, observation_id: observationId })));
+      if (evidenceIds.length >= 2 && createdAssets?.length) {
+        const sourceHash = createHash("sha256").update(input.transcript).digest("hex");
+        const sharedContent = {
+          sections: [{ heading: "Customer evidence", content: (inserted ?? []).slice(0, 5).map((item) => item.claim).join("\n") }],
+          caveats: ["Manager review is required before publication."],
+          sourceHash,
+        };
+        const { data: versions, error: versionError } = await admin.from("revenue_asset_versions").insert(createdAssets.map((asset) => ({
+          organization_id: input.organizationId,
+          asset_id: asset.id,
+          version: 1,
+          content: { ...sharedContent, summary: `Evidence-backed ${asset.title}` },
+          model: "deterministic-evidence-planner",
+          prompt_version: "asset-planner-v1",
+          generated_by: input.userId,
+        }))).select("id");
+        if (versionError) throw versionError;
+        const evidenceLinks = (versions ?? []).flatMap((version) => evidenceIds.map((observationId) => ({ organization_id: input.organizationId, asset_version_id: version.id, observation_id: observationId })));
+        if (evidenceLinks.length) {
+          const { error: evidenceError } = await admin.from("revenue_asset_evidence").insert(evidenceLinks);
+          if (evidenceError) throw evidenceError;
+        }
       }
     }
     await admin.from("revenue_calls").update({ status: "ready" }).eq("id", call.id).eq("organization_id", input.organizationId);
@@ -59,4 +78,3 @@ export async function ingestRevenueCall(input: { organizationId: string; userId:
     throw error;
   }
 }
-
