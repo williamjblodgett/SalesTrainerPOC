@@ -15,6 +15,7 @@
     "test:e2e:authenticated": "playwright test --grep @authenticated",
     "typecheck": "tsc --noEmit",
     "validate:hosted": "node scripts/validate-hosted-html.mjs",
+    "check:pilot-env": "node scripts/check-pilot-env.mjs",
     "check:production-env": "node scripts/check-production-env.mjs",
     "calibrate:openai": "node --conditions=react-server --import tsx scripts/calibrate-openai.ts",
     "validate:scanner:live": "node --conditions=react-server --import tsx scripts/validate-scanner-live.ts"
