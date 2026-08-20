@@ -6,7 +6,7 @@ The canonical application is the Next.js server build deployed to Vercel with Su
 
 The repository has `preview`, `production`, and `supabase-staging` environments. The canonical deployment workflow is manually dispatched so production promotion is intentional. Configure these environment secrets:
 
-- `preview` and `production`: `VERCEL_TOKEN`. The workflow links the existing `suadence/salessim` project explicitly instead of relying on duplicated organization or project IDs.
+- `preview` and `production`: `VERCEL_TOKEN`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`. The workflow links the existing `suadence/salessim` project explicitly instead of relying on duplicated organization or project IDs.
 - `supabase-staging`: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`
 
 Configure the runtime values in Vercel rather than GitHub. Required production values are checked by `pnpm check:production-env`:
