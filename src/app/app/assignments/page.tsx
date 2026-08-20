@@ -2,40 +2,41 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { canManage, requireAppContext } from "@/lib/auth/context";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AssignmentsPage() {
   const context = await requireAppContext();
-  const admin = createSupabaseAdminClient();
+  const supabase = await createSupabaseServerClient();
   const manager = canManage(context.role);
-  if (!admin) return <p className="form-alert">Assignment persistence is unavailable.</p>;
+  if (!supabase) return <p className="form-alert">Assignment persistence is unavailable.</p>;
 
   async function createAssignment(formData: FormData) {
     "use server";
     const actionContext = await requireAppContext();
     if (!canManage(actionContext.role)) return;
-    const actionAdmin = createSupabaseAdminClient();
-    if (!actionAdmin) return;
+    const actionSupabase = await createSupabaseServerClient();
+    if (!actionSupabase) return;
     const scenarioVersionId = String(formData.get("scenarioVersionId") ?? "");
     const userId = String(formData.get("userId") ?? "");
     const due = String(formData.get("dueAt") ?? "");
-    const { data: version } = await actionAdmin.from("scenario_versions").select("id").eq("id", scenarioVersionId).eq("organization_id", actionContext.organization.id).not("published_at", "is", null).maybeSingle();
-    const { data: membership } = await actionAdmin.from("memberships").select("user_id").eq("user_id", userId).eq("organization_id", actionContext.organization.id).maybeSingle();
-    if (!version || !membership) redirect("/app/assignments?error=Choose+a+published+scenario+and+team+member.");
-    const { data: assignment } = await actionAdmin.from("assignments").insert({ organization_id: actionContext.organization.id, scenario_version_id: version.id, created_by: actionContext.user.id, due_at: due ? new Date(due).toISOString() : null, status: "active" }).select("id").single();
-    if (!assignment) redirect("/app/assignments?error=Assignment+could+not+be+created.");
-    await actionAdmin.from("assignment_targets").insert({ organization_id: actionContext.organization.id, assignment_id: assignment.id, user_id: membership.user_id });
+    const { error } = await actionSupabase.rpc("create_assignment_for_member", {
+      p_organization_id: actionContext.organization.id,
+      p_scenario_version_id: scenarioVersionId,
+      p_user_id: userId,
+      p_due_at: due ? new Date(due).toISOString() : null,
+    });
+    if (error) redirect("/app/assignments?error=Choose+a+published+scenario+and+team+member.");
     revalidatePath("/app/assignments");
   }
 
   const [{ data: assignments }, { data: versions }, { data: memberships }] = await Promise.all([
-    admin.from("assignments").select("id,due_at,status,created_at,scenario_versions(id,scenario_id,scenarios(title)),assignment_targets(user_id)").eq("organization_id", context.organization.id).order("created_at", { ascending: false }),
-    admin.from("scenario_versions").select("id,version,scenarios(title)").eq("organization_id", context.organization.id).not("published_at", "is", null).order("created_at", { ascending: false }),
-    admin.from("memberships").select("user_id,role,created_at").eq("organization_id", context.organization.id).order("created_at"),
+    supabase.from("assignments").select("id,due_at,status,created_at,scenario_versions(id,scenario_id,scenarios(title)),assignment_targets(user_id)").eq("organization_id", context.organization.id).order("created_at", { ascending: false }),
+    supabase.from("scenario_versions").select("id,version,scenarios(title)").eq("organization_id", context.organization.id).not("published_at", "is", null).order("created_at", { ascending: false }),
+    supabase.from("memberships").select("user_id,role,created_at").eq("organization_id", context.organization.id).order("created_at"),
   ]);
   const memberIds = (memberships ?? []).map((membership) => membership.user_id);
-  const { data: profiles } = memberIds.length ? await admin.from("profiles").select("user_id,display_name").in("user_id", memberIds) : { data: [] };
-  const displayNames = new Map((profiles ?? []).map((profile) => [profile.user_id, profile.display_name]));
+  const { data: profiles } = memberIds.length ? await supabase.from("profiles").select("id,display_name").in("id", memberIds) : { data: [] };
+  const displayNames = new Map((profiles ?? []).map((profile) => [profile.id, profile.display_name]));
   const memberLabel = (userId: string) => displayNames.get(userId) ?? (userId === context.user.id ? context.user.email : null) ?? userId.slice(0, 8);
 
   return <><header className="page-header"><div><span className="eyebrow">Practice operations</span><h1>Assignments</h1><p className="page-lead">Assign immutable scenarios to specific team members and track completion.</p></div></header>

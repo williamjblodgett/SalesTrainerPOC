@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import type { BuyerActor } from "./contracts";
 import { MockBuyerActor } from "./mock";
+import { shouldUseDeterministicAI } from "./provider-mode";
 import { buyerStateSchema, clampState, sellerMoveSchema } from "@/lib/domain/buyer";
 
 const actorOutputSchema = z.object({
@@ -66,5 +67,5 @@ export class OpenAIBuyerActor implements BuyerActor {
 }
 
 export function createBuyerActor(): BuyerActor {
-  return process.env.AI_PROVIDER === "mock" || !process.env.OPENAI_API_KEY ? new MockBuyerActor() : new OpenAIBuyerActor();
+  return shouldUseDeterministicAI() ? new MockBuyerActor() : new OpenAIBuyerActor();
 }

@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v6
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Build static public preview
+      - name: Build canonical-site handoff
         run: node scripts/build-github-pages.mjs
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

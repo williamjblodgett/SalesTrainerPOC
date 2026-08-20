@@ -50,14 +50,18 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Verify production health
         run: curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ steps.deploy.outputs.url }}/api/health"
+      - name: Install Chromium for release acceptance
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Verify public, invite, and recovery surfaces
+        run: pnpm test:e2e:public --project=chromium
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
       - if: inputs.production
         name: Require authenticated release-test identity
         run: test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD"
         env:
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-      - if: inputs.production
-        run: pnpm exec playwright install --with-deps chromium
       - if: inputs.production
         run: pnpm test:e2e:authenticated --project=chromium
         env:

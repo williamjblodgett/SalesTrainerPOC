@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { signOut } from "@/app/auth/actions";
+import { signOut, switchOrganization } from "@/app/auth/actions";
 import { getOptionalAppContext } from "@/lib/auth/context";
 
 import { AppNavigation } from "./app-navigation";
 
 const mainSiteUrl =
   process.env.NEXT_PUBLIC_MAIN_SITE_URL ??
-  "https://williamjblodgett.github.io/SalesTrainerPOC/";
+  "https://salessim-five.vercel.app/";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const context = await getOptionalAppContext();
@@ -45,6 +45,17 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
           <span>Workspace</span>
           <strong>{context.organization.name}</strong>
           <small>{context.role}</small>
+          {context.organizations.length > 1 && (
+            <form action={switchOrganization} className="mt-3 grid gap-2">
+              <label className="sr-only" htmlFor="organizationId">Switch workspace</label>
+              <select id="organizationId" name="organizationId" defaultValue={context.organization.id}>
+                {context.organizations.map((organization) => (
+                  <option value={organization.id} key={organization.id}>{organization.name}</option>
+                ))}
+              </select>
+              <button className="button-secondary" type="submit">Switch</button>
+            </form>
+          )}
         </div>
         <AppNavigation role={context.role} />
         <Link href={mainSiteUrl} className="main-site-link">

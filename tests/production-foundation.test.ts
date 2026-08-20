@@ -29,6 +29,10 @@ describe("production database foundation", () => {
     "supabase/migrations/202607230001_production_foundation.sql",
     "utf8",
   );
+  const hardening = fs.readFileSync(
+    "supabase/migrations/202608200001_auth_and_profile_hardening.sql",
+    "utf8",
+  );
 
   it("does not reference a nonexistent organization_id on organizations", () => {
     expect(initial).not.toMatch(
@@ -52,5 +56,18 @@ describe("production database foundation", () => {
     expect(foundation).toContain("session_insert_self");
     expect(foundation).toContain("auth.uid() = user_id");
     expect(foundation).toContain("override_manager_insert");
+  });
+
+  it("prevents reps from selecting hidden scenario specs or peer sessions", () => {
+    expect(hardening).toContain("drop policy if exists tenant_select");
+    expect(hardening).toContain("manager_tenant_select");
+    expect(hardening).toContain("session_owner_or_manager_select");
+    expect(hardening).toContain("session_turn_owner_or_manager_select");
+  });
+
+  it("creates assignments atomically through an authorized RPC", () => {
+    expect(hardening).toContain("function public.create_assignment_for_member");
+    expect(hardening).toContain("manager access required");
+    expect(hardening).toContain("insert into public.assignment_targets");
   });
 });

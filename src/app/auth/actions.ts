@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -10,9 +11,8 @@ const credentialsSchema = z.object({
   password: z.string().min(8).max(128),
 });
 
-const signupSchema = credentialsSchema.extend({
-  displayName: z.string().trim().min(2).max(80),
-});
+const recoveryEmailSchema = z.object({ email: z.string().trim().email() });
+const recoveryCookieName = "suadence-recovery-intent";
 
 function authError(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
@@ -27,33 +27,33 @@ export async function signIn(formData: FormData) {
 
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) authError("/login", "The email or password was not recognized.");
-  redirect("/app");
+  const returnTo = String(formData.get("returnTo") ?? "");
+  const safeReturnTo =
+    returnTo.startsWith("/app") && !returnTo.startsWith("//")
+      ? returnTo
+      : "/app";
+  redirect(safeReturnTo);
 }
 
-export async function signUp(formData: FormData) {
-  const parsed = signupSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success)
-    authError(
-      "/signup",
-      "Use a valid email, a name, and a password of at least eight characters.",
-    );
+export async function requestPasswordReset(formData: FormData) {
+  const parsed = recoveryEmailSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) authError("/forgot-password", "Enter a valid work email.");
   const supabase = await createSupabaseServerClient();
   if (!supabase)
-    authError("/signup", "Authentication is not configured in this environment.");
+    authError("/forgot-password", "Authentication is not configured.");
 
-  const { data, error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    options: { data: { display_name: parsed.data.displayName } },
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const redirectTo = new URL("/auth/confirm?next=/reset-password", appUrl);
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: redirectTo.toString(),
   });
-  if (error) authError("/signup", "We could not create that account.");
-  if (!data.session) {
-    redirect(
-      "/login?message=" +
-        encodeURIComponent("Check your email to confirm your Suadence account."),
-    );
-  }
-  redirect("/app/onboarding");
+
+  redirect(
+    "/forgot-password?message=" +
+      encodeURIComponent(
+        "If that account exists, a new one-time reset link is on its way.",
+      ),
+  );
 }
 
 export async function signOut() {
@@ -62,12 +62,82 @@ export async function signOut() {
   redirect("/");
 }
 
+export async function switchOrganization(formData: FormData) {
+  const organizationId = z.string().uuid().safeParse(formData.get("organizationId"));
+  if (!organizationId.success) redirect("/app?error=Invalid+workspace.");
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) redirect("/login");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("organization_id")
+    .eq("organization_id", organizationId.data)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!membership) redirect("/app?error=You+cannot+access+that+workspace.");
+  const cookieStore = await cookies();
+  cookieStore.set("suadence-active-organization", organizationId.data, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 365,
+    path: "/",
+  });
+  redirect("/app");
+}
+
 const changePasswordSchema = z
   .object({
     password: z.string().min(12).max(128),
     confirmPassword: z.string().min(12).max(128),
   })
   .refine(({ password, confirmPassword }) => password === confirmPassword);
+
+export async function resetRecoveredPassword(formData: FormData) {
+  const parsed = changePasswordSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success)
+    authError(
+      "/reset-password",
+      "Use matching passwords of at least 12 characters.",
+    );
+
+  const cookieStore = await cookies();
+  const recoveryIntent = cookieStore.get(recoveryCookieName)?.value;
+  const supabase = await createSupabaseServerClient();
+  if (!supabase || recoveryIntent !== "verified")
+    authError(
+      "/forgot-password",
+      "That recovery session is invalid or expired. Request a new link.",
+    );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user)
+    authError(
+      "/forgot-password",
+      "That recovery session is invalid or expired. Request a new link.",
+    );
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error)
+    authError(
+      "/reset-password",
+      "We could not save that password. Request a new reset link and try again.",
+    );
+
+  cookieStore.delete(recoveryCookieName);
+  await supabase.auth.signOut({ scope: "global" });
+  redirect(
+    "/login?message=" +
+      encodeURIComponent("Password updated. Sign in with your new password."),
+  );
+}
 
 export async function changePassword(formData: FormData) {
   const parsed = changePasswordSchema.safeParse(Object.fromEntries(formData));

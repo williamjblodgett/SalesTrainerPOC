@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -11,6 +12,7 @@ export { canManage, canOwn } from "./roles";
 export type AppContext = {
   user: { id: string; email: string; displayName: string };
   organization: { id: string; name: string };
+  organizations: Array<{ id: string; name: string; role: OrganizationRole }>;
   role: OrganizationRole;
   demo: boolean;
 };
@@ -22,6 +24,9 @@ const demoContext: AppContext = {
     displayName: "Alex Morgan",
   },
   organization: { id: "demo-organization", name: "Northstar Revenue Team" },
+  organizations: [
+    { id: "demo-organization", name: "Northstar Revenue Team", role: "manager" },
+  ],
   role: "manager",
   demo: true,
 };
@@ -40,18 +45,21 @@ export async function getOptionalAppContext(): Promise<AppContext | null> {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: membership } = await supabase
+  const { data: memberships } = await supabase
     .from("memberships")
     .select("role, organizations(id, name)")
     .eq("user_id", user.id)
-    .order("created_at")
-    .limit(1)
-    .maybeSingle();
+    .order("created_at");
 
-  const organization = Array.isArray(membership?.organizations)
-    ? membership.organizations[0]
-    : membership?.organizations;
-  if (!membership || !organization) {
+  const organizations = (memberships ?? []).flatMap((membership) => {
+    const organization = Array.isArray(membership.organizations)
+      ? membership.organizations[0]
+      : membership.organizations;
+    return organization
+      ? [{ ...organization, role: membership.role as OrganizationRole }]
+      : [];
+  });
+  if (!organizations.length) {
     return {
       user: {
         id: user.id,
@@ -62,10 +70,16 @@ export async function getOptionalAppContext(): Promise<AppContext | null> {
           "New user",
       },
       organization: { id: "", name: "" },
+      organizations: [],
       role: "owner",
       demo: false,
     };
   }
+
+  const cookieStore = await cookies();
+  const requestedOrganizationId = cookieStore.get("suadence-active-organization")?.value;
+  const activeOrganization =
+    organizations.find(({ id }) => id === requestedOrganizationId) ?? organizations[0];
 
   return {
     user: {
@@ -76,8 +90,9 @@ export async function getOptionalAppContext(): Promise<AppContext | null> {
         user.email?.split("@")[0] ||
         "User",
     },
-    organization: { id: organization.id, name: organization.name },
-    role: membership.role as OrganizationRole,
+    organization: { id: activeOrganization.id, name: activeOrganization.name },
+    organizations,
+    role: activeOrganization.role,
     demo: false,
   };
 }

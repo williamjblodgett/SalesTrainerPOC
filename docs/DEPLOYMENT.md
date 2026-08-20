@@ -1,6 +1,6 @@
 # Canonical deployment
 
-The canonical application is the Next.js server build deployed to Vercel with Supabase Auth, Postgres, RLS, and private Storage. GitHub Pages remains a fixture-only public demonstration, and the Sites/D1 deployment remains a private compatibility preview.
+The canonical application is the Next.js server build deployed to Vercel with Supabase Auth, Postgres, RLS, and private Storage. Marketing and product share `https://salessim-five.vercel.app`. GitHub Pages redirects to that origin. The retired Sites/D1 preview must not be deployed or used for customer data.
 
 ## GitHub environments
 
@@ -24,8 +24,8 @@ Configure the runtime values in Vercel rather than GitHub. Required production v
 - `ENABLE_REALTIME_VOICE=false` until the text benchmark passes
 - `TEXT_REALISM_BENCHMARK_STATUS=pending` until the approved calibration report passes
 
-The production GitHub environment also requires `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated, least-privilege release-test user that already belongs to a seeded organization. The canonical workflow deploys, checks `/api/health`, and runs the authenticated Chromium flow. Supabase handles identity directly; ChatGPT login is never part of application authentication.
+The production GitHub environment also requires `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated, least-privilege release-test user that already belongs to a seeded organization. It also needs `SUPABASE_ACCESS_TOKEN` to apply the versioned invite-only auth configuration. The canonical workflow deploys, checks `/api/health`, and runs the authenticated Chromium flow. Supabase handles identity directly; ChatGPT login is never part of application authentication.
 
-The Supabase workflow first links the explicitly supplied staging project and performs a migration dry run. It applies migrations and runs `supabase test db --linked` only when `apply_migrations` is deliberately selected. Never point that validation workflow at a customer production database.
+The Supabase workflow builds an explicit database URL, performs a migration dry run, applies migrations only when requested, and runs every pgTAP isolation suite. The separate auth workflow applies canonical URLs, disables public signup, and installs token-hash recovery/invite templates through the Supabase Management API.
 
 After a hosted calibration pass and sales-leader naturalness sign-off, set `TEXT_REALISM_BENCHMARK_STATUS=passed`, then enable voice in a separate release with `ENABLE_REALTIME_VOICE=true`. The standard OpenAI key remains server-side.

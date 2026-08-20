@@ -47,6 +47,28 @@ export const assetContentSchema = z.object({
   caveats: z.array(z.string()).max(10),
 });
 
+export const revenueAssetDraftSchema = z.object({
+  assetType: z.enum(assetBlueprints.map(([type]) => type) as [RevenueAssetType, ...RevenueAssetType[]]),
+  content: assetContentSchema,
+});
+
+export const revenueAssetBatchSchema = z.object({
+  assets: z.array(revenueAssetDraftSchema).length(assetBlueprints.length),
+}).superRefine(({ assets }, context) => {
+  const types = assets.map(({ assetType }) => assetType);
+  if (new Set(types).size !== assetBlueprints.length) {
+    context.addIssue({ code: "custom", path: ["assets"], message: "Every revenue asset type must appear exactly once" });
+  }
+  for (const [type] of assetBlueprints) {
+    if (!types.includes(type)) {
+      context.addIssue({ code: "custom", path: ["assets"], message: `Missing revenue asset type: ${type}` });
+    }
+  }
+});
+
+export type EvidenceExtraction = z.infer<typeof evidenceExtractionSchema>;
+export type RevenueAssetDraft = z.infer<typeof revenueAssetDraftSchema>;
+
 export const connectorCatalog = [
   { provider: "gong", name: "Gong", scopes: ["calls:read", "transcripts:read", "users:read"] },
   { provider: "chorus", name: "Chorus", scopes: ["calls:read", "transcripts:read"] },
@@ -54,4 +76,3 @@ export const connectorCatalog = [
   { provider: "teams", name: "Microsoft Teams", scopes: ["OnlineMeetings.Read", "CallRecords.Read.All"] },
   { provider: "salesforce", name: "Salesforce", scopes: ["api", "refresh_token"] },
 ] as const;
-
