@@ -46,6 +46,9 @@ jobs:
           AUTH_ACCESS_MODE: invite_only
           NEXT_PUBLIC_APP_URL: https://salessim-five.vercel.app
           NEXT_PUBLIC_MAIN_SITE_URL: https://salessim-five.vercel.app
+          NEXT_PUBLIC_SUPABASE_URL: https://iwigbylktbudvmjtqdvi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           ENABLE_REALTIME_VOICE: "false"
       - run: pnpm dlx vercel@latest build ${{ inputs.production && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
         env:
@@ -53,6 +56,9 @@ jobs:
           AUTH_ACCESS_MODE: invite_only
           NEXT_PUBLIC_APP_URL: ${{ inputs.production && 'https://salessim-five.vercel.app' || '' }}
           NEXT_PUBLIC_MAIN_SITE_URL: ${{ inputs.production && 'https://salessim-five.vercel.app' || '' }}
+          NEXT_PUBLIC_SUPABASE_URL: https://iwigbylktbudvmjtqdvi.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           ENABLE_REALTIME_VOICE: "false"
       - id: deploy
         shell: bash
@@ -64,6 +70,9 @@ jobs:
               --env AUTH_ACCESS_MODE=invite_only
               --env NEXT_PUBLIC_APP_URL=https://salessim-five.vercel.app
               --env NEXT_PUBLIC_MAIN_SITE_URL=https://salessim-five.vercel.app
+              --env NEXT_PUBLIC_SUPABASE_URL=https://iwigbylktbudvmjtqdvi.supabase.co
+              --env "NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY"
+              --env "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY"
               --env ENABLE_REALTIME_VOICE=false
             )
           fi
@@ -71,6 +80,8 @@ jobs:
           echo "url=$deployment_url" >> "$GITHUB_OUTPUT"
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       - name: Verify production health
         run: curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ steps.deploy.outputs.url }}/api/health"
       - name: Install Chromium for release acceptance
