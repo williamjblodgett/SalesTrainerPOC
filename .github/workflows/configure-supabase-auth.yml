@@ -19,7 +19,7 @@ jobs:
   configure-auth:
     if: inputs.confirmation == 'CONFIGURE_AUTH'
     runs-on: ubuntu-24.04
-    environment: production
+    environment: supabase-staging
     steps:
       - uses: actions/checkout@v4
       - name: Require Supabase management token
