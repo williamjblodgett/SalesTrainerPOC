@@ -6,7 +6,7 @@ The canonical application is the Next.js server build deployed to Vercel with Su
 
 The repository has `preview`, `production`, and `supabase-staging` environments. The canonical deployment workflow is manually dispatched so production promotion is intentional. Configure these environment secrets:
 
-- `preview` and `production`: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+- `preview` and `production`: `VERCEL_TOKEN`. The workflow links the existing `suadence/salessim` project explicitly instead of relying on duplicated organization or project IDs.
 - `supabase-staging`: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`
 
 Configure the runtime values in Vercel rather than GitHub. Required production values are checked by `pnpm check:production-env`:
@@ -25,6 +25,8 @@ Configure the runtime values in Vercel rather than GitHub. Required production v
 - `TEXT_REALISM_BENCHMARK_STATUS=pending` until the approved calibration report passes
 
 The production GitHub environment also requires `E2E_EMAIL` and `E2E_PASSWORD` for a dedicated, least-privilege release-test user that already belongs to a seeded organization. The protected `supabase-staging` environment currently holds `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD` for database/Auth operations; the workflow still requires an explicit project reference and confirmation. The canonical workflow deploys, checks `/api/health`, and runs the authenticated Chromium flow. Supabase handles identity directly; ChatGPT login is never part of application authentication.
+
+For the private pilot, `allow_degraded_pilot` may be explicitly selected. That path still requires production Supabase, the canonical URL, invite-only Auth, disabled voice, unit checks, a production build, health validation, and clean-browser public acceptance. It does not enable deterministic AI for customer data; live AI, scanning, and voice remain fail-closed until the full production contract and calibration gates pass.
 
 The Supabase workflow authenticates with the Management API, can resume a paused project only when `restore_project=true` is explicitly selected, derives the project region, uses the IPv4 session pooler required by GitHub Actions, performs a migration dry run, applies migrations only when requested, and runs every pgTAP isolation suite. The separate Auth workflow always applies canonical URLs, invite-only signup, and password policy. Token-hash templates are a separate explicit option because Supabase Free blocks template modification until custom SMTP or a paid mail provider is configured.
 
