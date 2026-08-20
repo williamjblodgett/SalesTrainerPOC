@@ -83,13 +83,16 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       - name: Verify production health
-        run: curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ steps.deploy.outputs.url }}/api/health"
+        shell: bash
+        run: |
+          health_json="$(curl --fail --silent --show-error --retry 5 --retry-all-errors "${{ inputs.production && 'https://salessim-five.vercel.app' || steps.deploy.outputs.url }}/api/health")"
+          node -e 'const health=JSON.parse(process.argv[1]); if (health.chatgptAccountRequired !== false) process.exit(1)' "$health_json"
       - name: Install Chromium for release acceptance
         run: pnpm exec playwright install --with-deps chromium
       - name: Verify public, invite, and recovery surfaces
         run: pnpm test:e2e:public --project=chromium
         env:
-          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          E2E_BASE_URL: ${{ inputs.production && 'https://salessim-five.vercel.app' || steps.deploy.outputs.url }}
       - if: inputs.production && !inputs.allow_degraded_pilot
         name: Require authenticated release-test identity
         run: test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD"
@@ -99,7 +102,7 @@ jobs:
       - if: inputs.production && !inputs.allow_degraded_pilot
         run: pnpm test:e2e:authenticated --project=chromium
         env:
-          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          E2E_BASE_URL: ${{ inputs.production && 'https://salessim-five.vercel.app' || steps.deploy.outputs.url }}
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       - if: failure()
