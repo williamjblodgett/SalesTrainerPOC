@@ -19,8 +19,8 @@
 - [x] Fail closed when live production data would otherwise fall back to deterministic mock AI.
 - [x] Prevent reps from reading Revenue OS calls, evidence, graph, connectors, or cross-team assets directly through RLS.
 - [x] Add evidence-backed review pages and atomic approve/change/reject decisions for generated revenue assets.
-- [ ] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all pgTAP suites.
-- [ ] Apply `supabase/auth-production-config.json` through the production auth workflow.
+- [x] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all 47 pgTAP checks (`32404194687`).
+- [ ] Apply custom recovery and invite email templates after custom SMTP or a paid Supabase email provider is configured.
 - [x] Apply canonical Site URL, callback allowlist, invite-only mode, and password policy through the hosted Auth workflow (`32403986457`).
 - [x] Reuse the protected Supabase operations environment containing `SUPABASE_ACCESS_TOKEN` and remove the incorrect hard-coded database region.
 - [x] Add an explicit, audited paused-project resume option before hosted migration validation.
