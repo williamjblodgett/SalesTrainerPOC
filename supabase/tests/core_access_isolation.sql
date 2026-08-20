@@ -36,7 +36,14 @@ select set_config('request.jwt.claims', '{"sub":"81000000-0000-0000-0000-0000000
 select is((select count(*)::integer from public.scenario_versions), 1, 'owner can read governed scenario specs');
 select is((select count(*)::integer from public.sessions), 2, 'owner can review team sessions');
 select is((select count(*)::integer from public.session_turns), 2, 'owner can review team transcripts');
-select is((select count(*)::integer from public.profiles), 3, 'owner can read team display profiles');
+select is((
+  select count(*)::integer from public.profiles
+  where id in (
+    '81000000-0000-0000-0000-000000000001',
+    '81000000-0000-0000-0000-000000000002',
+    '81000000-0000-0000-0000-000000000003'
+  )
+), 3, 'owner can read all three team fixture profiles');
 
 select * from finish();
 rollback;
