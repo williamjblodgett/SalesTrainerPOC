@@ -4,16 +4,16 @@
 
 The persona engine is an upstream intelligence boundary. It normalizes consent-confirmed transcripts into stable turns, quarantines seller instructions and unknown speakers, and produces atomic claims with exact source, turn, excerpt, and character spans. Unsupported calls return insufficient evidence. Managers accept, edit, or reject the exact claim set; only accepted projections enter immutable persona versions or scenarios.
 
-Transcript contents are untrusted reference data, never model instructions. Deterministic mock mode uses the same PersonaDraft schema and evidence validator without making an external call.
+Transcript contents are untrusted reference data, never model instructions. Deterministic mode uses the same contracts and validators, but it is limited to local tests and explicitly synthetic demonstrations. Live production data fails closed unless provider-backed AI is configured.
 
 Revenue OS adds two bounded responsibilities ahead of the existing simulation loop:
 
-1. Evidence Extractor converts consented, normalized transcript segments into candidate graph nodes and relationships with source turn IDs, confidence, and freshness.
-2. Asset Generator creates department-specific drafts from a compact, policy-filtered graph view. It cannot publish an asset or treat transcript instructions as system instructions.
+1. Evidence Extractor converts consented, normalized transcript segments into grounded observations with exact source turn IDs, excerpts, confidence, and explicit assumptions/missing information. Its output is revalidated against the transcript.
+2. Asset Generator creates exactly one differentiated, department-specific draft for each of the 20 required asset types. Every asset cites persisted evidence UUIDs; invented or out-of-scope citations fail the operation. It cannot publish an asset or treat transcript instructions as system instructions.
 
 The Proactive Revenue Advisor ranks deterministic action candidates produced from graph change, gaps, drift, coaching need, and commercial context. It may explain and draft, but all side effects pass through server-side permission and confirmation boundaries.
 
-Evidence extraction, asset generation, buyer acting, and evaluation use separate provider interfaces, prompts, contracts, usage events, and model configuration. No operation receives more private data than its job requires.
+Evidence extraction, asset generation, buyer acting, and evaluation use separate provider interfaces, prompts, contracts, usage events, model/prompt lineage, and configuration. No operation receives more private data than its job requires. Generated assets stay `review_required` until an atomic manager decision is recorded.
 
 Three responsibilities remain intentionally separate:
 

@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:public": "playwright test --grep-invert @authenticated",
     "test:e2e:authenticated": "playwright test --grep @authenticated",
     "typecheck": "tsc --noEmit",
     "validate:hosted": "node scripts/validate-hosted-html.mjs",

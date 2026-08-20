@@ -46,7 +46,10 @@ export async function proxy(request: NextRequest) {
   if (protectedRoute && !user) {
     const login = request.nextUrl.clone();
     login.pathname = "/login";
-    login.searchParams.set("returnTo", request.nextUrl.pathname);
+    login.searchParams.set(
+      "returnTo",
+      `${request.nextUrl.pathname}${request.nextUrl.search}`,
+    );
     return NextResponse.redirect(login);
   }
   if (authRoute && user) {

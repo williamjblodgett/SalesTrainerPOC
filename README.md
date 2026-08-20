@@ -6,13 +6,12 @@ It converts consented calls and transcripts into an organization-scoped knowledg
 
 The product retains the original sales-practice vertical slice while expanding it into a cross-department operating system for Sales, Enablement, Marketing, Product, Customer Success, Revenue Operations, and Leadership.
 
-## Deployments
+## Deployment
 
-- Public marketing site: [GitHub Pages](https://williamjblodgett.github.io/SalesTrainerPOC/)
-- Public no-login synthetic Revenue OS: [GitHub Pages app](https://williamjblodgett.github.io/SalesTrainerPOC/app/)
-- Secure private pilot: [hosted application](https://salessim-training-demo.williamjblodgett.chatgpt.site)
+- Canonical marketing site and private pilot: [salessim-five.vercel.app](https://salessim-five.vercel.app/)
+- GitHub Pages handoff: [williamjblodgett.github.io/SalesTrainerPOC](https://williamjblodgett.github.io/SalesTrainerPOC/)
 
-GitHub Pages provides a hash-routed synthetic preview with seven industry packs, 35 scenarios, one locked transcript/persona evidence fixture, scripted practice, explicitly illustrative local scoring, coaching, and analytics. It does not accept or infer from customer transcripts. The Next.js application is the canonical secure surface for Supabase authentication, private uploads, governed persona extraction, stateful text practice, evaluation, and future production voice. Suadence authentication is independent of ChatGPT; no ChatGPT account is required.
+The marketing site, Supabase login, account recovery, and authenticated Revenue OS now share one canonical Vercel origin. GitHub Pages is a branded redirect so old links do not strand users in a static or ChatGPT-gated copy. Authentication is provided directly by Supabase and never requires a ChatGPT account. The pilot is invite-only; approved users receive a single-use invitation.
 
 ## Stack
 
@@ -34,7 +33,7 @@ Next.js App Router, strict TypeScript, React, Tailwind CSS, Supabase Auth/Postgr
 5. Run `pnpm install` and `pnpm dev`.
 6. Open `http://localhost:3000/app`.
 
-The hosted D1 worker remains a compatibility preview during migration. New transcript, persona, practice, and evaluation work belongs only in Next.js/Supabase; `/legacy` is not approved for design-partner customer data.
+Do not use retired Sites/D1 previews for customer data. New transcript, persona, practice, and evaluation work belongs only in Next.js/Supabase.
 
 ## Environment variables
 
@@ -66,12 +65,12 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 
 ## Current limitations
 
-- GitHub Pages processes synthetic data only and intentionally cannot run server-side AI or customer authentication.
+- GitHub Pages redirects to the canonical application and intentionally runs no product logic.
 - Canonical production fails closed if Supabase authentication is missing. Local development may use deterministic demo mode.
 - The secure Transcript Lab accepts pasted text and scanned TXT/DOCX/PDF files. Production upload processing now requires the Cloudmersive Advanced scanner and fails closed without it; a provider credential and production smoke test remain launch gates for external customer data.
 - The Vercel and Supabase production environments still require project credentials and the latest migration to be applied.
 - The hosted private pilot accepts consent-confirmed pasted/TXT evidence and a replay-protected, HMAC-signed normalized connector envelope. Provider-specific OAuth authorization screens, historical backfills, token rotation, and marketplace approval still require customer credentials and external provider configuration.
-- The D1-hosted asset outputs and graph extraction remain deterministic compatibility demonstrations and are not the canonical evidence engine.
+- Deterministic output remains test/synthetic-demo behavior only; provider-backed production behavior stays gated by calibration.
 - Revenue DNA, Knowledge Drift, and Content Gap use deterministic calculations and minimum cross-call evidence thresholds. Outcome calibration still requires representative customer data and approved success metrics.
 - The hosted preview derives a single authorized organization server-side. The canonical Next.js/Supabase application owns production authentication, membership resolution, and RLS.
 - Security architecture is designed for enterprise review, but SOC 2, SSO/SCIM, regional data residency, a signed DPA, and jurisdiction-specific legal review are roadmap items, not current certifications.
@@ -90,3 +89,4 @@ Open `/demo` to generate one fictional transcript or a three-to-six-call synthet
 - [Sales-leader research](docs/SALES-LEADER-RESEARCH.md)
 - [Connector implementation](docs/CONNECTORS.md)
 - [Production readiness](docs/PRODUCTION-READINESS.md)
+- [Launch-readiness review](docs/LAUNCH-READINESS-REVIEW-2026-08-20.md)

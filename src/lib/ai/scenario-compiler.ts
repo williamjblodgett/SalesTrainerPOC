@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { demoScenario } from "@/lib/demo/scenario";
 import { scenarioSpecSchema, type ScenarioSpec } from "@/lib/domain/scenario";
+import { shouldUseDeterministicAI } from "./provider-mode";
 
 const outputSchema = z.object({
   spec: scenarioSpecSchema,
@@ -51,7 +52,7 @@ function deterministicSpec(input: z.infer<typeof scenarioCompilerInputSchema>): 
 
 export async function compileScenario(rawInput: unknown) {
   const input = scenarioCompilerInputSchema.parse(rawInput);
-  if (process.env.AI_PROVIDER === "mock" || !process.env.OPENAI_API_KEY) {
+  if (shouldUseDeterministicAI()) {
     return { spec: deterministicSpec(input), assumptions: ["Deterministic preview uses the seeded Northstar fact pattern."], missingInformation: ["Add an OpenAI API key and pass calibration before customer-facing generation."], sourceReferences: [], model: "deterministic-preview", usage: { inputTokens: 0, outputTokens: 0 } };
   }
   const model = process.env.OPENAI_SCENARIO_MODEL;
@@ -66,4 +67,3 @@ export async function compileScenario(rawInput: unknown) {
   if (!response.output_parsed) throw new Error("Scenario compiler returned no structured output");
   return { ...outputSchema.parse(response.output_parsed), model, usage: { inputTokens: response.usage?.input_tokens ?? 0, outputTokens: response.usage?.output_tokens ?? 0 } };
 }
-

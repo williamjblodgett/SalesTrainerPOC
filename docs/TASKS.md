@@ -1,5 +1,30 @@
 # Tasks
 
+## 2026-08-20 launch-readiness authentication and tenancy
+
+- [x] Replace client hash-token password reset with server-verified Supabase SSR recovery.
+- [x] Add cross-device token-hash recovery and invite templates.
+- [x] Convert public signup to an invite-only pilot request surface.
+- [x] Add server-validated active-organization switching for multi-organization users.
+- [x] Add an owner-only Team invitation workflow with a single-use Supabase invite and tenant membership.
+- [x] Consolidate marketing, login, and Revenue OS on the canonical Vercel origin.
+- [x] Convert GitHub Pages to a branded redirect and retire ChatGPT-gated Sites compatibility.
+- [x] Fix invalid `profiles.user_id` queries in Team and Assignments.
+- [x] Make assignment plus target creation atomic.
+- [x] Prevent reps from reading hidden scenario specs or peer sessions/transcripts through RLS.
+- [x] Add core-access pgTAP isolation coverage and auth contract tests.
+- [x] Add CSP, anti-framing, MIME-sniffing, referrer, permission, and private-cache headers.
+- [x] Replace duplicate 20-asset placeholders with separated evidence-extractor and differentiated asset-generator providers.
+- [x] Require all 20 unique asset types, exact evidence UUID lineage, and no uncited production asset.
+- [x] Fail closed when live production data would otherwise fall back to deterministic mock AI.
+- [x] Prevent reps from reading Revenue OS calls, evidence, graph, connectors, or cross-team assets directly through RLS.
+- [x] Add evidence-backed review pages and atomic approve/change/reject decisions for generated revenue assets.
+- [ ] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all pgTAP suites.
+- [ ] Apply `supabase/auth-production-config.json` through the production auth workflow.
+- [ ] Configure custom SMTP, then send and complete a fresh owner recovery link.
+- [ ] Run authenticated production Playwright with a dedicated release-test user.
+- [ ] Complete two-reviewer human calibration before enabling voice.
+
 ## 2026-08-07 canonical production remediation
 
 - [x] Add canonical Supabase Revenue OS call, evidence, graph, 20-asset, connector, sync-job, and enterprise identity tables with RLS.

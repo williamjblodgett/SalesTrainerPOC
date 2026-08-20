@@ -17,5 +17,15 @@ export async function GET(request: Request) {
   if (error) {
     return NextResponse.redirect(new URL("/login?error=Invalid+or+expired+link.", url));
   }
-  return NextResponse.redirect(new URL(safeNext, url));
+  const response = NextResponse.redirect(new URL(safeNext, url));
+  if (safeNext === "/reset-password") {
+    response.cookies.set("suadence-recovery-intent", "verified", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 15 * 60,
+      path: "/",
+    });
+  }
+  return response;
 }

@@ -3,7 +3,7 @@ import { KeyRound, ShieldCheck } from "lucide-react";
 import { changePassword } from "@/app/auth/actions";
 import { requireAppContext } from "@/lib/auth/context";
 import { connectorCatalog } from "@/lib/revenue-os/contracts";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function SettingsPage({
   searchParams,
@@ -12,10 +12,10 @@ export default async function SettingsPage({
 }) {
   const context = await requireAppContext();
   const { error, message } = await searchParams;
-  const admin = createSupabaseAdminClient();
-  const [{ data: connections }, { data: identityConfigs }] = admin ? await Promise.all([
-    admin.from("connector_connections").select("provider,status,last_synced_at,last_error_code").eq("organization_id", context.organization.id),
-    admin.from("enterprise_identity_configs").select("protocol,status,provider_name").eq("organization_id", context.organization.id),
+  const supabase = await createSupabaseServerClient();
+  const [{ data: connections }, { data: identityConfigs }] = supabase ? await Promise.all([
+    supabase.from("connector_connections").select("provider,status,last_synced_at,last_error_code").eq("organization_id", context.organization.id),
+    supabase.from("enterprise_identity_configs").select("protocol,status,provider_name").eq("organization_id", context.organization.id),
   ]) : [{ data: [] }, { data: [] }];
   const connectionMap = new Map((connections ?? []).map((item) => [item.provider, item]));
   const launchChecks = [

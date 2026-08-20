@@ -16,6 +16,21 @@ test("public health and authentication surfaces do not require ChatGPT", async (
   await page.goto("/login");
   await expect(page.getByRole("heading", { name: "Sign in to Suadence" })).toBeVisible();
   await expect(page.getByText(/ChatGPT account is never required/i)).toBeVisible();
+  expect(await page.locator("body").evaluate(() => document.cookie)).not.toContain("access_token");
+  expect((await page.request.get("/login")).headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
+});
+
+test("pilot access and recovery surfaces fail safely", async ({ page }) => {
+  await page.goto("/signup");
+  await expect(page.getByRole("heading", { name: "Request a pilot invitation" })).toBeVisible();
+  await expect(page.getByLabel("Password")).toHaveCount(0);
+
+  await page.goto("/forgot-password");
+  await expect(page.getByRole("heading", { name: "Get a reset link" })).toBeVisible();
+
+  await page.goto("/reset-password");
+  await expect(page.getByText(/recovery session is invalid or expired/i)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Save password" })).toHaveCount(0);
 });
 
 test("@authenticated owner can enter the Supabase workspace and reach critical flows", async ({

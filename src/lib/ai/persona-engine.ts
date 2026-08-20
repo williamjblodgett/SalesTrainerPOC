@@ -13,6 +13,7 @@ import {
   type TranscriptPersonaRequest,
 } from "@/lib/domain/persona";
 import { createDeterministicPersona } from "@/lib/domain/persona-mock";
+import { shouldUseDeterministicAI } from "./provider-mode";
 
 const PERSONA_SYSTEM_PROMPT = `You are an evidence-based buyer-persona architect.
 Convert consent-confirmed sales transcripts into one structured buyer persona draft.
@@ -32,7 +33,8 @@ export class OpenAIPersonaEngine implements PersonaEngine {
   async synthesize(input: TranscriptPersonaRequest) {
     const assessed = assessTranscriptEvidence(input.transcripts);
     if (assessed.issues.length) throw new PersonaEvidenceError(assessed.issues);
-    if (process.env.AI_PROVIDER === "mock" || !process.env.OPENAI_API_KEY) {
+    const synthetic = input.transcripts.every(({ consentStatus }) => consentStatus === "synthetic");
+    if (shouldUseDeterministicAI({ synthetic })) {
       const draft = validatePersonaEvidence(createDeterministicPersona(input), input.transcripts);
       return { draft, model: "deterministic-mock", inputTokens: 0, outputTokens: 0 };
     }

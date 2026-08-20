@@ -5,6 +5,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 
 import type { Evaluator } from "./contracts";
 import { MockEvaluator } from "./mock";
+import { shouldUseDeterministicAI } from "./provider-mode";
 import { evaluationResultSchema, validateEvaluationAgainstTranscript } from "@/lib/domain/evaluation";
 
 const EVALUATOR_PROMPT = `You are an evidence-based sales-call evaluator. Score only observable seller behavior against the supplied immutable 0–4 anchors.
@@ -27,5 +28,5 @@ export class OpenAIEvaluator implements Evaluator {
 }
 
 export function createEvaluator(): Evaluator {
-  return process.env.AI_PROVIDER === "mock" || !process.env.OPENAI_API_KEY ? new MockEvaluator() : new OpenAIEvaluator();
+  return shouldUseDeterministicAI() ? new MockEvaluator() : new OpenAIEvaluator();
 }

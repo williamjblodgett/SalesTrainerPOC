@@ -42,3 +42,6 @@ jobs:
         run: supabase db push --db-url "$SUPABASE_DIRECT_DB_URL"
       - if: inputs.apply_migrations
         run: supabase test db --db-url "$SUPABASE_DIRECT_DB_URL"
+      - if: inputs.apply_migrations
+        name: Confirm core isolation suite is present
+        run: test -f supabase/tests/core_access_isolation.sql

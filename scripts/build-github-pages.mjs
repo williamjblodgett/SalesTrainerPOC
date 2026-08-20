@@ -1,70 +1,41 @@
 import assert from "node:assert/strict";
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
-const sourceDirectory = path.join(repositoryRoot, "demo");
 const outputDirectory = path.join(repositoryRoot, "pages-dist");
-const demoOutputDirectory = path.join(outputDirectory, "demo");
-const appOutputDirectory = path.join(outputDirectory, "app");
-const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "SalesTrainerPOC";
-const repositoryOwner = process.env.GITHUB_REPOSITORY_OWNER ?? "williamjblodgett";
-const pagesUrl = process.env.GITHUB_PAGES_URL ?? `https://${repositoryOwner.toLowerCase()}.github.io/${repositoryName}/`;
-const publicAppUrl = `${pagesUrl}app/`;
+const canonicalUrl = "https://salessim-five.vercel.app/";
 
-const { repairedLandingHtml } = await import("../dist/server/revenue-os.js");
+const redirectPage = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Suadence has moved</title>
+  <meta name="robots" content="noindex,follow">
+  <meta http-equiv="refresh" content="0;url=${canonicalUrl}">
+  <link rel="canonical" href="${canonicalUrl}">
+  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f7fb;color:#071e41;font:16px/1.5 system-ui,sans-serif}.card{width:min(88vw,520px);padding:38px;border:1px solid #dce5ee;border-radius:24px;background:white;box-shadow:0 24px 70px #071e4115}.logo{width:280px;max-width:100%;height:auto}h1{margin:32px 0 12px;font-size:34px;letter-spacing:-.03em}p{color:#5d6d7e}a{display:inline-flex;margin-top:16px;padding:12px 18px;border-radius:10px;background:#078eaa;color:white;font-weight:700;text-decoration:none}</style>
+  <script>window.location.replace(${JSON.stringify(canonicalUrl)});</script>
+</head>
+<body><main class="card"><img class="logo" src="./brand/suadence-logo.webp" alt="Suadence"><h1>The complete site has moved.</h1><p>Marketing, product access, and account recovery now live together on one secure domain.</p><a href="${canonicalUrl}">Open Suadence</a></main></body>
+</html>`;
 
-const [html, script] = await Promise.all([
-  readFile(path.join(sourceDirectory, "index.html"), "utf8"),
-  readFile(path.join(sourceDirectory, "app.js"), "utf8"),
-]);
-
-assert.match(html, /Interactive Demo/, "Pages must ship the interactive demo shell");
-assert.match(repairedLandingHtml, /One call in/, "Pages must ship the product landing page");
-assert.match(repairedLandingHtml, /id="pricing"/, "Landing page must include pricing");
-assert.match(repairedLandingHtml, />TBD</, "Public pricing must remain TBD");
-assert.match(script, /routeNames/, "Pages must include resilient client-side navigation");
-assert.match(script, /synthetic/i, "Pages must identify synthetic-only data handling");
-assert.doesNotMatch(script, /OPENAI_API_KEY|SUPABASE_SERVICE_ROLE_KEY/, "Pages must never contain server secrets");
-assert.doesNotMatch(html, /\$[\d,]+/, "Pages must not publish pricing");
-
+assert.match(redirectPage, /salessim-five\.vercel\.app/);
+assert.doesNotMatch(redirectPage, /chatgpt\.com|chatgpt\.site/);
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(path.join(outputDirectory, "brand"), { recursive: true });
-await cp(sourceDirectory, demoOutputDirectory, { recursive: true });
-await cp(sourceDirectory, appOutputDirectory, { recursive: true });
+await cp(
+  path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"),
+  path.join(outputDirectory, "brand", "suadence-logo.webp"),
+);
 await Promise.all([
-  cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(outputDirectory, "brand", "suadence-logo.webp")),
-  cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(demoOutputDirectory, "brand", "suadence-logo.webp")),
-  cp(path.join(repositoryRoot, "public", "brand", "suadence-logo.webp"), path.join(appOutputDirectory, "brand", "suadence-logo.webp")),
-  cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(demoOutputDirectory, "data", "industry-packs.json")),
-  cp(path.join(repositoryRoot, "public", "data", "industry-packs.json"), path.join(appOutputDirectory, "data", "industry-packs.json")),
-  cp(path.join(repositoryRoot, "public", "og-revenue-os.png"), path.join(outputDirectory, "og-revenue-os.png")),
-  cp(path.join(repositoryRoot, "public", "legal"), path.join(outputDirectory, "legal"), { recursive: true }),
-]);
-
-const landingPageHtml = repairedLandingHtml
-  .replaceAll('href="/app"', `href="${publicAppUrl}"`)
-  .replaceAll('href="/demo"', `href="${pagesUrl}demo/"`)
-  .replaceAll('href="/legal/', `href="${pagesUrl}legal/`)
-  .replaceAll('src="/brand/suadence-logo.webp"', 'src="./brand/suadence-logo.webp"')
-  .replace("</head>", `<link rel="canonical" href="${pagesUrl}"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
-const demoPageHtml = html.replace("</head>", `<link rel="canonical" href="${pagesUrl}demo/"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
-const appPageHtml = html
-  .replace("Interactive Demo", "Revenue OS")
-  .replace("</head>", `<link rel="canonical" href="${publicAppUrl}"><meta property="og:image" content="${pagesUrl}og-revenue-os.png"></head>`);
-assert.doesNotMatch(landingPageHtml, /chatgpt\.site/, "GitHub landing page must not require the private host");
-await Promise.all([
-  writeFile(path.join(outputDirectory, "index.html"), landingPageHtml, "utf8"),
-  writeFile(path.join(outputDirectory, "404.html"), landingPageHtml, "utf8"),
-  writeFile(path.join(demoOutputDirectory, "index.html"), demoPageHtml, "utf8"),
-  writeFile(path.join(appOutputDirectory, "index.html"), appPageHtml, "utf8"),
+  writeFile(path.join(outputDirectory, "index.html"), redirectPage, "utf8"),
+  writeFile(path.join(outputDirectory, "404.html"), redirectPage, "utf8"),
   writeFile(path.join(outputDirectory, ".nojekyll"), "", "utf8"),
-  writeFile(path.join(outputDirectory, "robots.txt"), `User-agent: *\nAllow: /\n`, "utf8"),
+  writeFile(path.join(outputDirectory, "robots.txt"), "User-agent: *\nDisallow: /\n", "utf8"),
 ]);
 
-console.log(`GitHub Pages marketing site built at ${outputDirectory}`);
-console.log(`Main site: ${pagesUrl}`);
-console.log(`Revenue OS: ${publicAppUrl}`);
-console.log(`Interactive demo: ${pagesUrl}demo/`);
+console.log(`GitHub Pages now redirects to ${canonicalUrl}`);

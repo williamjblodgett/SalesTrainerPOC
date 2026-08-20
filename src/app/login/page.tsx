@@ -6,9 +6,9 @@ import { signIn } from "@/app/auth/actions";
 export default async function Login({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; message?: string; returnTo?: string }>;
 }) {
-  const { error, message } = await searchParams;
+  const { error, message, returnTo } = await searchParams;
   return (
     <main className="auth-shell">
       <section className="auth-story">
@@ -35,6 +35,7 @@ export default async function Login({
       </section>
       <section className="auth-form-wrap">
         <form action={signIn} className="auth-form">
+          <input type="hidden" name="returnTo" value={returnTo ?? "/app"} />
           <div>
             <span className="eyebrow">Welcome back</span>
             <h2>Sign in to Suadence</h2>
@@ -73,7 +74,7 @@ export default async function Login({
             account is never required.
           </p>
           <p className="auth-switch">
-            New to Suadence? <Link href="/signup">Start your 14-day trial</Link>
+            New to Suadence? <Link href="/signup">Request pilot access</Link>
           </p>
         </form>
       </section>
