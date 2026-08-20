@@ -21,7 +21,7 @@
 - [x] Add evidence-backed review pages and atomic approve/change/reject decisions for generated revenue assets.
 - [ ] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all pgTAP suites.
 - [ ] Apply `supabase/auth-production-config.json` through the production auth workflow.
-- [ ] Add a production `SUPABASE_ACCESS_TOKEN` secret; the first hosted Auth run correctly failed closed because it is absent.
+- [x] Reuse the protected Supabase operations environment containing `SUPABASE_ACCESS_TOKEN` and remove the incorrect hard-coded database region.
 - [ ] Configure custom SMTP, then send and complete a fresh owner recovery link.
 - [ ] Run authenticated production Playwright with a dedicated release-test user.
 - [ ] Complete two-reviewer human calibration before enabling voice.
