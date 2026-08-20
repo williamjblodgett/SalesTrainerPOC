@@ -21,6 +21,7 @@
 - [x] Add evidence-backed review pages and atomic approve/change/reject decisions for generated revenue assets.
 - [ ] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all pgTAP suites.
 - [ ] Apply `supabase/auth-production-config.json` through the production auth workflow.
+- [x] Apply canonical Site URL, callback allowlist, invite-only mode, and password policy through the hosted Auth workflow (`32403986457`).
 - [x] Reuse the protected Supabase operations environment containing `SUPABASE_ACCESS_TOKEN` and remove the incorrect hard-coded database region.
 - [x] Add an explicit, audited paused-project resume option before hosted migration validation.
 - [x] Split core Auth configuration from paid/custom-SMTP email templates so free-tier settings fail independently and clearly.
