@@ -22,6 +22,7 @@
 - [ ] Apply `202608200001_auth_and_profile_hardening.sql` to hosted Supabase and pass all pgTAP suites.
 - [ ] Apply `supabase/auth-production-config.json` through the production auth workflow.
 - [x] Reuse the protected Supabase operations environment containing `SUPABASE_ACCESS_TOKEN` and remove the incorrect hard-coded database region.
+- [x] Add an explicit, audited paused-project resume option before hosted migration validation.
 - [ ] Configure custom SMTP, then send and complete a fresh owner recovery link.
 - [ ] Run authenticated production Playwright with a dedicated release-test user.
 - [ ] Complete two-reviewer human calibration before enabling voice.
