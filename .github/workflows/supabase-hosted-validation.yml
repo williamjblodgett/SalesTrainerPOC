@@ -12,6 +12,11 @@ on:
         required: true
         type: boolean
         default: false
+      restore_project:
+        description: Explicitly resume the paused project before validation
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -25,8 +30,25 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - if: inputs.restore_project
+        name: Resume the explicitly requested Supabase project
+        run: |
+          curl --fail-with-body --silent --show-error --request POST \
+            "https://api.supabase.com/v1/projects/${PROJECT_REF}/restore" \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}"
+        env:
+          PROJECT_REF: ${{ inputs.project_ref }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       - name: Link the requested project using Supabase project metadata
-        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+        run: |
+          for attempt in $(seq 1 30); do
+            if supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"; then
+              exit 0
+            fi
+            echo "Project is not ready yet (attempt ${attempt}/30)."
+            sleep 10
+          done
+          exit 1
         env:
           PROJECT_REF: ${{ inputs.project_ref }}
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

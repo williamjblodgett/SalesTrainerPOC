@@ -28,7 +28,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       - name: Apply canonical auth URLs, invite-only mode, and token-hash templates
         run: |
-          curl --fail --silent --show-error --request PATCH \
+          curl --fail-with-body --silent --show-error --request PATCH \
             "https://api.supabase.com/v1/projects/${PROJECT_REF}/config/auth" \
             --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
             --header "Content-Type: application/json" \
